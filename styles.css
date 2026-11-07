@@ -69,11 +69,15 @@ a { color: inherit; }
 .keys-strip .ui { opacity: 0.8; }
 .keys-strip button.view-toggle { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 0; }
 .keys-strip button.view-toggle:hover kbd { border-color: var(--ink); }
+.keys-strip .gfx-status { padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--line); color: var(--ink); }
+.keys-strip .gfx-status.on { background: var(--ok); color: #fff; }
+.keys-strip .gfx-status.off { background: var(--accent); color: var(--accent-ink); }
+html.view-original.dragging #stage .screen { outline: 3px dashed var(--accent); outline-offset: 6px; }
 
 /* ---- Original (1985) view ------------------------------------------------- */
 html.view-original #app { grid-template-columns: 1fr; grid-template-areas: "stage" "foot"; }
 html.view-original #hud .hud-top, html.view-original #sidebar { display: none; }
-html.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #000; }
+html.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #0000d7; }   /* the Spectrum's blue border */
 html.view-original .overlay { border-radius: 0; }
 html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted: #a9b2bd; --surface: #2b3037; --line: #3a414a; }
 #sidebar { grid-area: side; display: flex; flex-direction: column; gap: 12px; min-width: 0; }

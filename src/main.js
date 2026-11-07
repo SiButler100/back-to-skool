@@ -42,7 +42,7 @@ export function boot() {
   const canvas = document.getElementById('game');
   const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics });
   const hud = new HUD(document.getElementById('hud'), game, DEFAULT_BINDINGS);
-  const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => tapeLoader.update(settings.view));
+  const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); });
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
 
@@ -70,6 +70,7 @@ export function boot() {
     document.documentElement.classList.toggle('view-original', s.view === 'original');
     hud.setView(s.view);
     tapeLoader.update(s.view);
+    hud.setGraphicsStatus(s.view, renderer.original.ready);
     fitCanvas();
   }
 
@@ -114,6 +115,8 @@ export function boot() {
 
   applySettings(settings);
   menu.show('title');
+  let polls = 0;
+  const poll = setInterval(() => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); if (++polls > 10) clearInterval(poll); }, 500);
 
   // The loop
   let last = performance.now(), acc = 0;

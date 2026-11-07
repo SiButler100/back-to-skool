@@ -30,6 +30,10 @@ export class TapeLoader {
     this.el = this.container.querySelector('#tape-loader');
     this.status = this.container.querySelector('#tape-status');
     this.container.querySelector('#tape-file').addEventListener('change', (e) => this.load(e.target.files[0]));
+    // Dropping the file anywhere on the page also works.
+    window.addEventListener('dragover', (e) => { e.preventDefault(); document.documentElement.classList.add('dragging'); });
+    window.addEventListener('dragleave', () => document.documentElement.classList.remove('dragging'));
+    window.addEventListener('drop', (e) => { e.preventDefault(); document.documentElement.classList.remove('dragging'); const f = e.dataTransfer?.files?.[0]; if (f) this.load(f); });
   }
 
   async load(file) {
@@ -44,6 +48,7 @@ export class TapeLoader {
       this.onChange(true);
     } catch (err) {
       this.status.textContent = `Could not use that file: ${err.message}`;
+      console.error('Tape load failed', err);
     }
   }
 

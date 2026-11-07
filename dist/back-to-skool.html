@@ -79,11 +79,15 @@ a { color: inherit; }
 .keys-strip .ui { opacity: 0.8; }
 .keys-strip button.view-toggle { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 0; }
 .keys-strip button.view-toggle:hover kbd { border-color: var(--ink); }
+.keys-strip .gfx-status { padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--line); color: var(--ink); }
+.keys-strip .gfx-status.on { background: var(--ok); color: #fff; }
+.keys-strip .gfx-status.off { background: var(--accent); color: var(--accent-ink); }
+html.view-original.dragging #stage .screen { outline: 3px dashed var(--accent); outline-offset: 6px; }
 
 /* ---- Original (1985) view ------------------------------------------------- */
 html.view-original #app { grid-template-columns: 1fr; grid-template-areas: "stage" "foot"; }
 html.view-original #hud .hud-top, html.view-original #sidebar { display: none; }
-html.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #000; }
+html.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #0000d7; }   /* the Spectrum's blue border */
 html.view-original .overlay { border-radius: 0; }
 html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted: #a9b2bd; --surface: #2b3037; --line: #3a414a; }
 #sidebar { grid-area: side; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
@@ -8135,7 +8139,8 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       <span class="k"><kbd>${key("fire")}</kbd> fire</span>
       <span class="k"><kbd>${key("act")}</kbd> act</span>
       <span class="k ui"><kbd>Esc</kbd> menu</span>
-      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (V)"></button>`;
+      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (V)"></button>
+      <span class="gfx-status" id="gfx-status" hidden></span>`;
       strip.querySelector("#view-toggle").addEventListener("click", () => this.viewHandlers.forEach((h) => h()));
       this.viewToggle = strip.querySelector("#view-toggle");
     }
@@ -8147,6 +8152,13 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
     }
     setView(view) {
       this.viewToggle.innerHTML = view === "original" ? "<kbd>V</kbd> modern view" : "<kbd>V</kbd> original view";
+    }
+    // The chip in the key strip: are the 1985 graphics loaded?
+    setGraphicsStatus(view, loaded) {
+      const el = document.getElementById("gfx-status");
+      el.hidden = view !== "original";
+      el.textContent = loaded ? "1985 graphics: loaded" : "1985 graphics: NOT loaded (painted stand-ins shown)";
+      el.className = `gfx-status ${loaded ? "on" : "off"}`;
     }
     // Add a titled panel to the sidebar. Returns the content element.
     addPanel(title2, contentEl) {
@@ -9082,6 +9094,17 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       this.el = this.container.querySelector("#tape-loader");
       this.status = this.container.querySelector("#tape-status");
       this.container.querySelector("#tape-file").addEventListener("change", (e) => this.load(e.target.files[0]));
+      window.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        document.documentElement.classList.add("dragging");
+      });
+      window.addEventListener("dragleave", () => document.documentElement.classList.remove("dragging"));
+      window.addEventListener("drop", (e) => {
+        e.preventDefault();
+        document.documentElement.classList.remove("dragging");
+        const f = e.dataTransfer?.files?.[0];
+        if (f) this.load(f);
+      });
     }
     async load(file) {
       if (!file) return;
@@ -9095,6 +9118,7 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
         this.onChange(true);
       } catch (err) {
         this.status.textContent = `Could not use that file: ${err.message}`;
+        console.error("Tape load failed", err);
       }
     }
     forget() {
@@ -9300,7 +9324,10 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
     const canvas = document.getElementById("game");
     const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics });
     const hud = new HUD(document.getElementById("hud"), game, DEFAULT_BINDINGS);
-    const tapeLoader = new TapeLoader(document.getElementById("tape"), renderer, () => tapeLoader.update(settings.view));
+    const tapeLoader = new TapeLoader(document.getElementById("tape"), renderer, () => {
+      tapeLoader.update(settings.view);
+      hud.setGraphicsStatus(settings.view, renderer.original.ready);
+    });
     const sound = new Sound();
     game.events.on("sound", (id) => sound.play(id));
     let paused = true;
@@ -9340,6 +9367,7 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       document.documentElement.classList.toggle("view-original", s.view === "original");
       hud.setView(s.view);
       tapeLoader.update(s.view);
+      hud.setGraphicsStatus(s.view, renderer.original.ready);
       fitCanvas();
     }
     function toggleView() {
@@ -9388,6 +9416,12 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
     setupFeatures({ game, renderer, hud, input, settings });
     applySettings(settings);
     menu.show("title");
+    let polls = 0;
+    const poll = setInterval(() => {
+      tapeLoader.update(settings.view);
+      hud.setGraphicsStatus(settings.view, renderer.original.ready);
+      if (++polls > 10) clearInterval(poll);
+    }, 500);
     let last = performance.now(), acc = 0;
     function frame(now) {
       const dt = Math.min(0.25, (now - last) / 1e3);

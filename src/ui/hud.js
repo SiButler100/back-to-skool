@@ -78,7 +78,8 @@ export class HUD {
       <span class="k"><kbd>${key('fire')}</kbd> fire</span>
       <span class="k"><kbd>${key('act')}</kbd> act</span>
       <span class="k ui"><kbd>Esc</kbd> menu</span>
-      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (V)"></button>`;
+      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (V)"></button>
+      <span class="gfx-status" id="gfx-status" hidden></span>`;
     strip.querySelector('#view-toggle').addEventListener('click', () => this.viewHandlers.forEach((h) => h()));
     this.viewToggle = strip.querySelector('#view-toggle');
   }
@@ -87,6 +88,13 @@ export class HUD {
   onToggleView(h) { this.viewHandlers.push(h); }
   setView(view) {
     this.viewToggle.innerHTML = view === 'original' ? '<kbd>V</kbd> modern view' : '<kbd>V</kbd> original view';
+  }
+  // The chip in the key strip: are the 1985 graphics loaded?
+  setGraphicsStatus(view, loaded) {
+    const el = document.getElementById('gfx-status');
+    el.hidden = view !== 'original';
+    el.textContent = loaded ? '1985 graphics: loaded' : '1985 graphics: NOT loaded (painted stand-ins shown)';
+    el.className = `gfx-status ${loaded ? 'on' : 'off'}`;
   }
 
   // Add a titled panel to the sidebar. Returns the content element.
