@@ -1,0 +1,51 @@
+# Features: what is in, what is new, what is next
+
+## Faithful to the original (implemented)
+
+- The whole school: boys' school (Blue Room, Yellow Room, Science Lab with storeroom, Revision Library, Dinner Hall, Assembly Hall with stage, head's study), playground with the conker tree, bike shed and gate, and the girls' school (Upper Room, Middle Room, kitchen, Miss Take's study with the drinks cabinet). All seven staircases, every door and window, the four cups, the safe.
+- All 30 characters with their original names and behaviours: four masters, Miss Take, Albert, Boy Wander (catapult), Angelface (fists), Einstein (tells tales), Hayley (kisses), ten boys and seven girls.
+- The 64-period timetable, the lesson clock and bell, assembly (with the detention rant), dinner duty, playtime, revision library.
+- Lessons: teachers tell the class to sit, wipe and write on the board, pace, run question-and-answer sessions with Einstein; Einstein grasses on Eric for absence, hitting and board-writing; teachers fetch a truant Eric and nag him back.
+- Lines for every original offence (wrong place, standing in class, on the floor, catapults, hitting, writing on boards, stinkbombs, water pistols, plants, bikes, the girls' school, no-go zones) with the original messages; 10,000 lines means expulsion by Mr Wacker.
+- The quest, end to end: water pistol and stinkbombs hidden in desks; filling cups; knocking cups with the catapult (including the bounce off a knocked-over master's head); masters revealing bike digits when soaked and storeroom letters when sherried; writing combinations on blackboards (any order); the bike (pedal, stand on the saddle, jump to the cup, fly over the shut gate); the storeroom key and the frog; the frog in the girls' kitchen cup; the safe key on Miss Take; jumping up to the safe to go up a year.
+- Also: the conker that knocks Albert out, Albert raising the alarm when Eric escapes, Miss Take chasing Eric out of the girls' school, stinkbombs making Mr Wacker open the window, climbing out of the windows (the top one expels you), plants that grow when watered, the mouse (catch it, release it to scare the girls and Miss Take), kissing Hayley to shed lines.
+- Scoring as the original: 100 per mouse, 1,000 per combination, 2,000 for the key, 2,000 for the year.
+
+## New in this remake
+
+- A **modern HUD**: lesson box with a progress bar, score/lines/hi-score, pocket inventory, and an event log in plain English.
+- Three plug-in **features**: a quest tracker that remembers the digits and letters you've been told, a minimap of the whole school, and a "staff room" radar showing who can see you.
+- **Options**: modern or Spectrum palette, game speed, view width (32 columns is the original; up to 96), smooth motion, retro 8-column scrolling, freeze-on-lines, sound.
+- Smooth camera and eased sprite movement (switchable), synthesised sound, hi-score saved in the browser.
+- Painted sprites and a painted backdrop: no copyrighted artwork anywhere, and every colour is one line to change.
+- Headless engine with scenario tests.
+
+## Not done yet (honest list)
+
+- **Save and load** mid-game. Settings and hi-score persist; a game in progress does not.
+- **Touch controls** for phones and tablets. The page lays out responsively but there are no on-screen buttons.
+- **Lowercase blackboard text** is drawn as small capitals rather than a true lowercase font.
+- **Special playtimes** (the original's occasional variant playtimes, e.g. the mumps) are not in the timetable data.
+- **Speech bubbles** scroll a single line, as the original did; a "show the whole sentence" modern mode would be a nice option.
+- **Sprite polish**: the figures are deliberately simple. Each pose is a short painting routine in `src/render/sprites.js`; replacing them with hand-drawn pixel art is the obvious next visual step.
+- **Sound** is minimal beeps. The original tune and the up-a-year tune are not transcribed.
+- **Key rebinding UI**: bindings live in `src/ui/input.js` and are easy to edit, but there is no screen for it yet.
+
+## How to add a feature
+
+1. Copy `src/features/teacher-radar.js` to `src/features/my-thing.js`.
+2. Give it an `id`, `name`, `description`, and write the `setup({ game, renderer, hud, input, settings })` function. Use `hud.addPanel(title, element)` for a sidebar panel and `game.events.on(...)` to react to the game.
+3. Import it in `src/features/index.js` and add it to the `FEATURES` array.
+4. If you want the renderer to draw something extra on the canvas, wrap `renderer.draw`:
+
+   ```js
+   const original = renderer.draw.bind(renderer);
+   renderer.draw = () => { original(); /* draw on renderer.ctx here */ };
+   ```
+
+## Ideas for later
+
+- A level editor that writes `src/data/skool.js`.
+- Alternative casts (your own school) as a drop-in data pack.
+- Achievements fed by the events stream.
+- A "director's commentary" mode that explains what each character's command list is doing, live.

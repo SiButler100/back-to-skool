@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Back to Skool</title>
+  <meta name="description" content="A faithful, moddable browser remake of the 1985 ZX Spectrum game Back to Skool.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <div id="hud"></div>
+    <main id="stage">
+      <canvas id="game" width="384" height="168" aria-label="Back to Skool game view"></canvas>
+      <div id="overlay" class="overlay" hidden></div>
+    </main>
+    <aside id="sidebar"></aside>
+    <footer class="foot">
+      <span>Back to Skool remake · <a href="ARCHITECTURE.md">how it's built</a> · <a href="FEATURES.md">what's in and what's next</a></span>
+    </footer>
+  </div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
