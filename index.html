@@ -13,8 +13,11 @@
   <div id="app">
     <div id="hud"></div>
     <main id="stage">
-      <canvas id="game" width="384" height="168" aria-label="Back to Skool game view"></canvas>
-      <div id="overlay" class="overlay" hidden></div>
+      <div class="screen">
+        <canvas id="game" width="384" height="168" aria-label="Back to Skool game view"></canvas>
+        <div id="overlay" class="overlay" hidden></div>
+      </div>
+      <div id="keys" class="keys-strip" aria-label="Controls"></div>
     </main>
     <aside id="sidebar"></aside>
     <footer class="foot">

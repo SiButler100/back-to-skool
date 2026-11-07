@@ -12,24 +12,20 @@ It runs in any modern browser. No install, no build step for playing.
 
 ## Controls
 
+Four directions and three actions. The game works out which tool fits what is in front of Eric.
+
 | Key | Action |
 | --- | --- |
-| Arrow keys (or Q A O P) | Walk, go up or down stairs |
-| Space or J | Jump |
-| S | Sit down / stand up |
-| F | Fire catapult |
-| H | Punch |
-| W | Write on a blackboard (type, then Enter) |
-| C | Catch a mouse or frog |
-| D | Drop a stinkbomb |
-| G | Fire the water pistol |
-| M | Mount the bike (left/right to pedal, up to stand on the saddle, down to dismount) |
-| E or O | Open the desk you are sitting at |
-| R | Release mice |
-| T | Throw away the water pistol |
-| K | Kiss |
-| U | Acknowledge a message |
+| ← → (or O P) | Walk |
+| ↑ (or Q) | Up stairs; stand up |
+| ↓ (or A) | Down stairs; sit down; open the desk when seated |
+| Space (or J) | Jump (also jump off the bike saddle) |
+| F | Fire: the water pistol when a cup or plant pot is in range, otherwise the catapult |
+| E (or Enter) | Act: write on a blackboard, catch a mouse or frog, mount the bike, kiss, punch, release mice, drop a stinkbomb |
 | Esc | Pause / menu |
+| V | Switch between the original (1985) and modern views |
+
+Eric gets up by himself after being knocked down. Writing on a blackboard: stand beside it, press E, type, press Enter. Bike: alternate ← and → to pedal, ↑ to stand on the saddle, ↓ to dismount.
 
 The *How to play* screen inside the game has the School Rules and your brother's invisible-ink notes, which explain the whole caper.
 

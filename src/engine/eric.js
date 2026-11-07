@@ -36,6 +36,7 @@ export class Eric extends Character {
     this.baseLocation = null; this.hideCoords = null;
     this.bike = null; this.sittingOnSaddle = false; this.bikeKey = null; this.lastBikeKey = null;
     this.walkDelay = this.defaultWalkDelay;
+    this.floorTimer = 0;     // moves left before Eric gets up from the floor by himself
   }
 
   reinitialise() { super.reinitialise(); this.reset(); }
@@ -69,35 +70,27 @@ export class Eric extends Character {
     if (this.paralysed) { input.flush(); return; }
     if (this.midstride()) { this.walk(); input.flush(); return; }
 
-    if (this.isKnockedOut() || this.isSitting()) {
-      if (input.wasPressed('sit')) {
-        if (this.isSittingOnChair()) this.chair().vacate();
-        this.animatoryState = 'WALK0';
-        this.game.playSound('SIT');
-      } else if (this.isSittingOnChair() && input.wasPressed('openDesk')) {
-        this.openDesk(this.world.desk(this));
-      }
+    // On the floor (knocked out, or pushed off a chair): get up automatically
+    // after a moment, or straight away if 'up' is pressed.
+    if (this.isKnockedOut() || (this.isSittingOnFloor() && this.floorTimer > 0)) {
+      this.floorTimer -= 1;
+      if (this.floorTimer <= 0 || input.wasPressed('up')) { this.floorTimer = 0; this.standUpFromFloor(); }
       input.flush();
       return;
     }
-    if (input.wasPressed('sit') && this.sit()) { this.game.playSound('SIT'); input.flush(); return; }
-    if (input.wasPressed('fire') && this.canFireCatapult()) { this.setController(new cmd.FireCatapult()); input.flush(); return; }
-    if (input.wasPressed('waterPistol') && this.canFireWaterPistol()) { this.setController(new cmd.FireWaterPistol()); input.flush(); return; }
-    if (input.wasPressed('dumpPistol') && this.canDumpWaterPistol()) { this.bendOver(); this.setController(new cmd.DumpWaterPistol()); input.flush(); return; }
-    if (input.wasPressed('stinkbomb') && this.canDropStinkbomb()) { this.setController(new cmd.DropStinkbomb()); input.flush(); return; }
-    if (input.wasPressed('hit')) { this.setController(new cmd.Hit()); input.flush(); return; }
-    if (input.wasPressed('jump')) { this.setController(new cmd.Jump()); input.flush(); return; }
-    if (input.wasPressed('write') && this.world.besideBlackboard(this)) {
-      this.raiseArm(); this.setController(new cmd.Write()); input.startWriting(); this.writing = true; input.flush(); return;
+    if (this.isSitting()) {
+      if (input.wasPressed('up')) this.standUpFromFloor();
+      else if (this.isSittingOnChair() && input.wasPressed('down')) this.openDesk(this.world.desk(this));
+      input.flush();
+      return;
     }
-    if (input.wasPressed('catch') && this.canBendOver()) { this.bendOver(); this.setController(new cmd.Catch()); input.flush(); return; }
-    if (input.wasPressed('mountBike') && this.canMountBike()) {
-      this.bike = this.cast.bike; this.mountBike(); this.setController(new cmd.RideBike(this.bike)); input.flush(); return;
-    }
-    if (input.wasPressed('kiss') && this.canKiss()) { this.previousAs = this.animatoryState; this.setController(new cmd.Kiss()); input.flush(); return; }
-    if (input.wasPressed('releaseMice') && this.canReleaseMice()) { this.bendOver(); this.setController(new cmd.ReleaseMice()); input.flush(); return; }
-
     this.staircase = this.world.staircase(this);
+    // 'down' sits when there are no stairs to go down; on stairs it descends.
+    if (input.wasPressed('down') && !this.staircase && this.floor && this.sit()) { this.game.playSound('SIT'); input.flush(); return; }
+    if (input.wasPressed('jump')) { this.setController(new cmd.Jump()); input.flush(); return; }
+    if (input.wasPressed('fire')) { const c = this.fireAction(); if (c) { this.setController(c); input.flush(); return; } }
+    if (input.wasPressed('act')) { const c = this.actAction(); if (c) { this.setController(c); input.flush(); return; } }
+
     if (!this.isSupported()) { this.y += 1; input.flush(); return; }
     this.baseLocation = null;
     const plant = this.cast.plant(this);
@@ -117,12 +110,58 @@ export class Eric extends Character {
         if (this.barrier && this.barrier.isShut() && this.barrier.climbPhases) { this.setController(new cmd.Flight(this.world.animationPhases[this.barrier.climbPhases])); input.flush(); return; }
       }
       this.right();
-    } else if (input.pressed('up')) {
+    } else if (input.pressed('up') && this.staircase) {
       this.up();
-    } else if (input.pressed('down')) {
+    } else if (input.pressed('down') && this.staircase) {
       this.down();
     }
     input.flush();
+  }
+
+  standUpFromFloor() {
+    if (this.isSittingOnChair()) this.chair().vacate();
+    this.animatoryState = 'WALK0';
+    this.game.playSound('SIT');
+  }
+
+  // The Fire key: the water pistol when Eric is carrying one AND a cup or
+  // plant pot is where the jet would land; otherwise the catapult.
+  fireAction() {
+    if (this.hasWaterPistol() && this.canFireWaterPistol() && this.waterTargetAhead()) return new cmd.FireWaterPistol();
+    if (this.canFireCatapult()) return new cmd.FireCatapult();
+    return null;
+  }
+  // Trace the water jet's flight path and see whether it meets a cup or a pot.
+  waterTargetAhead() {
+    const phases = this.world.animationPhases.Water;
+    const d = this.direction;
+    let x = this.x + 2 * d, y = this.y - 2;
+    for (let i = 0; i < 12; i++) {
+      const [, xInc, yInc, hit] = phases[Math.min(i, phases.length - 1)];
+      if (hit === 1 && this.world.cup(x - (d < 0 ? 1 : -3), y)) return true;
+      if (hit === 2 && this.world.plantPot(x, y)) return true;
+      if (this.world.floorAt(x, y)) return false;
+      x += d * xInc; y += yInc;
+    }
+    return false;
+  }
+
+  // The Act key: whatever makes sense right in front of Eric, in priority order.
+  actAction() {
+    if (this.world.besideBlackboard(this)) {
+      this.raiseArm(); this.input.startWriting(); this.writing = true;
+      return new cmd.Write();
+    }
+    if (this.canBendOver()) {
+      const [hx, hy] = this.bendOverHandCoords();
+      if (this.cast.getAnimal(hx, hy)) { this.bendOver(); return new cmd.Catch(); }
+    }
+    if (this.canMountBike()) { this.bike = this.cast.bike; this.mountBike(); return new cmd.RideBike(this.bike); }
+    if (this.canKiss() && this.kissee()) { this.previousAs = this.animatoryState; return new cmd.Kiss(); }
+    if (this.getPunchee(1) || this.getPunchee(2)) return new cmd.Hit();
+    if (this.canReleaseMice()) { this.bendOver(); return new cmd.ReleaseMice(); }
+    if (this.canDropStinkbomb()) return new cmd.DropStinkbomb();
+    return new cmd.Hit();   // nothing in reach: a punch at thin air, as the original allowed
   }
 
   // Eric's left/right never return commands; a shut door just stops him.
@@ -189,7 +228,7 @@ export class Eric extends Character {
   }
 
   // ---- Being hit -------------------------------------------------------------
-  dethrone() { this.sitOnFloor(); this.game.playSound('KNOCKED_OUT'); }
+  dethrone() { this.sitOnFloor(); this.floorTimer = this.config.ericFloorMoves; this.game.playSound('KNOCKED_OUT'); }
   isDeckable() {
     const deckable = super.isDeckable();
     if (this.writing) return deckable;
@@ -199,6 +238,7 @@ export class Eric extends Character {
   deck() {
     if (this.isSittingOnChair()) this.chair().vacate();
     this.knockOver();
+    this.floorTimer = this.config.ericFloorMoves;
     if (this.writing) { this.writing = false; this.input.finishWriting(); this.setController(null); }
     this.game.playSound('KNOCKED_OUT');
     this.game.events.emit('decked', { character: this });
@@ -362,7 +402,7 @@ export class Eric extends Character {
     return true;
   }
   unfreeze() { if (this.frozen) { this.setController(null); this.frozen = false; this.understood = false; } }
-  checkUnderstanding() { if (this.input.wasPressed('understood')) this.understood = true; }
+  checkUnderstanding() { if (this.input.wasPressed('act') || this.input.wasPressed('jump')) this.understood = true; }
   paralyse(commandListId) { this.expelled = true; this.paralysed = true; this.game.expelEric(commandListId); }
   takeSafeKey() {
     if (!this.inventory.has(ITEMS.SAFE_KEY)) {
@@ -382,7 +422,7 @@ export class Eric extends Character {
   unhide() { if (this.hideCoords) { [this.x, this.y] = this.hideCoords; this.hideCoords = null; } this.visible = true; }
 
   // ---- Falling and flying ----------------------------------------------------
-  fallToFloor() { this.sitOnFloor(); this.game.playSound('KNOCKED_OUT'); }
+  fallToFloor() { this.sitOnFloor(); this.floorTimer = this.config.ericFloorMoves; this.game.playSound('KNOCKED_OUT'); }
   fallOffPlant() { this.setController(new cmd.FallToFloor()); }
   fly(xInc, yInc) {
     if (!this.baseLocation) this.baseLocation = [this.x, this.y];

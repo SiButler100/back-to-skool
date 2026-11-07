@@ -53,7 +53,29 @@ a { color: inherit; }
   margin: 0 auto;
 }
 #hud { grid-area: hud; }
-#stage { grid-area: stage; position: relative; display: flex; align-items: flex-start; justify-content: center; min-width: 0; }
+#stage { grid-area: stage; display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 0; }
+.screen { position: relative; max-width: 100%; }
+
+/* ---- Key strip (always visible) ------------------------------------------ */
+.keys-strip {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 14px;
+  font-size: 13px; color: var(--muted); max-width: 100%;
+}
+.keys-strip .k { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.keys-strip kbd {
+  font: inherit; font-size: 12px; padding: 1px 6px; border-radius: 5px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); min-width: 20px; text-align: center;
+}
+.keys-strip .ui { opacity: 0.8; }
+.keys-strip button.view-toggle { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 0; }
+.keys-strip button.view-toggle:hover kbd { border-color: var(--ink); }
+
+/* ---- Original (1985) view ------------------------------------------------- */
+body.view-original #app { grid-template-columns: 1fr; grid-template-areas: "stage" "foot"; }
+body.view-original #hud .hud-top, body.view-original #sidebar { display: none; }
+body.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #000; }
+body.view-original .overlay { border-radius: 0; }
+body.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted: #a9b2bd; --surface: #2b3037; --line: #3a414a; }
 #sidebar { grid-area: side; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .foot { grid-area: foot; color: var(--muted); font-size: 13px; }
 

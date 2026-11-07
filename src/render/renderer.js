@@ -26,10 +26,11 @@ export class Renderer {
     this.game = game;
     this.ctx = canvas.getContext('2d');
     this.ctx.imageSmoothingEnabled = false;
-    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, ...options };
+    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, ...options };
     this.setTheme(this.options.theme);
     this.cameraX = 0;               // left edge of the view, in pixels
     this.positions = new Map();     // id -> {x, y} eased pixel positions
+    this.tint = document.createElement('canvas'); this.tint.width = 24; this.tint.height = 32;
     this.resize(this.options.viewportColumns);
   }
 
@@ -40,10 +41,12 @@ export class Renderer {
     clearSpriteCache();
   }
 
-  resize(columns) {
+  // retroStatus adds the original's three status rows under the play area.
+  resize(columns, retroStatus = this.options.retroStatus) {
     this.columns = columns;
+    this.options.retroStatus = retroStatus;
     this.canvas.width = columns * C;
-    this.canvas.height = SKOOL.height * C;
+    this.canvas.height = (SKOOL.height + (retroStatus ? 3 : 0)) * C;
     this.ctx.imageSmoothingEnabled = false;
   }
 
@@ -92,17 +95,19 @@ export class Renderer {
     ctx.translate(-cam, 0);
     const viewFrom = cam - 32, viewTo = cam + this.canvas.width + 32;
 
-    ctx.drawImage(this.backdrop, cam, 0, this.canvas.width, this.canvas.height, cam, 0, this.canvas.width, this.canvas.height);
+    const playH = SKOOL.height * C;
+    ctx.drawImage(this.backdrop, cam, 0, this.canvas.width, playH, cam, 0, this.canvas.width, playH);
     this.drawFurniture(viewFrom, viewTo);
 
     // Characters and things
     const drawables = game.cast.drawables.filter((d) => d.visible && d.x * C + 24 >= viewFrom && d.x * C <= viewTo);
     for (const d of drawables) {
       const [x, y] = this.spritePos(d);
-      const sprite = getSprite(d.group, d.animatoryState, d.direction, d.look);
+      let sprite = getSprite(d.group, d.animatoryState, d.direction, d.look);
       if (this.theme.shadow !== 'rgba(0,0,0,0)' && d.group !== 'OBJ' && d.isStanding?.()) {
         ctx.fillStyle = theme.shadow; ctx.fillRect(Math.round(x) + 6, Math.round(y) + 31, 12, 1);
       }
+      if (theme.monoSprites && d.group !== 'OBJ') sprite = this.tinted(sprite, theme.monoSprites);
       ctx.drawImage(sprite, Math.round(x), Math.round(y));
     }
 
@@ -113,6 +118,49 @@ export class Renderer {
 
     // Message box (screen space)
     if (game.messageBox) this.drawMessageBox(game.messageBox, cam);
+    if (this.options.retroStatus) this.drawStatus();
+  }
+
+  // Recolour a sprite to a single ink, the way an 8-bit machine drew people.
+  tinted(sprite, colour) {
+    const t = this.tint.getContext('2d');
+    t.clearRect(0, 0, 24, 32);
+    t.globalCompositeOperation = 'source-over';
+    t.drawImage(sprite, 0, 0);
+    t.globalCompositeOperation = 'source-in';
+    t.fillStyle = colour; t.fillRect(0, 0, 24, 32);
+    return this.tint;
+  }
+
+  // The original's bottom three rows: score box, mice, inventory, lesson box, logo.
+  drawStatus() {
+    const { ctx, game, theme } = this;
+    const top = SKOOL.height * C;
+    const w = this.canvas.width;
+    const rect = (x, y, ww, hh, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, ww, hh); };
+    rect(0, top, w, 3 * C, theme.statusPaper);
+    // Score box: columns 0-7
+    rect(0, top, 8 * C, 3 * C, theme.statusBox);
+    const num = (n) => String(n).padStart(5, ' ');
+    drawText(ctx, `Score${num(game.score)}`, 2, top + 1, theme.statusInk);
+    drawText(ctx, `Lines${num(game.lines)}`, 2, top + 9, theme.statusLinesInk);
+    drawText(ctx, `Hi-Sc${num(game.hiScore)}`, 2, top + 17, theme.statusInk);
+    // Mice and pockets: columns 8-15
+    const eric = game.cast.eric;
+    if (eric.mice > 0) drawText(ctx, `${eric.mice} mice`, 8 * C + 2, top + 1, theme.statusInk);
+    let ix = 8 * C + 2;
+    for (const item of eric.inventory) { drawIcon(ctx, item, ix, top + 2 * C, theme); ix += 9; }
+    // Lesson box: columns 16-23
+    rect(16 * C, top, 8 * C, 3 * C, theme.statusBox);
+    rect(16 * C + 1, top + 1, 8 * C - 2, 3 * C - 2, theme.lessonPaper);
+    const { teacher, room } = game.lessonDescription();
+    drawTextCentred(ctx, teacher, 20 * C, top + 4, theme.lessonInk);
+    drawTextCentred(ctx, room, 20 * C, top + 13, theme.lessonInk);
+    // Logo: columns 24-31 (or whatever is left)
+    if (w >= 32 * C) {
+      drawTextCentred(ctx, 'BACK TO', 28 * C, top + 3, theme.logoInk);
+      drawTextCentred(ctx, 'SKOOL', 28 * C, top + 13, theme.logoInk2);
+    }
   }
 
   drawFurniture(viewFrom, viewTo) {
@@ -214,5 +262,21 @@ export class Renderer {
     ctx.fillStyle = paper; ctx.fillRect(Math.round(x), Math.round(y), w, h);
     ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(Math.round(x), Math.round(y), w, 1);
     lines.forEach((l, i) => drawTextCentred(ctx, l, Math.round(x + w / 2), Math.round(y + 3 + i * LINE_HEIGHT), ink));
+  }
+}
+
+// Small 8x8 pictures for the pockets row of the retro status bar.
+function drawIcon(ctx, item, x, y, theme) {
+  const p = (dx, dy, w, h, col) => { ctx.fillStyle = col; ctx.fillRect(x + dx, y + dy, w, h); };
+  switch (item) {
+    case 'SAFE_KEY': p(0, 3, 5, 2, '#f5d300'); p(4, 2, 3, 4, '#f5d300'); p(1, 5, 1, 2, '#f5d300'); p(3, 5, 1, 1, '#f5d300'); break;
+    case 'STOREROOM_KEY': p(0, 3, 5, 2, theme.statusInk); p(4, 2, 3, 4, theme.statusInk); p(1, 5, 1, 2, theme.statusInk); break;
+    case 'FROG': p(1, 3, 6, 4, '#00d700'); p(1, 2, 2, 1, '#00d700'); p(5, 2, 2, 1, '#00d700'); p(0, 7, 2, 1, '#00d700'); p(6, 7, 2, 1, '#00d700'); break;
+    case 'WATER_PISTOL': p(0, 2, 7, 2, '#00d7d7'); p(1, 4, 2, 3, '#00d7d7'); break;
+    case 'SHERRY_PISTOL': p(0, 2, 7, 2, '#d70000'); p(1, 4, 2, 3, '#d70000'); break;
+    case 'STINKBOMBS3': p(0, 4, 2, 3, theme.statusInk); p(3, 4, 2, 3, theme.statusInk); p(6, 4, 2, 3, theme.statusInk); break;
+    case 'STINKBOMBS2': p(0, 4, 2, 3, theme.statusInk); p(3, 4, 2, 3, theme.statusInk); break;
+    case 'STINKBOMBS1': p(0, 4, 2, 3, theme.statusInk); break;
+    default: break;
   }
 }

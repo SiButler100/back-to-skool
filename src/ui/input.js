@@ -3,11 +3,18 @@
 // ----------------------------------------------------------------------------
 // Maps physical keys to game actions. Eric asks two kinds of question:
 //   pressed(action)     is the key held down right now? (walking)
-//   wasPressed(action)  was it pressed since I last looked? (jump, fire...)
+//   wasPressed(action)  was it pressed since I last looked? (jump, fire, act)
 // While Eric is writing on a blackboard, typed characters are collected in a
 // queue instead of being treated as actions.
 //
-// Change the key bindings in DEFAULT_BINDINGS (or via the options menu).
+// The scheme is deliberately small: four directions and three actions.
+//   up     climb stairs; stand up when sitting or lying down
+//   down   descend stairs; sit down; open the desk when seated
+//   jump   jump (also jump off the bike saddle)
+//   fire   fire: the water pistol when a cup or plant pot is in range, else the catapult
+//   act    do the obvious thing in front of Eric: write on a board, catch a
+//          mouse or frog, mount the bike, kiss, punch, release mice, drop a stinkbomb
+// Change the key bindings in DEFAULT_BINDINGS.
 // ============================================================================
 
 export const DEFAULT_BINDINGS = {
@@ -16,28 +23,19 @@ export const DEFAULT_BINDINGS = {
   up: ['ArrowUp', 'KeyQ'],
   down: ['ArrowDown', 'KeyA'],
   jump: ['Space', 'KeyJ'],
-  sit: ['KeyS'],
   fire: ['KeyF'],
-  hit: ['KeyH'],
-  write: ['KeyW'],
-  catch: ['KeyC'],
-  stinkbomb: ['KeyD'],
-  waterPistol: ['KeyG'],
-  mountBike: ['KeyM'],
-  openDesk: ['KeyO', 'KeyE'],
-  releaseMice: ['KeyR'],
-  dumpPistol: ['KeyT'],
-  kiss: ['KeyK'],
-  understood: ['KeyU'],
-  pause: ['Escape', 'KeyP'],
+  act: ['KeyE', 'Enter'],
+  // UI keys (not game actions)
+  pause: ['Escape'],
+  view: ['KeyV'],
 };
 
 export const ACTION_LABELS = {
-  left: 'Walk left', right: 'Walk right', up: 'Up stairs / keep walking', down: 'Down stairs / keep walking',
-  jump: 'Jump', sit: 'Sit / stand', fire: 'Fire catapult', hit: 'Punch', write: 'Write on blackboard (Enter to finish)',
-  catch: 'Catch mouse / frog', stinkbomb: 'Drop stinkbomb', waterPistol: 'Fire water pistol', mountBike: 'Mount bike',
-  openDesk: 'Open desk (while seated)', releaseMice: 'Release mice', dumpPistol: 'Throw away water pistol',
-  kiss: 'Kiss', understood: 'Acknowledge a message', pause: 'Pause / menu',
+  left: 'Walk left', right: 'Walk right',
+  up: 'Up stairs · stand up', down: 'Down stairs · sit · open desk',
+  jump: 'Jump', fire: 'Fire (water pistol at a cup or plant, otherwise catapult)',
+  act: 'Act: write, catch, mount bike, kiss, punch, release mice, drop stinkbomb',
+  pause: 'Pause / menu', view: 'Switch original / modern view',
 };
 
 export class Input {
@@ -47,7 +45,7 @@ export class Input {
     this.edges = new Set();       // actions pressed since last flush
     this.writing = false;
     this.typed = [];              // characters typed while writing
-    this.menuHandlers = [];
+    this.uiHandlers = { pause: [], view: [] };
     this.enabled = true;
   }
 
@@ -64,8 +62,13 @@ export class Input {
 
   onKeyDown(e) {
     if (e.repeat) return;
+    if (e.target && ['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON'].includes(e.target.tagName) && e.code !== 'Escape') return;
     const action = this.actionFor(e.code);
-    if (action === 'pause') { this.menuHandlers.forEach((h) => h()); e.preventDefault(); return; }
+    if (action === 'pause' || (action === 'view' && !this.writing)) {
+      this.uiHandlers[action].forEach((h) => h());
+      e.preventDefault();
+      return;
+    }
     if (!this.enabled) return;
     if (this.writing) {
       if (e.key === 'Enter') this.typed.push('\n');
@@ -82,7 +85,8 @@ export class Input {
 
   onKeyUp(e) { this.held.delete(e.code); }
 
-  onMenu(handler) { this.menuHandlers.push(handler); }
+  onMenu(handler) { this.uiHandlers.pause.push(handler); }
+  onView(handler) { this.uiHandlers.view.push(handler); }
 
   pressed(action) { return this.bindings[action].some((code) => this.held.has(code)); }
   wasPressed(action) { return this.edges.has(action); }
@@ -97,9 +101,9 @@ export class Input {
   release(action) { this.held.delete(`virtual:${action}`); }
 }
 
-// A scriptable keyboard for headless tests: queue actions by tick.
+// A scriptable keyboard for headless tests: hold or tap actions directly.
 export class FakeInput extends Input {
-  constructor() { super(); this.script = new Map(); this.heldActions = new Set(); }
+  constructor() { super(); this.heldActions = new Set(); }
   pressed(action) { return this.heldActions.has(action) || super.pressed(action); }
   hold(action) { this.heldActions.add(action); }
   unhold(action) { this.heldActions.delete(action); }

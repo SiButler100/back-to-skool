@@ -14,8 +14,10 @@
 ## New in this remake
 
 - A **modern HUD**: lesson box with a progress bar, score/lines/hi-score, pocket inventory, and an event log in plain English.
-- Three plug-in **features**: a quest tracker that remembers the digits and letters you've been told, a minimap of the whole school, and a "staff room" radar showing who can see you.
-- **Options**: modern or Spectrum palette, game speed, view width (32 columns is the original; up to 96), smooth motion, retro 8-column scrolling, freeze-on-lines, sound.
+- Two plug-in **features** on by default: a quest tracker that remembers the digits and letters you've been told, and a minimap of the whole school. A third (a "staff room" radar showing who can see you) is kept in the code, switched off, as a template.
+- **Two views, one key apart (V)**: *Original* is the 1985 screen: 32 columns, Spectrum colours, black-ink figures, 8-pixel steps, scrolling in jumps, score/lines/lesson rows drawn on the canvas. *Modern* is wide and smooth with the HUD and sidebar. Advanced options let you mix the two.
+- **Three-action controls**: the original's fourteen keys are folded into jump, fire and act; fire picks the water pistol when a cup or plant is in range, act does whatever is in front of Eric. Eric gets up by himself after being floored. The key strip under the canvas is always visible.
+- **Options**: view preset, game speed, sound; advanced: palette, view width (32 to 96 columns), status rows on canvas, smooth motion, retro scrolling, freeze-on-lines.
 - Smooth camera and eased sprite movement (switchable), synthesised sound, hi-score saved in the browser.
 - Painted sprites and a painted backdrop: no copyrighted artwork anywhere, and every colour is one line to change.
 - Headless engine with scenario tests.
@@ -30,6 +32,7 @@
 - **Sprite polish**: the figures are deliberately simple. Each pose is a short painting routine in `src/render/sprites.js`; replacing them with hand-drawn pixel art is the obvious next visual step.
 - **Sound** is minimal beeps. The original tune and the up-a-year tune are not transcribed.
 - **Key rebinding UI**: bindings live in `src/ui/input.js` and are easy to edit, but there is no screen for it yet.
+- **Throwing the water pistol away** (the original's T key, which put a fresh water pistol back in a desk) is not mapped. Practical consequence: collect the four bike digits with water before you fill the pistol with sherry.
 
 ## How to add a feature
 

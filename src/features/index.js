@@ -24,7 +24,9 @@ import questTracker from './quest-tracker.js';
 import minimap from './minimap.js';
 import teacherRadar from './teacher-radar.js';
 
-export const FEATURES = [questTracker, minimap, teacherRadar];
+// teacher-radar is kept as an example but switched off; set defaultOn in its
+// file or add it back here to use it.
+export const FEATURES = [questTracker, minimap, { ...teacherRadar, defaultOn: false }];
 
 export function setupFeatures(ctx, enabled = {}) {
   for (const f of FEATURES) {

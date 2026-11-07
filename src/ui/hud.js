@@ -1,9 +1,11 @@
 // ============================================================================
-// HUD (score, lines, lesson box, inventory, event log)
+// HUD (score, lines, lesson box, inventory, event log, key strip)
 // ----------------------------------------------------------------------------
 // Plain HTML around the game canvas. It listens to game events and updates
 // the DOM; it never touches game state. Features (src/features/) can add
 // their own panels with hud.addPanel(title, element).
+//
+// The key strip under the canvas is always visible, in both views.
 // ============================================================================
 
 const ITEM_ICONS = {
@@ -18,10 +20,12 @@ const ITEM_ICONS = {
 };
 
 export class HUD {
-  constructor(root, game) {
+  constructor(root, game, bindings) {
     this.root = root;
     this.game = game;
+    this.bindings = bindings;
     this.logLimit = 8;
+    this.menuHandlers = []; this.viewHandlers = [];
     this.build();
     this.bind();
   }
@@ -52,9 +56,37 @@ export class HUD {
       inventory: this.root.querySelector('#hud-inventory'),
       menu: this.root.querySelector('#hud-menu'),
     };
+    this.el.menu.addEventListener('click', () => this.menuHandlers.forEach((h) => h()));
     this.sidebar = document.getElementById('sidebar');
     this.logEl = this.addPanel('What just happened', document.createElement('ul'));
     this.logEl.className = 'event-log';
+    this.buildKeyStrip();
+  }
+
+  // The permanent reminder of the controls, under the canvas.
+  buildKeyStrip() {
+    const strip = document.getElementById('keys');
+    const key = (action) => {
+      const codes = this.bindings[action];
+      return codes.map(pretty).join('/');
+    };
+    strip.innerHTML = `
+      <span class="k"><kbd>${key('left')}</kbd><kbd>${key('right')}</kbd> walk</span>
+      <span class="k"><kbd>${key('up')}</kbd> up stairs · stand</span>
+      <span class="k"><kbd>${key('down')}</kbd> down stairs · sit · open desk</span>
+      <span class="k"><kbd>${key('jump')}</kbd> jump</span>
+      <span class="k"><kbd>${key('fire')}</kbd> fire</span>
+      <span class="k"><kbd>${key('act')}</kbd> act</span>
+      <span class="k ui"><kbd>Esc</kbd> menu</span>
+      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (V)"></button>`;
+    strip.querySelector('#view-toggle').addEventListener('click', () => this.viewHandlers.forEach((h) => h()));
+    this.viewToggle = strip.querySelector('#view-toggle');
+  }
+
+  onMenu(h) { this.menuHandlers.push(h); }
+  onToggleView(h) { this.viewHandlers.push(h); }
+  setView(view) {
+    this.viewToggle.innerHTML = view === 'original' ? '<kbd>V</kbd> modern view' : '<kbd>V</kbd> original view';
   }
 
   // Add a titled panel to the sidebar. Returns the content element.
@@ -121,3 +153,7 @@ function describeItem(item) {
 }
 function title(name) { return name.split(' ').map((w) => w[0] + w.slice(1).toLowerCase()).join(' '); }
 function sentence(text) { return text[0] + text.slice(1).toLowerCase(); }
+function pretty(code) {
+  return code.replace('ArrowLeft', '←').replace('ArrowRight', '→').replace('ArrowUp', '↑').replace('ArrowDown', '↓')
+    .replace('Key', '').replace('Escape', 'Esc');
+}

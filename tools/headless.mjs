@@ -34,7 +34,6 @@ for (let t = 0; t < ticks; t++) {
   if (t === 1500) input.unhold('left');
   if (t === 1600) input.hold('right');
   if (t === 2200) input.unhold('right');
-  if (eric.isKnockedOut() && t % 10 === 0) input.tap('sit');
   // The camera follows Eric: pretend 48 columns around him are visible.
   game.setVisibleColumns(Math.max(0, eric.x - 24), Math.min(191, eric.x + 24));
   game.tick();

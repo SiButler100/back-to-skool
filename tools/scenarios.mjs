@@ -41,16 +41,16 @@ function freezeCast(game) {
   const desk = room.desks.find((d) => d.x === 21);
   desk.insert('WATER_PISTOL');
   place(eric, 21, 3, -1);
-  input.tap('sit'); run(game, 4);
+  input.tap('down'); run(game, 4);
   check('Eric sits on the chair', eric.isSittingOnChair(), eric.animatoryState);
-  input.tap('openDesk'); run(game, 6);
+  input.tap('down'); run(game, 6);
   check('Desk lid delivers the water pistol', eric.inventory.has('WATER_PISTOL'), [...eric.inventory].join(','));
-  input.tap('sit'); run(game, 4);
+  input.tap('up'); run(game, 4);
   check('Eric stands up again', eric.isStanding());
 
   // ---- 2. Fire the pistol at the middle cup ---------------------------------
   place(eric, 20, 17, 1);
-  input.tap('waterPistol'); run(game, 40);
+  input.tap('fire'); run(game, 40);   // the pistol is chosen because a cup is in range
   const cup = game.world.cups.get('MiddleCup');
   check('Water pistol fills the middle cup', cup.contents === 'WATER', String(cup.contents));
 
@@ -71,7 +71,7 @@ function freezeCast(game) {
   const combo = game.world.bikeCombination;
   place(eric, 5, 3, 1);              // beside the Blue Room board
   check('Eric is beside the blackboard', game.world.besideBlackboard(eric));
-  input.tap('write'); run(game, 3);
+  input.tap('act'); run(game, 3);
   check('Eric started writing', eric.writing && input.writing);
   input.type(combo); run(game, 40);
   input.type('\n'); run(game, 10);
@@ -85,12 +85,12 @@ function freezeCast(game) {
   frog.commandList.setTemplate([['SitStill']]);   // hold still for the test
   frog.x = 59; frog.y = 10; frog.sit();
   place(eric, frog.x - 1, 10, 1);    // Eric's hand reaches x+2 when facing right; the frog sits at frog.x+1
-  input.tap('catch'); run(game, 8);
+  input.tap('act'); run(game, 8);
   check('Eric catches the frog', eric.inventory.has('FROG'), [...eric.inventory].join(','));
 
   const bike = game.cast.bike;
   place(eric, bike.x, 17, 1);
-  input.tap('mountBike'); run(game, 2);
+  input.tap('act'); run(game, 2);
   check('Eric mounts the bike', eric.isRidingBike(), eric.animatoryState);
   const startX = eric.x;
   for (let i = 0; i < 20; i++) { input.tap(i % 2 ? 'left' : 'right'); run(game, 3); }
@@ -133,7 +133,7 @@ function freezeCast(game) {
   for (let t = 0; t < 30000; t++) {
     if (t % 400 === 0) { input.unhold('left'); input.unhold('right'); input.hold(Math.random() < 0.5 ? 'left' : 'right'); }
     if (t % 97 === 0) input.tap('up');
-    if (eric.isKnockedOut() && t % 10 === 0) input.tap('sit');
+    
     game.setVisibleColumns(Math.max(0, eric.x - 24), eric.x + 24);
     game.tick();
   }

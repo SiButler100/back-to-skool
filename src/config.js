@@ -26,6 +26,7 @@ export const CONFIG = {
 
   // How long people stay on the floor
   knockedOutDelay: 10,         // kids
+  ericFloorMoves: 20,          // Eric gets up by himself after this many of his moves (~2 seconds)
   knockedOverDelay: 15,        // adults
   dethronedDelay: 3,
   reprimandDelay: 8,

@@ -48,8 +48,9 @@ export class Menu {
       if (!key) return;
       const v = e.target.type === 'checkbox' ? e.target.checked : (e.target.type === 'range' ? Number(e.target.value) : e.target.value);
       this.settings[key] = v;
-      this.onApply(this.settings);
+      this.onApply(this.settings, key);
       if (e.target.type === 'range') this.root.querySelector(`[data-out="${key}"]`).textContent = formatSetting(key, v);
+      if (key === 'view') this.show('options', this.data);   // the preset changed the other controls
     });
     this.root.addEventListener('input', (e) => {
       const key = e.target.dataset.setting;
@@ -127,14 +128,21 @@ export class Menu {
     return `
       <h1>Options</h1>
       <div class="options">
-        <label class="opt"><span>Theme</span>
-          <select data-setting="theme"><option value="modern" ${s.theme === 'modern' ? 'selected' : ''}>Modern</option><option value="spectrum" ${s.theme === 'spectrum' ? 'selected' : ''}>Spectrum (1985)</option></select></label>
+        <label class="opt"><span>View</span>
+          <select data-setting="view"><option value="modern" ${s.view === 'modern' ? 'selected' : ''}>Modern</option><option value="original" ${s.view === 'original' ? 'selected' : ''}>Original (1985)</option></select>
+          <small>Press V in the game to switch. Choosing a view resets the advanced options below to that view's defaults.</small></label>
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting('speed', s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
+        ${check('sound', 'Sound', 'Synthesised beeps.')}
+      </div>
+      <h2>Advanced</h2>
+      <div class="options">
+        <label class="opt"><span>Palette</span>
+          <select data-setting="theme"><option value="modern" ${s.theme === 'modern' ? 'selected' : ''}>Modern</option><option value="spectrum" ${s.theme === 'spectrum' ? 'selected' : ''}>Spectrum</option></select></label>
         <label class="opt"><span>View width <output data-out="columns">${formatSetting('columns', s.columns)}</output></span><input type="range" min="32" max="96" step="8" value="${s.columns}" data-setting="columns"><small>32 columns is what the original showed.</small></label>
+        ${check('retroStatus', 'Status rows on the canvas', 'Score, lines and lesson drawn under the play area, as in 1985.')}
         ${check('smoothMotion', 'Smooth motion', 'Ease sprites between steps instead of 8-pixel hops.')}
         ${check('retroScroll', 'Retro scrolling', 'Jump the view by 8 columns like the original.')}
         ${check('freezeOnMessages', 'Freeze while lines are given', 'The original froze the whole school for each reprimand.')}
-        ${check('sound', 'Sound', 'Synthesised beeps.')}
       </div>
       <div class="menu-actions"><button type="button" data-action="back" class="primary">Back</button></div>`;
   }
@@ -143,8 +151,9 @@ export class Menu {
     const rows = Object.entries(ACTION_LABELS).map(([action, label]) => `<tr><td>${this.bindings[action].map(pretty).join(' or ')}</td><td>${label}</td></tr>`).join('');
     return `
       <h1>Controls</h1>
+      <p class="lede">Four directions and three actions. The game works out which tool fits what is in front of Eric.</p>
       <table class="keys"><tbody>${rows}</tbody></table>
-      <p class="small">While writing on a blackboard, type normally and press Enter to finish. Riding the bike: left/right to pedal, up to stand on the saddle, down to dismount, jump while standing on the saddle to reach a cup.</p>
+      <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
       <div class="menu-actions"><button type="button" data-action="back" class="primary">Back</button></div>`;
   }
 
@@ -160,7 +169,8 @@ export class Menu {
 }
 
 function pretty(code) {
-  return code.replace('Key', '').replace('Arrow', '').replace('Space', 'Space').replace('Escape', 'Esc');
+  return code.replace('ArrowLeft', '←').replace('ArrowRight', '→').replace('ArrowUp', '↑').replace('ArrowDown', '↓')
+    .replace('Key', '').replace('Escape', 'Esc');
 }
 function formatSetting(key, v) {
   if (key === 'speed') return `${v.toFixed(1)}×`;
