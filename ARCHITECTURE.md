@@ -40,6 +40,8 @@ flowchart TD
     backdrop[backdrop.js the building]
     renderer[renderer.js camera + frame]
     theme[theme.js palettes]
+    original[original.js 1985 painter]
+    extract[extract.js tape → graphics]
   end
 
   subgraph UI["src/ui"]
@@ -83,6 +85,8 @@ flowchart TD
   sprites --> renderer
   backdrop --> renderer
   theme --> renderer
+  original --> renderer
+  extract --> original
   main --> game
   main --> renderer
   main --> hud
@@ -114,7 +118,7 @@ flowchart TD
 | Change what teachers write or say | `src/data/messages.js` |
 | Give a character a new routine | `src/data/commandLists.js`; new verbs go in `src/engine/commands.js` |
 | Change the look of the building | `src/render/backdrop.js` and `src/render/theme.js` |
-| Change how people look | `src/render/sprites.js` |
+| Change how people look | `src/render/sprites.js` (modern view); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
 | Add a panel, an overlay, a new rule | a new file in `src/features/`, registered in `src/features/index.js` |
 | Change the HUD or menus | `src/ui/hud.js`, `src/ui/menu.js`, `styles.css` |
 

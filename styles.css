@@ -191,3 +191,16 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .keys td:first-child { white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; width: 140px; }
 .rules { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.5; }
 .rules.notes { font-style: italic; }
+
+/* ---- Tape loader (original view, when no original graphics are loaded) --- */
+.tape-loader {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+  max-width: 900px; margin-top: 4px; padding: 10px 14px; font-size: 13px; line-height: 1.45;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); color: var(--muted);
+}
+.tape-loader[hidden] { display: none; }
+.tape-loader .tape-text { flex: 1 1 420px; min-width: 0; }
+.tape-loader strong { color: var(--ink); }
+.tape-loader code { font-size: 12px; }
+.tape-button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); cursor: pointer; white-space: nowrap; }
+.tape-status { font-size: 13px; color: var(--ink); }

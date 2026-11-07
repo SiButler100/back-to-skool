@@ -14,6 +14,7 @@ import { Input, DEFAULT_BINDINGS } from './ui/input.js';
 import { HUD } from './ui/hud.js';
 import { Menu } from './ui/menu.js';
 import { Sound } from './ui/sound.js';
+import { TapeLoader } from './ui/tape-loader.js';
 import { measureText, fontHas } from './render/font.js';
 import { setupFeatures } from './features/index.js';
 import { CONFIG } from './config.js';
@@ -41,6 +42,7 @@ export function boot() {
   const canvas = document.getElementById('game');
   const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics });
   const hud = new HUD(document.getElementById('hud'), game, DEFAULT_BINDINGS);
+  const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => tapeLoader.update(settings.view));
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
 
@@ -67,6 +69,7 @@ export function boot() {
     sound.enabled = s.sound;
     document.documentElement.classList.toggle('view-original', s.view === 'original');
     hud.setView(s.view);
+    tapeLoader.update(s.view);
     fitCanvas();
   }
 
@@ -130,7 +133,7 @@ export function boot() {
   requestAnimationFrame(frame);
 
   // Expose for the console and for tests.
-  window.bts = { game, renderer, hud, menu, settings, input };
+  window.bts = { game, renderer, hud, menu, settings, input, tapeLoader };
   return window.bts;
 }
 

@@ -2,8 +2,8 @@
 // ORIGINAL GRAPHICS (the 1985 artwork, pixel for pixel)
 // ----------------------------------------------------------------------------
 // The "original" view draws with the ZX Spectrum game's own graphics, lifted
-// from the game's memory map (see assets/original/ and tools/pack-original-
-// assets.mjs). This module knows where everything is on those sheets:
+// from the game's memory map by render/extract.js. This module knows where
+// everything is on those sheets:
 //
 //   skool.png      the whole school backdrop, 1536 x 168
 //   sprites.png    128 character/object pictures, 16 per row, 24 x 32 each,
@@ -13,22 +13,23 @@
 //   bubble.png, message_box.png, lesson_box.png, scorebox.png, logo.png,
 //   inventory.png  the status-area furniture
 //
-// Images decode asynchronously; `ready` turns true when all are usable. Until
-// then the renderer falls back to the painted graphics.
+// None of this artwork is shipped with the game. The player loads their own
+// copy of Back to Skool (a .tzx tape image or a .z80/.sna snapshot); the
+// graphics are extracted in the browser by render/extract.js, handed to
+// `installGraphics`, and remembered in the browser's local storage. Until
+// that has happened `ready` is false and the renderer uses the painted
+// graphics instead.
 // ============================================================================
 
-import { ORIGINAL_ASSETS, SKOOL_ATTRIBUTES } from './original-assets.js';
 import { SKOOL } from '../data/skool.js';
 
 const C = 8;
+const STORAGE_KEY = 'bts.originalGraphics.v1';
+const IMAGE_NAMES = ['skool', 'sprites', 'mutables', 'font', 'bubble', 'inventory', 'scorebox', 'logo'];
 
-// The Spectrum's palette (normal and bright), as the extracted PNGs use it.
+// The Spectrum's palette (normal and bright), as the extracted graphics use it.
 const PALETTE = ['#000000', '#0000c5', '#c50000', '#c500c5', '#00c600', '#00c6c5', '#c5c600', '#cdc6cd'];
 const BRIGHT = ['#000000', '#0000ff', '#ff0000', '#ff00ff', '#00ff00', '#00ffff', '#ffff00', '#ffffff'];
-function attrAt(cx, cy) {
-  if (cx < 0 || cx >= SKOOL.width || cy < 0 || cy >= SKOOL.height) return 0;
-  return SKOOL_ATTRIBUTES[cy * SKOOL.width + cx];
-}
 const inkOf = (a) => (a & 64 ? BRIGHT : PALETTE)[a & 7];
 const paperOf = (a) => (a & 64 ? BRIGHT : PALETTE)[(a >> 3) & 7];
 
@@ -97,41 +98,62 @@ export class OriginalPainter {
   constructor() {
     this.ready = false;
     this.images = {};
+    this.attributes = null;
     this.spriteCache = new Map();
     this.fontCache = new Map();
-    this.load();
+    this.restore();
   }
 
-  load() {
-    const names = Object.keys(ORIGINAL_ASSETS);
-    let remaining = names.length;
-    for (const name of names) {
+  attrAt(cx, cy) {
+    if (!this.attributes || cx < 0 || cx >= SKOOL.width || cy < 0 || cy >= SKOOL.height) return 0;
+    return this.attributes[cy * SKOOL.width + cx];
+  }
+
+  // Take the bitmaps produced by extract.js, turn them into canvases, and
+  // remember them in local storage so the next visit needs no file.
+  installGraphics(gfx) {
+    for (const name of IMAGE_NAMES) {
+      const bm = gfx[name];
+      const canvas = document.createElement('canvas');
+      canvas.width = bm.width; canvas.height = bm.height;
+      canvas.getContext('2d').putImageData(new ImageData(bm.data, bm.width, bm.height), 0, 0);
+      this.images[name] = canvas;
+    }
+    this.attributes = Uint8Array.from(gfx.attributes);
+    this.spriteCache.clear(); this.fontCache.clear();
+    this.ready = true;
+    try {
+      const stored = { attributes: btoa(String.fromCharCode(...this.attributes)) };
+      for (const name of IMAGE_NAMES) stored[name] = this.images[name].toDataURL('image/png');
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    } catch (e) { /* storage unavailable: the graphics still work for this visit */ }
+  }
+
+  // Load graphics saved by an earlier visit, if any.
+  restore() {
+    let stored = null;
+    try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) { stored = null; }
+    if (!stored || !IMAGE_NAMES.every((n) => stored[n]) || !stored.attributes) return;
+    this.attributes = Uint8Array.from(atob(stored.attributes), (c) => c.charCodeAt(0));
+    let remaining = IMAGE_NAMES.length;
+    for (const name of IMAGE_NAMES) {
       const img = new Image();
       img.onload = () => {
-        this.images[name] = this.prepare(name, img);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width; canvas.height = img.height;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        this.images[name] = canvas;
         if (--remaining === 0) this.ready = true;
       };
-      img.src = ORIGINAL_ASSETS[name];
+      img.src = stored[name];
     }
   }
 
-  // Convert an image to a canvas and knock out its transparency key colour.
-  prepare(name, img) {
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width; canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const key = { sprites: [0, 254, 0], bubble: [0, 254, 0], inventory: [0, 0, 0], font: [255, 254, 253] }[name];
-    if (key) {
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const px = data.data;
-      for (let i = 0; i < px.length; i += 4) {
-        if (px[i] === key[0] && px[i + 1] === key[1] && px[i + 2] === key[2]) px[i + 3] = 0;
-        else if (name === 'font') { px[i] = 255; px[i + 1] = 255; px[i + 2] = 255; }   // ink becomes white, tinted later
-      }
-      ctx.putImageData(data, 0, 0);
-    }
-    return canvas;
+  // Throw the stored graphics away (the player can load the file again).
+  forget() {
+    this.ready = false; this.images = {}; this.attributes = null;
+    this.spriteCache.clear(); this.fontCache.clear();
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
   }
 
   // ---- Sprites ---------------------------------------------------------------
@@ -177,7 +199,7 @@ export class OriginalPainter {
     for (const [mask, colourOf] of [[m.paper, paperOf], [m.ink, inkOf]]) {
       s.globalCompositeOperation = 'source-over';
       s.clearRect(0, 0, 24, 32);
-      for (let j = 0; j < 4; j++) for (let i = 0; i < 3; i++) { s.fillStyle = colourOf(attrAt(cellX + i, cellY + j)); s.fillRect(i * C, j * C, C, C); }
+      for (let j = 0; j < 4; j++) for (let i = 0; i < 3; i++) { s.fillStyle = colourOf(this.attrAt(cellX + i, cellY + j)); s.fillRect(i * C, j * C, C, C); }
       s.globalCompositeOperation = 'destination-in';
       s.drawImage(mask, 0, 0);
       ctx.drawImage(this.scratch, px, py);

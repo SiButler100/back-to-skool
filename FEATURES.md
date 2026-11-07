@@ -15,16 +15,16 @@
 
 - A **modern HUD**: lesson box with a progress bar, score/lines/hi-score, pocket inventory, and an event log in plain English.
 - Two plug-in **features** on by default: a quest tracker that remembers the digits and letters you've been told, and a minimap of the whole school. A third (a "staff room" radar showing who can see you) is kept in the code, switched off, as a template.
-- **Two views, one key apart (V)**: *Original* is the 1985 screen drawn with the game's own graphics (the school backdrop, all 128 sprites, doors, cups, bike, font, speech bubble, score and lesson boxes and logo, lifted from the Spectrum memory map via the published disassembly): 32 columns, 8-pixel steps, scrolling in jumps, status rows under the play area. *Modern* is wide and smooth with the HUD and sidebar. Advanced options let you mix the two.
+- **Two views, one key apart (V)**: *Original* is the 1985 screen drawn with the game's own graphics (the school backdrop, all 128 sprites, doors, cups, bike, font, speech bubble, score and lesson boxes and logo), extracted from the player's own copy of the game: 32 columns, 8-pixel steps, scrolling in jumps, status rows under the play area. *Modern* is wide and smooth with the HUD and sidebar. Advanced options let you mix the two.
 - **Three-action controls**: the original's fourteen keys are folded into jump, fire and act; fire picks the water pistol when a cup or plant is in range, act does whatever is in front of Eric. Eric gets up by himself after being floored. The key strip under the canvas is always visible.
 - **Options**: view preset, game speed, sound; advanced: palette, view width (32 to 96 columns), status rows on canvas, smooth motion, retro scrolling, freeze-on-lines.
 - Smooth camera and eased sprite movement (switchable), synthesised sound, hi-score saved in the browser.
-- The modern view uses painted sprites and a painted backdrop (every colour is one line to change). The original view uses the 1985 artwork in `assets/original/`, © Microsphere, included for the faithful mode only.
+- The modern view uses painted sprites and a painted backdrop (every colour is one line to change). The original view uses the 1985 artwork extracted in the browser from the player's own tape image or snapshot (`src/render/extract.js`, a port of Pyskool's extractor); no copyrighted graphics are in the repository or the build.
 - Headless engine with scenario tests.
 
 ## Not done yet (honest list)
 
-- **Original view, measured against the real thing**: the game was run in a Z80 emulator (SkoolKit) from the rebuilt snapshot and its first screen compared pixel for pixel with this remake at the same scroll position (`docs-comparison.png`). Backdrop, score box and logo are identical; the play area is 99.83% identical, the only difference being a few pixels of Eric's hair on the very first frame (the real game appears to draw his starting pose slightly differently). Sprites take the ink and paper colours of the wall cells behind them exactly as the Spectrum's attribute system did. Not reproduced: the loading screen, the countdown, demo mode and the tune.
+- **Original view, measured against the real thing**: the game was run in a Z80 emulator (SkoolKit) from the rebuilt snapshot and its first screen compared pixel for pixel with this remake at the same scroll position. Backdrop, score box and logo are identical; the play area is 99.83% identical, the only difference being a few pixels of Eric's hair on the very first frame (the real game appears to draw his starting pose slightly differently). Sprites take the ink and paper colours of the wall cells behind them exactly as the Spectrum's attribute system did. Not reproduced: the loading screen, the countdown, demo mode and the tune.
 
 - **Save and load** mid-game. Settings and hi-score persist; a game in progress does not.
 - **Touch controls** for phones and tablets. The page lays out responsively but there are no on-screen buttons.

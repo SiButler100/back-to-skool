@@ -3,3 +3,8 @@ node_modules/
 *.log
 .env
 dist/bundle.js
+# Never commit copyrighted game files or graphics extracted from them
+assets/original/
+*.tzx
+*.z80
+*.sna
