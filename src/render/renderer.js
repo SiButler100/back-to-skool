@@ -142,8 +142,9 @@ export class Renderer {
     for (const d of game.cast.drawables) {
       if (!d.visible || d.x * C + 24 < viewFrom || d.x * C > viewTo) continue;
       const [x, y] = this.spritePos(d);
-      const sprite = o.sprite(d.group, d.animatoryState, d.direction) || getSprite(d.group, d.animatoryState, d.direction, d.look);
-      ctx.drawImage(sprite, Math.round(x), Math.round(y));
+      if (!o.drawSprite(ctx, d.group, d.animatoryState, d.direction, Math.round(x), Math.round(y))) {
+        ctx.drawImage(getSprite(d.group, d.animatoryState, d.direction, d.look), Math.round(x), Math.round(y));
+      }
     }
     for (const c of game.cast.characterList) if (c.bubble) o.drawBubble(ctx, c);
     ctx.restore();

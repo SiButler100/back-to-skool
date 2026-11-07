@@ -17,10 +17,20 @@
 // then the renderer falls back to the painted graphics.
 // ============================================================================
 
-import { ORIGINAL_ASSETS } from './original-assets.js';
+import { ORIGINAL_ASSETS, SKOOL_ATTRIBUTES } from './original-assets.js';
 import { SKOOL } from '../data/skool.js';
 
 const C = 8;
+
+// The Spectrum's palette (normal and bright), as the extracted PNGs use it.
+const PALETTE = ['#000000', '#0000c5', '#c50000', '#c500c5', '#00c600', '#00c6c5', '#c5c600', '#cdc6cd'];
+const BRIGHT = ['#000000', '#0000ff', '#ff0000', '#ff00ff', '#00ff00', '#00ffff', '#ffff00', '#ffffff'];
+function attrAt(cx, cy) {
+  if (cx < 0 || cx >= SKOOL.width || cy < 0 || cy >= SKOOL.height) return 0;
+  return SKOOL_ATTRIBUTES[cy * SKOOL.width + cx];
+}
+const inkOf = (a) => (a & 64 ? BRIGHT : PALETTE)[a & 7];
+const paperOf = (a) => (a & 64 ? BRIGHT : PALETTE)[(a >> 3) & 7];
 
 // Sprite sheet index for every character state (from the game's own tables).
 const WALK = (b) => ({ WALK0: b, WALK1: b + 1, WALK2: b + 2, WALK3: b + 3 });
@@ -125,18 +135,54 @@ export class OriginalPainter {
   }
 
   // ---- Sprites ---------------------------------------------------------------
-  sprite(group, state, direction) {
-    const index = (SPRITE_INDEX[group] || {})[state];
-    if (index === undefined) return null;
+  // A Spectrum sprite has no colours of its own: its set pixels take the INK
+  // of the screen cell they land in and its clear (unmasked) pixels take that
+  // cell's PAPER. So each sprite is split into an ink mask and a paper mask,
+  // and coloured cell by cell from the school's attribute map when drawn.
+  hasSprite(group, state) { return (SPRITE_INDEX[group] || {})[state] !== undefined; }
+
+  masks(index, direction) {
     const key = `${index}|${direction}`;
     if (this.spriteCache.has(key)) return this.spriteCache.get(key);
-    const canvas = document.createElement('canvas');
-    canvas.width = 24; canvas.height = 32;
-    const ctx = canvas.getContext('2d');
-    if (direction > 0) { ctx.translate(24, 0); ctx.scale(-1, 1); }
-    ctx.drawImage(this.images.sprites, (index % 16) * 24, Math.floor(index / 16) * 32, 24, 32, 0, 0, 24, 32);
-    this.spriteCache.set(key, canvas);
-    return canvas;
+    const base = document.createElement('canvas');
+    base.width = 24; base.height = 32;
+    const bctx = base.getContext('2d');
+    if (direction > 0) { bctx.translate(24, 0); bctx.scale(-1, 1); }
+    bctx.drawImage(this.images.sprites, (index % 16) * 24, Math.floor(index / 16) * 32, 24, 32, 0, 0, 24, 32);
+    const data = bctx.getImageData(0, 0, 24, 32).data;
+    const make = (wantInk) => {
+      const c = document.createElement('canvas'); c.width = 24; c.height = 32;
+      const cctx = c.getContext('2d');
+      const img = cctx.createImageData(24, 32);
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] === 0) continue;
+        const isInk = data[i] < 128;                 // black pixels are ink, light ones are paper
+        if (isInk === wantInk) { img.data[i] = img.data[i + 1] = img.data[i + 2] = 255; img.data[i + 3] = 255; }
+      }
+      cctx.putImageData(img, 0, 0);
+      return c;
+    };
+    const m = { ink: make(true), paper: make(false) };
+    this.spriteCache.set(key, m);
+    return m;
+  }
+
+  drawSprite(ctx, group, state, direction, px, py) {
+    const index = (SPRITE_INDEX[group] || {})[state];
+    if (index === undefined) return false;
+    const m = this.masks(index, direction);
+    if (!this.scratch) { this.scratch = document.createElement('canvas'); this.scratch.width = 24; this.scratch.height = 32; }
+    const s = this.scratch.getContext('2d');
+    const cellX = Math.round(px / C), cellY = Math.round(py / C);
+    for (const [mask, colourOf] of [[m.paper, paperOf], [m.ink, inkOf]]) {
+      s.globalCompositeOperation = 'source-over';
+      s.clearRect(0, 0, 24, 32);
+      for (let j = 0; j < 4; j++) for (let i = 0; i < 3; i++) { s.fillStyle = colourOf(attrAt(cellX + i, cellY + j)); s.fillRect(i * C, j * C, C, C); }
+      s.globalCompositeOperation = 'destination-in';
+      s.drawImage(mask, 0, 0);
+      ctx.drawImage(this.scratch, px, py);
+    }
+    return true;
   }
 
   // ---- Text ------------------------------------------------------------------
@@ -228,13 +274,13 @@ export class OriginalPainter {
   drawStatus(ctx, game, screenW) {
     const top = 21 * C;
     ctx.fillStyle = '#000000'; ctx.fillRect(0, top, screenW, 3 * C);
-    // Score box at (0,21): magenta, numbers right-aligned on rows 1, 9, 17.
-    ctx.fillStyle = PAPER.score; ctx.fillRect(0, top, 64, 24);
-    const rows = [['Score', game.score, 1], ['Lines', game.lines, 9], ['Hi-Sc', game.hiScore, 17]];
-    for (const [label, value, dy] of rows) {
-      this.drawText(ctx, label, 1, top + dy, INK.score);
+    // Score box at (0,21): the game's own 'Score - / Lines - / Hi-Sc -' graphic
+    // with the numbers right-aligned on rows 1, 9 and 17.
+    ctx.drawImage(this.images.scorebox, 0, top);
+    ctx.fillStyle = PAPER.score; ctx.fillRect(40, top, 24, 24);   // clear the baked-in zeros
+    for (const [value, dy] of [[game.score, 1], [game.lines, 9], [game.hiScore, 17]]) {
       const s = String(value);
-      this.drawText(ctx, s, 64 - 1 - originalMeasure(s), top + dy, INK.score);
+      this.drawText(ctx, s, 60 - originalMeasure(s), top + dy, INK.score);   // right-aligned exactly where the original put them
     }
     // Mice at (8,21), pockets at (10,23)
     const eric = game.cast.eric;

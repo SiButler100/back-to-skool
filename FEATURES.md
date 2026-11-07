@@ -24,7 +24,7 @@
 
 ## Not done yet (honest list)
 
-- **Original view, known small differences**: sprites are drawn in the fixed white-and-black of the sprite sheet rather than taking on the colour of the wall behind them as the Spectrum's attribute system did; the score box carries Score/Lines/Hi-Sc labels; there is no loading screen or tune.
+- **Original view, measured against the real thing**: the game was run in a Z80 emulator (SkoolKit) from the rebuilt snapshot and its first screen compared pixel for pixel with this remake at the same scroll position (`docs-comparison.png`). Backdrop, score box and logo are identical; the play area is 99.83% identical, the only difference being a few pixels of Eric's hair on the very first frame (the real game appears to draw his starting pose slightly differently). Sprites take the ink and paper colours of the wall cells behind them exactly as the Spectrum's attribute system did. Not reproduced: the loading screen, the countdown, demo mode and the tune.
 
 - **Save and load** mid-game. Settings and hi-score persist; a game in progress does not.
 - **Touch controls** for phones and tablets. The page lays out responsively but there are no on-screen buttons.
