@@ -71,11 +71,11 @@ a { color: inherit; }
 .keys-strip button.view-toggle:hover kbd { border-color: var(--ink); }
 
 /* ---- Original (1985) view ------------------------------------------------- */
-body.view-original #app { grid-template-columns: 1fr; grid-template-areas: "stage" "foot"; }
-body.view-original #hud .hud-top, body.view-original #sidebar { display: none; }
-body.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #000; }
-body.view-original .overlay { border-radius: 0; }
-body.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted: #a9b2bd; --surface: #2b3037; --line: #3a414a; }
+html.view-original #app { grid-template-columns: 1fr; grid-template-areas: "stage" "foot"; }
+html.view-original #hud .hud-top, html.view-original #sidebar { display: none; }
+html.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #000; }
+html.view-original .overlay { border-radius: 0; }
+html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted: #a9b2bd; --surface: #2b3037; --line: #3a414a; }
 #sidebar { grid-area: side; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .foot { grid-area: foot; color: var(--muted); font-size: 13px; }
 

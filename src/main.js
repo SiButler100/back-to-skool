@@ -61,7 +61,7 @@ export function boot() {
     if (renderer.columns !== s.columns || renderer.options.retroStatus !== s.retroStatus) renderer.resize(s.columns, s.retroStatus);
     game.config.freezeOnMessages = s.freezeOnMessages;
     sound.enabled = s.sound;
-    document.body.classList.toggle('view-original', s.view === 'original');
+    document.documentElement.classList.toggle('view-original', s.view === 'original');
     hud.setView(s.view);
     fitCanvas();
   }
