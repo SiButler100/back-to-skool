@@ -37,7 +37,8 @@ src/main.js                 boots everything and runs the loop
 src/config.js               tuning numbers (speeds, delays, probabilities, scores)
 src/data/                   THE GAME AS DATA: map, cast, timetable, AI scripts, words
 src/engine/                 the rules: world, characters, commands, lessons, game loop
-src/render/                 drawing: font, sprites, backdrop, renderer, themes
+src/render/                 drawing: font, sprites, backdrop, renderer, themes, original (1985 artwork)
+assets/original/            the Spectrum game's own graphics, used by the original view
 src/ui/                     HUD, menus, keyboard, sound
 src/features/               plug-in extras (quest tracker, minimap, teacher radar) — add yours here
 tools/                      headless test runs and the single-file build
@@ -58,4 +59,4 @@ node tools/build-single-file.mjs   # rebuilds dist/back-to-skool.html
 
 ## Credits and licence
 
-The original game is © 1985 Microsphere. This is unofficial fan work; it contains none of the original code or artwork. The school layout, timetable, character behaviour and messages were transcribed from Richard Dymond's GPL-licensed [Pyskool](https://pyskool.ca) and [SkoolKit](https://skoolkit.ca) documentation, so this project is released under the GNU GPL v3 (see `LICENSE`).
+The original game is © 1985 Microsphere. This is unofficial fan work. It contains none of the original code; the original view does use the game's own graphics (in `assets/original/`), extracted from the published SkoolKit disassembly, so that mode can look exactly as it did in 1985. The school layout, timetable, character behaviour and messages were transcribed from Richard Dymond's GPL-licensed [Pyskool](https://pyskool.ca) and [SkoolKit](https://skoolkit.ca) documentation, so this project is released under the GNU GPL v3 (see `LICENSE`).

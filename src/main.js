@@ -9,7 +9,7 @@
 // ============================================================================
 
 import { Game } from './engine/game.js';
-import { Renderer } from './render/renderer.js';
+import { Renderer, originalMeasure, originalFontHas } from './render/renderer.js';
 import { Input, DEFAULT_BINDINGS } from './ui/input.js';
 import { HUD } from './ui/hud.js';
 import { Menu } from './ui/menu.js';
@@ -22,8 +22,8 @@ import { CONFIG } from './config.js';
 // 8-pixel steps, scrolling in jumps, status rows on the canvas. "modern" is
 // the wide, smooth, HUD-and-sidebar version. The advanced options let you mix.
 export const VIEW_PRESETS = {
-  original: { theme: 'spectrum', columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true },
-  modern: { theme: 'modern', columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false },
+  original: { theme: 'spectrum', columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true },
+  modern: { theme: 'modern', columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false },
 };
 
 const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, ...VIEW_PRESETS.modern };
@@ -39,7 +39,7 @@ export function boot() {
   input.attach(window);
   const game = new Game({ input, measureText, fontHas });
   const canvas = document.getElementById('game');
-  const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus });
+  const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics });
   const hud = new HUD(document.getElementById('hud'), game, DEFAULT_BINDINGS);
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
@@ -60,6 +60,10 @@ export function boot() {
     renderer.options.retroScroll = s.retroScroll;
     if (renderer.columns !== s.columns || renderer.options.retroStatus !== s.retroStatus) renderer.resize(s.columns, s.retroStatus);
     game.config.freezeOnMessages = s.freezeOnMessages;
+    renderer.options.originalGraphics = !!s.originalGraphics;
+    // Blackboard wrapping and bubble timing follow whichever font is on screen.
+    game.measureText = s.originalGraphics ? originalMeasure : measureText;
+    game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
     sound.enabled = s.sound;
     document.documentElement.classList.toggle('view-original', s.view === 'original');
     hud.setView(s.view);

@@ -15,21 +15,23 @@
 
 - A **modern HUD**: lesson box with a progress bar, score/lines/hi-score, pocket inventory, and an event log in plain English.
 - Two plug-in **features** on by default: a quest tracker that remembers the digits and letters you've been told, and a minimap of the whole school. A third (a "staff room" radar showing who can see you) is kept in the code, switched off, as a template.
-- **Two views, one key apart (V)**: *Original* is the 1985 screen: 32 columns, Spectrum colours, black-ink figures, 8-pixel steps, scrolling in jumps, score/lines/lesson rows drawn on the canvas. *Modern* is wide and smooth with the HUD and sidebar. Advanced options let you mix the two.
+- **Two views, one key apart (V)**: *Original* is the 1985 screen drawn with the game's own graphics (the school backdrop, all 128 sprites, doors, cups, bike, font, speech bubble, score and lesson boxes and logo, lifted from the Spectrum memory map via the published disassembly): 32 columns, 8-pixel steps, scrolling in jumps, status rows under the play area. *Modern* is wide and smooth with the HUD and sidebar. Advanced options let you mix the two.
 - **Three-action controls**: the original's fourteen keys are folded into jump, fire and act; fire picks the water pistol when a cup or plant is in range, act does whatever is in front of Eric. Eric gets up by himself after being floored. The key strip under the canvas is always visible.
 - **Options**: view preset, game speed, sound; advanced: palette, view width (32 to 96 columns), status rows on canvas, smooth motion, retro scrolling, freeze-on-lines.
 - Smooth camera and eased sprite movement (switchable), synthesised sound, hi-score saved in the browser.
-- Painted sprites and a painted backdrop: no copyrighted artwork anywhere, and every colour is one line to change.
+- The modern view uses painted sprites and a painted backdrop (every colour is one line to change). The original view uses the 1985 artwork in `assets/original/`, © Microsphere, included for the faithful mode only.
 - Headless engine with scenario tests.
 
 ## Not done yet (honest list)
+
+- **Original view, known small differences**: sprites are drawn in the fixed white-and-black of the sprite sheet rather than taking on the colour of the wall behind them as the Spectrum's attribute system did; the score box carries Score/Lines/Hi-Sc labels; there is no loading screen or tune.
 
 - **Save and load** mid-game. Settings and hi-score persist; a game in progress does not.
 - **Touch controls** for phones and tablets. The page lays out responsively but there are no on-screen buttons.
 - **Lowercase blackboard text** is drawn as small capitals rather than a true lowercase font.
 - **Special playtimes** (the original's occasional variant playtimes, e.g. the mumps) are not in the timetable data.
 - **Speech bubbles** scroll a single line, as the original did; a "show the whole sentence" modern mode would be a nice option.
-- **Sprite polish**: the figures are deliberately simple. Each pose is a short painting routine in `src/render/sprites.js`; replacing them with hand-drawn pixel art is the obvious next visual step.
+- **Sprite polish (modern view)**: the painted figures are deliberately simple. Each pose is a short painting routine in `src/render/sprites.js`; replacing them with hand-drawn pixel art is the obvious next visual step.
 - **Sound** is minimal beeps. The original tune and the up-a-year tune are not transcribed.
 - **Key rebinding UI**: bindings live in `src/ui/input.js` and are easy to edit, but there is no screen for it yet.
 - **Throwing the water pistol away** (the original's T key, which put a fresh water pistol back in a desk) is not mapped. Practical consequence: collect the four bike digits with water before you fill the pistol with sherry.

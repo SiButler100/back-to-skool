@@ -17,6 +17,8 @@ import { buildBackdrop } from './backdrop.js';
 import { getSprite, clearSpriteCache } from './sprites.js';
 import { drawText, drawTextCentred, measureText, LINE_HEIGHT } from './font.js';
 import { THEMES } from './theme.js';
+import { OriginalPainter, originalMeasure, originalFontHas } from './original.js';
+export { originalMeasure, originalFontHas };
 
 const C = SKOOL.cell;
 
@@ -26,7 +28,8 @@ export class Renderer {
     this.game = game;
     this.ctx = canvas.getContext('2d');
     this.ctx.imageSmoothingEnabled = false;
-    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, ...options };
+    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, ...options };
+    this.original = new OriginalPainter();   // the 1985 artwork, used when originalGraphics is on
     this.setTheme(this.options.theme);
     this.cameraX = 0;               // left edge of the view, in pixels
     this.positions = new Map();     // id -> {x, y} eased pixel positions
@@ -86,11 +89,15 @@ export class Renderer {
     return [p.x, p.y];
   }
 
+  // True when the view should use the genuine Spectrum graphics.
+  useOriginal() { return this.options.originalGraphics && this.original.ready; }
+
   // ---- The frame -------------------------------------------------------------
   draw() {
     const { ctx, game, theme } = this;
     this.updateCamera();
     const cam = Math.round(this.cameraX);
+    if (this.useOriginal()) return this.drawOriginal(cam);
     ctx.save();
     ctx.translate(-cam, 0);
     const viewFrom = cam - 32, viewTo = cam + this.canvas.width + 32;
@@ -119,6 +126,29 @@ export class Renderer {
     // Message box (screen space)
     if (game.messageBox) this.drawMessageBox(game.messageBox, cam);
     if (this.options.retroStatus) this.drawStatus();
+  }
+
+  // The same frame, drawn entirely with the original artwork.
+  drawOriginal(cam) {
+    const { ctx, game } = this;
+    const o = this.original;
+    const w = this.canvas.width;
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, this.canvas.height);
+    ctx.save();
+    ctx.translate(-cam, 0);
+    o.drawBackdrop(ctx, cam, w);
+    o.drawFurniture(ctx, game);
+    const viewFrom = cam - 32, viewTo = cam + w + 32;
+    for (const d of game.cast.drawables) {
+      if (!d.visible || d.x * C + 24 < viewFrom || d.x * C > viewTo) continue;
+      const [x, y] = this.spritePos(d);
+      const sprite = o.sprite(d.group, d.animatoryState, d.direction) || getSprite(d.group, d.animatoryState, d.direction, d.look);
+      ctx.drawImage(sprite, Math.round(x), Math.round(y));
+    }
+    for (const c of game.cast.characterList) if (c.bubble) o.drawBubble(ctx, c);
+    ctx.restore();
+    if (game.messageBox) o.drawMessageBox(ctx, game.messageBox, cam, w);
+    if (this.options.retroStatus) o.drawStatus(ctx, game, w);
   }
 
   // Recolour a sprite to a single ink, the way an 8-bit machine drew people.
@@ -238,14 +268,16 @@ export class Renderer {
     // lip
     const lipX = x + b.lipPos * C + 2;
     r(lipX, y + h - 4, 4, 2, theme.bubbleFill); r(lipX + 1, y + h - 2, 2, 2, theme.bubbleFill);
-    // scrolling text window: 11 chars visible, moving left one char per step
-    const visible = 11;
-    const start = b.shift;
-    let text = '';
-    for (let i = 0; i < visible; i++) { const idx = start + i; text += idx >= 0 && idx < b.words.length ? b.words[idx] : ' '; }
-    ctx.save(); ctx.beginPath(); ctx.rect(x + 3, y + 2, w - 6, h - 8); ctx.clip();
-    drawText(ctx, text, x + 4, y + (h - 8) / 2 - 3 + 2, theme.bubbleInk);
-    ctx.restore();
+    // Text scrolls leftwards in 8-pixel steps, exactly as the original did.
+    const textWidth = measureText(b.words);
+    const insetX = 4 - 8 * Math.min(0, b.shift);
+    const textX = Math.max(0, b.shift) * 8;
+    const width = Math.min(4 + 56 - insetX, textWidth - textX);
+    if (width > 0) {
+      ctx.save(); ctx.beginPath(); ctx.rect(x + insetX, y + 4, width, 8); ctx.clip();
+      drawText(ctx, b.words, x + insetX - textX, y + 5, theme.bubbleInk);
+      ctx.restore();
+    }
   }
 
   drawMessageBox(box, cam) {

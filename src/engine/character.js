@@ -419,7 +419,8 @@ export class Character {
       };
     }
     this.bubble.shift = shift;
-    return shift >= words.length - 4;
+    // Finished once the text has scrolled fully out of the bubble (8 px per step).
+    return Math.max(0, shift) * 8 > this.game.measureText(words);
   }
   removeBubble() { this.bubble = null; }
 
