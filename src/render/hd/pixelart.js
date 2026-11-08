@@ -46,6 +46,7 @@ export const PALETTE = {
   C: '#4aa3ff',   // water
   O: '#b5651d',   // sherry / conker
   X: '#f5d300',   // gold (stars, keys)
+  Q: '#c07030',   // Eric's hair (for pictures that include him)
 };
 
 export const SLOT_LETTERS = 'tupqhikoe';
