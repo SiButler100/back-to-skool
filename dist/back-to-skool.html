@@ -51,10 +51,12 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); fo
 h1, h2, h3, strong, b { font-weight: 400; }
 a { color: inherit; }
 
+/* One column: the play screen fills the first screenful; the plan, the key
+   strip and the side panels follow underneath (scroll down for them). */
 #app {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  grid-template-areas: "hud hud" "stage side" "foot foot";
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "hud" "stage" "side" "foot";
   gap: 16px;
   padding-block: 16px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -90,12 +92,9 @@ html.view-original #hud .hud-top, html.view-original #sidebar { display: none; }
 html.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #0000d7; }   /* the Spectrum's blue border */
 html.view-original .overlay { border-radius: 0; }
 html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted: #a9b2bd; --surface: #2b3037; --line: #3a414a; }
-#sidebar { grid-area: side; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+#sidebar { grid-area: side; display: flex; flex-wrap: wrap; gap: 12px; min-width: 0; }
+#sidebar .panel { flex: 1 1 320px; min-width: 0; }
 .foot { grid-area: foot; color: var(--muted); font-size: 13px; }
-
-@media (max-width: 1000px) {
-  #app { grid-template-columns: 1fr; grid-template-areas: "hud" "stage" "side" "foot"; }
-}
 
 /* ---- Canvas ---------------------------------------------------------------- */
 #game {
@@ -146,12 +145,33 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .event-log li:first-child { border-top: 0; color: var(--ink); }
 .event-log li.highlight { color: var(--accent); }
 .minimap { width: 100%; height: auto; image-rendering: pixelated; border-radius: 4px; }
-.quest ol { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.5; }
-.quest li.done { color: var(--muted); text-decoration: line-through; }
-.quest .combos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; font-size: 12px; }
-.quest .combos div { display: flex; flex-direction: column; background: var(--bg); border-radius: 6px; padding: 6px 8px; }
-.quest .combos strong { font-size: 18px; letter-spacing: 0.2em; font-weight: 400; }
-.quest .combos small { color: var(--muted); }
+/* ---- The plan (quest steps, above the key strip, both views) ---------------- */
+.quest-steps { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; max-width: 100%; font-size: 13px; }
+.quest-steps .title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.quest-steps ol { display: contents; list-style: none; margin: 0; padding: 0; }
+.quest-steps .step {
+  position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: help; white-space: nowrap;
+}
+.quest-steps .step .tick {
+  display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--line); color: var(--ink); font-size: 11px;
+}
+.quest-steps .step.done { color: var(--muted); }
+.quest-steps .step.done .label { text-decoration: line-through; }
+.quest-steps .step.done .tick { background: var(--ok); color: #fff; }
+.quest-steps .step.next { border-color: var(--accent); }
+.quest-steps .step.next .tick { background: var(--accent); color: var(--accent-ink); }
+/* The hint: a bubble above the step, shown on hover or keyboard focus. */
+.quest-steps .step::after {
+  content: attr(data-hint); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+  width: min(360px, 80vw); white-space: normal; padding: 10px 12px; border-radius: 8px; line-height: 1.45; font-size: 13px;
+  background: var(--ink); color: var(--bg); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0; pointer-events: none; transition: opacity 0.12s; z-index: 5;
+}
+.quest-steps .step:hover::after, .quest-steps .step:focus-visible::after { opacity: 1; }
+.quest-steps .step:first-child::after { left: 0; transform: none; }
+.quest-steps .step:last-child::after { left: auto; right: 0; transform: none; }
 .radar { list-style: none; margin: 0; padding: 0; font-size: 13px; }
 .radar li { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); }
 .radar li:first-child { border-top: 0; }
@@ -229,6 +249,7 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
         <canvas id="game" width="384" height="168" aria-label="Back to Skool game view"></canvas>
         <div id="overlay" class="overlay" hidden></div>
       </div>
+      <div id="quest" class="quest-steps" aria-label="The plan"></div>
       <div id="keys" class="keys-strip" aria-label="Controls"></div>
       <div id="tape"></div>
     </main>
@@ -3872,6 +3893,14 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
           return;
         }
       }
+      if (input.wasPressed("drop")) {
+        const c = this.dropAction();
+        if (c) {
+          this.setController(c);
+          input.flush();
+          return;
+        }
+      }
       if (!this.isSupported()) {
         this.y += 1;
         input.flush();
@@ -3962,13 +3991,16 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
         this.previousAs = this.animatoryState;
         return new Kiss();
       }
-      if (this.getPunchee(1) || this.getPunchee(2)) return new Hit();
+      return new Hit();
+    }
+    // The Drop key: a stinkbomb while Eric has any; otherwise let the mice go.
+    dropAction() {
+      if (this.canDropStinkbomb()) return new DropStinkbomb();
       if (this.canReleaseMice()) {
         this.bendOver();
         return new ReleaseMice();
       }
-      if (this.canDropStinkbomb()) return new DropStinkbomb();
-      return new Hit();
+      return null;
     }
     // Eric's left/right never return commands; a shut door just stops him.
     left() {
@@ -7963,25 +7995,27 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 
   // src/ui/input.js
   var DEFAULT_BINDINGS = {
-    left: ["ArrowLeft", "KeyO"],
-    right: ["ArrowRight", "KeyP"],
-    up: ["ArrowUp", "KeyQ"],
-    down: ["ArrowDown", "KeyA"],
-    jump: ["Space", "KeyJ"],
-    fire: ["KeyF"],
-    act: ["KeyE", "Enter"],
+    left: ["ArrowLeft"],
+    right: ["ArrowRight"],
+    up: ["ArrowUp"],
+    down: ["ArrowDown"],
+    jump: ["Space", "KeyZ"],
+    fire: ["KeyX"],
+    act: ["KeyC"],
+    drop: ["KeyV"],
     // UI keys (not game actions)
     pause: ["Escape"],
-    view: ["KeyV"]
+    view: ["Tab"]
   };
   var ACTION_LABELS = {
     left: "Walk left",
     right: "Walk right",
     up: "Up stairs \xB7 stand up",
     down: "Down stairs \xB7 sit \xB7 open desk",
-    jump: "Jump",
-    fire: "Fire (water pistol at a cup or plant, otherwise catapult)",
-    act: "Act: write, catch, mount bike, kiss, punch, release mice, drop stinkbomb",
+    jump: "Jump (also jump off the bike saddle)",
+    fire: "Fire: water pistol at a cup or plant pot, otherwise the catapult",
+    act: "Act: write on a board, catch a frog or mouse, mount the bike, kiss, punch",
+    drop: "Drop a stinkbomb (or release the mice when you have no stinkbombs)",
     pause: "Pause / menu",
     view: "Switch original / modern view"
   };
@@ -8133,14 +8167,15 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
         return codes.map(pretty).join("/");
       };
       strip.innerHTML = `
-      <span class="k"><kbd>${key("left")}</kbd><kbd>${key("right")}</kbd> walk</span>
+      <span class="k"><kbd>${key("left")}</kbd><kbd>${key("right")}</kbd> walk \xB7 pedal</span>
       <span class="k"><kbd>${key("up")}</kbd> up stairs \xB7 stand</span>
       <span class="k"><kbd>${key("down")}</kbd> down stairs \xB7 sit \xB7 open desk</span>
       <span class="k"><kbd>${key("jump")}</kbd> jump</span>
-      <span class="k"><kbd>${key("fire")}</kbd> fire</span>
-      <span class="k"><kbd>${key("act")}</kbd> act</span>
-      <span class="k ui"><kbd>Esc</kbd> menu</span>
-      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (V)"></button>
+      <span class="k"><kbd>${key("fire")}</kbd> fire pistol or catapult</span>
+      <span class="k"><kbd>${key("act")}</kbd> write \xB7 catch \xB7 mount \xB7 kiss \xB7 punch</span>
+      <span class="k"><kbd>${key("drop")}</kbd> stinkbomb \xB7 mice</span>
+      <span class="k ui"><kbd>${key("pause")}</kbd> menu</span>
+      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (${key("view")})"></button>
       <span class="gfx-status" id="gfx-status" hidden></span>`;
       strip.querySelector("#view-toggle").addEventListener("click", () => this.viewHandlers.forEach((h) => h()));
       this.viewToggle = strip.querySelector("#view-toggle");
@@ -8152,7 +8187,8 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       this.viewHandlers.push(h);
     }
     setView(view) {
-      this.viewToggle.innerHTML = view === "original" ? "<kbd>V</kbd> modern view" : "<kbd>V</kbd> original view";
+      const k = this.bindings.view.map(pretty).join("/");
+      this.viewToggle.innerHTML = view === "original" ? `<kbd>${k}</kbd> modern view` : `<kbd>${k}</kbd> original view`;
     }
     // The chip in the key strip: are the 1985 graphics loaded?
     setGraphicsStatus(view, loaded) {
@@ -8402,7 +8438,7 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       const rows = Object.entries(ACTION_LABELS).map(([action, label]) => `<tr><td>${this.bindings[action].map(pretty2).join(" or ")}</td><td>${label}</td></tr>`).join("");
       return `
       <h1>Controls</h1>
-      <p class="lede">Four directions and three actions. The game works out which tool fits what is in front of Eric.</p>
+      <p class="lede">The cursor keys to move and four action keys in a row under your left hand. The game works out which tool fits what is in front of Eric.</p>
       <table class="keys"><tbody>${rows}</tbody></table>
       <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
       <div class="menu-actions"><button type="button" data-action="back" class="primary">Back</button></div>`;
@@ -9135,36 +9171,82 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 
   // src/features/quest-tracker.js
   var STEPS = [
-    ["waterPistol", "Find the water pistol (open desks while seated)"],
-    ["stinkbombs", "Find the stinkbombs"],
-    ["bikeDigits", "Learn the 4 bike digits (soak teachers with water)"],
-    ["bikeUnchained", "Write the bike combination on a board"],
-    ["sherry", "Fill the pistol with sherry (Miss Take's cabinet)"],
-    ["storeroomLetters", "Learn the 4 storeroom letters (sherry on teachers)"],
-    ["storeroomKey", "Write the storeroom combination on a board"],
-    ["frog", "Catch the frog in the storeroom"],
-    ["frogInCup", "Put the frog in the girls' kitchen cup (from the bike saddle)"],
-    ["safeKey", "Drop the frog on Miss Take to get the safe key"],
-    ["safeOpened", "Jump up to the safe in the head's study"]
+    [
+      "waterPistol",
+      "Water pistol",
+      "It is hidden in one of the desks. Sit at a desk (\u2193), then press \u2193 again to lift the lid. Keep trying desks until you find it."
+    ],
+    [
+      "stinkbombs",
+      "Stinkbombs",
+      "Also in a desk, in any room. You get three. You will need one later to make Mr Wacker open a window."
+    ],
+    [
+      "bikeDigits",
+      "Four bike digits",
+      "Fill a cup by the toilets with the pistol (X from the ground floor), then knock the cup with the catapult (X from the stairs beside it) as a master walks under it. Each master you soak mutters a digit. Known so far: {digits}"
+    ],
+    [
+      "bikeUnchained",
+      "Bike combination",
+      "Stand beside a clean blackboard, press C, type the four digits in any order, then Enter. The bike appears by the tree."
+    ],
+    [
+      "sherry",
+      "Sherry in the pistol",
+      "Miss Take opens her drinks cabinet only while the boys' school door is shut. Be inside when Albert locks up, drop a stinkbomb (V) as Mr Wacker passes the middle-floor window, water the plant below the window, jump onto its pot and let it lift you, step out of the window, grow the plant by the gate the same way and climb over, then jump (Space) at the open cabinet upstairs in the girls' school."
+    ],
+    [
+      "storeroomLetters",
+      "Four storeroom letters",
+      "The same trick as the digits, with sherry in the cup. Known so far: {letters}"
+    ],
+    [
+      "storeroomKey",
+      "Storeroom combination",
+      "Write the four letters on a clean blackboard (any order). The key opens the door at the right-hand end of the science lab."
+    ],
+    [
+      "frog",
+      "Catch the frog",
+      "The frog is in the storeroom. Stand one cell from it, facing it, and press C the moment it sits still. It is skittish when you are close, so wait rather than chase."
+    ],
+    [
+      "frogInCup",
+      "Frog in the kitchen cup",
+      "At playtime, mount the bike (C) and pedal with \u2190 and \u2192 alternately through the open gate. In the girls' school, stand on the saddle (\u2191) and jump (Space) as the kitchen cup passes above your hand."
+    ],
+    [
+      "safeKey",
+      "The safe key",
+      "Knock Miss Take over with the catapult when she is standing right under the cup, then fire again straight away: the pellet bounces off her into the cup, the frog lands on her head and the key falls out of her hair."
+    ],
+    [
+      "safeOpened",
+      "The safe",
+      "Wait by the head's study door, slip in when Mr Wacker opens it, stand under the safe and jump (Space). That is the year done."
+    ]
   ];
   var quest_tracker_default = {
     id: "quest-tracker",
     name: "Quest tracker",
-    description: "A checklist of the report-card caper, plus the digits and letters you have been told.",
+    description: "The steps of the report-card caper, ticked off as you go, with a hint on hover.",
     defaultOn: true,
-    setup({ game, hud }) {
-      const el = document.createElement("div");
-      el.className = "quest";
-      hud.addPanel("The plan", el);
+    setup({ game }) {
+      const el = document.getElementById("quest");
+      if (!el) return;
       const done = /* @__PURE__ */ new Set();
       const digits = [], letters = [];
+      const known = (list) => list.length ? list.map((d) => `${d.value} (${d.who})`).join(", ") : "nothing yet";
       const render = () => {
-        el.innerHTML = `
-        <ol>${STEPS.map(([id, text]) => `<li class="${done.has(id) ? "done" : ""}">${text}</li>`).join("")}</ol>
-        <div class="combos">
-          <div><span>Bike digits</span><strong>${digits.map((d) => d.value).join(" ") || "\u2014"}</strong><small>${digits.map((d) => d.who).join(", ")}</small></div>
-          <div><span>Storeroom letters</span><strong>${letters.map((d) => d.value).join(" ") || "\u2014"}</strong><small>${letters.map((d) => d.who).join(", ")}</small></div>
-        </div>`;
+        const items = STEPS.map(([id, label, hint], i) => {
+          const text = hint.replace("{digits}", known(digits)).replace("{letters}", known(letters));
+          const isDone = done.has(id);
+          const next = !isDone && STEPS.slice(0, i).every(([pid]) => done.has(pid));
+          return `<li class="step ${isDone ? "done" : ""} ${next ? "next" : ""}" tabindex="0" data-hint="${text.replace(/"/g, "&quot;")}">
+          <span class="tick">${isDone ? "\u2713" : i + 1}</span><span class="label">${label}</span></li>`;
+        });
+        el.innerHTML = `<span class="title">The plan</span><ol>${items.join("")}</ol>`;
       };
       game.events.on("start", () => {
         done.clear();
@@ -9385,7 +9467,8 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       const border = settings.view === "original" ? 48 : 0;
       const avail = (stage.clientWidth || window.innerWidth) - border;
       let scale = Math.max(1, Math.floor(avail / canvas.width * 2) / 2);
-      const availH = window.innerHeight - 140 - border;
+      const top = stage.getBoundingClientRect().top + window.scrollY;
+      const availH = window.innerHeight - top - border - 12;
       scale = Math.min(scale, Math.max(1, Math.floor(availH / canvas.height * 2) / 2));
       if (settings.view === "original") scale = Math.max(1, Math.floor(scale));
       canvas.style.width = `${canvas.width * scale}px`;

@@ -41,10 +41,12 @@ html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); fo
 h1, h2, h3, strong, b { font-weight: 400; }
 a { color: inherit; }
 
+/* One column: the play screen fills the first screenful; the plan, the key
+   strip and the side panels follow underneath (scroll down for them). */
 #app {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  grid-template-areas: "hud hud" "stage side" "foot foot";
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "hud" "stage" "side" "foot";
   gap: 16px;
   padding-block: 16px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -80,12 +82,9 @@ html.view-original #hud .hud-top, html.view-original #sidebar { display: none; }
 html.view-original #game { border-radius: 0; box-shadow: none; border: 24px solid #0000d7; }   /* the Spectrum's blue border */
 html.view-original .overlay { border-radius: 0; }
 html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted: #a9b2bd; --surface: #2b3037; --line: #3a414a; }
-#sidebar { grid-area: side; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+#sidebar { grid-area: side; display: flex; flex-wrap: wrap; gap: 12px; min-width: 0; }
+#sidebar .panel { flex: 1 1 320px; min-width: 0; }
 .foot { grid-area: foot; color: var(--muted); font-size: 13px; }
-
-@media (max-width: 1000px) {
-  #app { grid-template-columns: 1fr; grid-template-areas: "hud" "stage" "side" "foot"; }
-}
 
 /* ---- Canvas ---------------------------------------------------------------- */
 #game {
@@ -136,12 +135,33 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .event-log li:first-child { border-top: 0; color: var(--ink); }
 .event-log li.highlight { color: var(--accent); }
 .minimap { width: 100%; height: auto; image-rendering: pixelated; border-radius: 4px; }
-.quest ol { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.5; }
-.quest li.done { color: var(--muted); text-decoration: line-through; }
-.quest .combos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; font-size: 12px; }
-.quest .combos div { display: flex; flex-direction: column; background: var(--bg); border-radius: 6px; padding: 6px 8px; }
-.quest .combos strong { font-size: 18px; letter-spacing: 0.2em; font-weight: 400; }
-.quest .combos small { color: var(--muted); }
+/* ---- The plan (quest steps, above the key strip, both views) ---------------- */
+.quest-steps { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; max-width: 100%; font-size: 13px; }
+.quest-steps .title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.quest-steps ol { display: contents; list-style: none; margin: 0; padding: 0; }
+.quest-steps .step {
+  position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: help; white-space: nowrap;
+}
+.quest-steps .step .tick {
+  display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--line); color: var(--ink); font-size: 11px;
+}
+.quest-steps .step.done { color: var(--muted); }
+.quest-steps .step.done .label { text-decoration: line-through; }
+.quest-steps .step.done .tick { background: var(--ok); color: #fff; }
+.quest-steps .step.next { border-color: var(--accent); }
+.quest-steps .step.next .tick { background: var(--accent); color: var(--accent-ink); }
+/* The hint: a bubble above the step, shown on hover or keyboard focus. */
+.quest-steps .step::after {
+  content: attr(data-hint); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+  width: min(360px, 80vw); white-space: normal; padding: 10px 12px; border-radius: 8px; line-height: 1.45; font-size: 13px;
+  background: var(--ink); color: var(--bg); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  opacity: 0; pointer-events: none; transition: opacity 0.12s; z-index: 5;
+}
+.quest-steps .step:hover::after, .quest-steps .step:focus-visible::after { opacity: 1; }
+.quest-steps .step:first-child::after { left: 0; transform: none; }
+.quest-steps .step:last-child::after { left: auto; right: 0; transform: none; }
 .radar { list-style: none; margin: 0; padding: 0; font-size: 13px; }
 .radar li { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); }
 .radar li:first-child { border-top: 0; }

@@ -84,15 +84,18 @@ export function boot() {
   input.onView(toggleView);
   hud.onToggleView(toggleView);
 
-  // Scale the canvas to the available width in whole pixels for crisp pixels.
+  // Scale the canvas as large as the window allows: the whole play screen
+  // fills the first screenful, and the plan and the key strip sit below it
+  // (scroll down to read them).
   function fitCanvas() {
     const stage = document.getElementById('stage');
-    const border = settings.view === 'original' ? 48 : 0;   // the Spectrum's black border
+    const border = settings.view === 'original' ? 48 : 0;   // the Spectrum's blue border
     const avail = (stage.clientWidth || window.innerWidth) - border;
     // Half-pixel steps keep pixels reasonably even while using the width well.
     let scale = Math.max(1, Math.floor((avail / canvas.width) * 2) / 2);
-    // Keep the whole screen (plus the key strip) visible without scrolling.
-    const availH = window.innerHeight - 140 - border;
+    // Height: everything above the stage (the HUD in the modern view) plus a small margin.
+    const top = stage.getBoundingClientRect().top + window.scrollY;
+    const availH = window.innerHeight - top - border - 12;
     scale = Math.min(scale, Math.max(1, Math.floor((availH / canvas.height) * 2) / 2));
     if (settings.view === 'original') scale = Math.max(1, Math.floor(scale));   // whole pixels for the original
     canvas.style.width = `${canvas.width * scale}px`;

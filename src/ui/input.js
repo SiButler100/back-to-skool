@@ -7,34 +7,40 @@
 // While Eric is writing on a blackboard, typed characters are collected in a
 // queue instead of being treated as actions.
 //
-// The scheme is deliberately small: four directions and three actions.
+// The scheme is deliberately small: the cursor keys for direction and four
+// action keys in a row under the left hand (Z X C V).
 //   up     climb stairs; stand up when sitting or lying down
 //   down   descend stairs; sit down; open the desk when seated
-//   jump   jump (also jump off the bike saddle)
-//   fire   fire: the water pistol when a cup or plant pot is in range, else the catapult
-//   act    do the obvious thing in front of Eric: write on a board, catch a
-//          mouse or frog, mount the bike, kiss, punch, release mice, drop a stinkbomb
+//   jump   jump (also jump off the bike saddle)                  Space or Z
+//   fire   the water pistol when a cup or plant pot is in range,
+//          otherwise the catapult                                 X
+//   act    do the obvious thing in front of Eric: write on a board,
+//          catch a mouse or frog, mount the bike, kiss, punch     C
+//   drop   drop a stinkbomb; with none left, release the mice     V
 // Change the key bindings in DEFAULT_BINDINGS.
 // ============================================================================
 
 export const DEFAULT_BINDINGS = {
-  left: ['ArrowLeft', 'KeyO'],
-  right: ['ArrowRight', 'KeyP'],
-  up: ['ArrowUp', 'KeyQ'],
-  down: ['ArrowDown', 'KeyA'],
-  jump: ['Space', 'KeyJ'],
-  fire: ['KeyF'],
-  act: ['KeyE', 'Enter'],
+  left: ['ArrowLeft'],
+  right: ['ArrowRight'],
+  up: ['ArrowUp'],
+  down: ['ArrowDown'],
+  jump: ['Space', 'KeyZ'],
+  fire: ['KeyX'],
+  act: ['KeyC'],
+  drop: ['KeyV'],
   // UI keys (not game actions)
   pause: ['Escape'],
-  view: ['KeyV'],
+  view: ['Tab'],
 };
 
 export const ACTION_LABELS = {
   left: 'Walk left', right: 'Walk right',
   up: 'Up stairs · stand up', down: 'Down stairs · sit · open desk',
-  jump: 'Jump', fire: 'Fire (water pistol at a cup or plant, otherwise catapult)',
-  act: 'Act: write, catch, mount bike, kiss, punch, release mice, drop stinkbomb',
+  jump: 'Jump (also jump off the bike saddle)',
+  fire: 'Fire: water pistol at a cup or plant pot, otherwise the catapult',
+  act: 'Act: write on a board, catch a frog or mouse, mount the bike, kiss, punch',
+  drop: 'Drop a stinkbomb (or release the mice when you have no stinkbombs)',
   pause: 'Pause / menu', view: 'Switch original / modern view',
 };
 

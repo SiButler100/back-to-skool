@@ -90,6 +90,7 @@ export class Eric extends Character {
     if (input.wasPressed('jump')) { this.setController(new cmd.Jump()); input.flush(); return; }
     if (input.wasPressed('fire')) { const c = this.fireAction(); if (c) { this.setController(c); input.flush(); return; } }
     if (input.wasPressed('act')) { const c = this.actAction(); if (c) { this.setController(c); input.flush(); return; } }
+    if (input.wasPressed('drop')) { const c = this.dropAction(); if (c) { this.setController(c); input.flush(); return; } }
 
     if (!this.isSupported()) { this.y += 1; input.flush(); return; }
     this.baseLocation = null;
@@ -158,10 +159,14 @@ export class Eric extends Character {
     }
     if (this.canMountBike()) { this.bike = this.cast.bike; this.mountBike(); return new cmd.RideBike(this.bike); }
     if (this.canKiss() && this.kissee()) { this.previousAs = this.animatoryState; return new cmd.Kiss(); }
-    if (this.getPunchee(1) || this.getPunchee(2)) return new cmd.Hit();
-    if (this.canReleaseMice()) { this.bendOver(); return new cmd.ReleaseMice(); }
+    return new cmd.Hit();   // a punch, at whoever is in reach or at thin air, as the original allowed
+  }
+
+  // The Drop key: a stinkbomb while Eric has any; otherwise let the mice go.
+  dropAction() {
     if (this.canDropStinkbomb()) return new cmd.DropStinkbomb();
-    return new cmd.Hit();   // nothing in reach: a punch at thin air, as the original allowed
+    if (this.canReleaseMice()) { this.bendOver(); return new cmd.ReleaseMice(); }
+    return null;
   }
 
   // Eric's left/right never return commands; a shut door just stops him.

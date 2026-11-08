@@ -71,14 +71,15 @@ export class HUD {
       return codes.map(pretty).join('/');
     };
     strip.innerHTML = `
-      <span class="k"><kbd>${key('left')}</kbd><kbd>${key('right')}</kbd> walk</span>
+      <span class="k"><kbd>${key('left')}</kbd><kbd>${key('right')}</kbd> walk · pedal</span>
       <span class="k"><kbd>${key('up')}</kbd> up stairs · stand</span>
       <span class="k"><kbd>${key('down')}</kbd> down stairs · sit · open desk</span>
       <span class="k"><kbd>${key('jump')}</kbd> jump</span>
-      <span class="k"><kbd>${key('fire')}</kbd> fire</span>
-      <span class="k"><kbd>${key('act')}</kbd> act</span>
-      <span class="k ui"><kbd>Esc</kbd> menu</span>
-      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (V)"></button>
+      <span class="k"><kbd>${key('fire')}</kbd> fire pistol or catapult</span>
+      <span class="k"><kbd>${key('act')}</kbd> write · catch · mount · kiss · punch</span>
+      <span class="k"><kbd>${key('drop')}</kbd> stinkbomb · mice</span>
+      <span class="k ui"><kbd>${key('pause')}</kbd> menu</span>
+      <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (${key('view')})"></button>
       <span class="gfx-status" id="gfx-status" hidden></span>`;
     strip.querySelector('#view-toggle').addEventListener('click', () => this.viewHandlers.forEach((h) => h()));
     this.viewToggle = strip.querySelector('#view-toggle');
@@ -87,7 +88,8 @@ export class HUD {
   onMenu(h) { this.menuHandlers.push(h); }
   onToggleView(h) { this.viewHandlers.push(h); }
   setView(view) {
-    this.viewToggle.innerHTML = view === 'original' ? '<kbd>V</kbd> modern view' : '<kbd>V</kbd> original view';
+    const k = this.bindings.view.map(pretty).join('/');
+    this.viewToggle.innerHTML = view === 'original' ? `<kbd>${k}</kbd> modern view` : `<kbd>${k}</kbd> original view`;
   }
   // The chip in the key strip: are the 1985 graphics loaded?
   setGraphicsStatus(view, loaded) {

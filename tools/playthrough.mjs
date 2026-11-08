@@ -335,7 +335,7 @@ check('wrote the bike combination and the bike came free', writeOnBoard(world.bi
       walkTo(WAIT_SPOT[0], WAIT_SPOT[1], 2000); face(-1);
       const near = waitUntil(() => wacker.y === 10 && wacker.isStanding() && wacker.x >= 88 && wacker.x <= 90 && !eric.getPunchee(1) && !eric.getPunchee(2), 6000);
       if (!near) break;
-      input.tap('act'); tick(2); bombsUsed++;
+      input.tap('drop'); tick(2); bombsUsed++;
       log(`  dropped a stinkbomb (${bombsUsed}) with Mr Wacker at (${wacker.x},${wacker.y})`);
       waitUntil(() => !window10.shut, 300);
     }
