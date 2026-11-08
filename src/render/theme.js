@@ -58,6 +58,11 @@ export const THEMES = {
     statusPaper: '#000000', statusBox: '#000000', statusInk: '#ffffff', statusLinesInk: '#ffffff',
     lessonPaper: '#ffffff', lessonInk: '#000000', logoInk: '#f5d300', logoInk2: '#00d7d7',
     monoSprites: null,
+    // Colours for the HD pixel-art painter (render/hd). Only the modern palette
+    // has this block; the Spectrum palette keeps the painted stand-ins.
+    hd: {
+      shadow: 'rgba(0,0,0,0.22)',
+    },
   },
   // The 1985 machine: eight colours, black ink figures, hard edges.
   spectrum: {

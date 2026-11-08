@@ -23,14 +23,22 @@ import { CONFIG } from './config.js';
 // 8-pixel steps, scrolling in jumps, status rows on the canvas. "modern" is
 // the wide, smooth, HUD-and-sidebar version. The advanced options let you mix.
 export const VIEW_PRESETS = {
-  original: { theme: 'spectrum', columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true },
-  modern: { theme: 'modern', columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false },
+  original: { theme: 'spectrum', columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, hdGraphics: false },
+  modern: { theme: 'modern', columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, hdGraphics: true },
 };
 
-const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, ...VIEW_PRESETS.modern };
+const SETTINGS_VERSION = 2;
+const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
 
+// Settings saved by an older version of the game get the new keys filled in.
+function migrateSettings(s) {
+  const v = s.settingsVersion || 1;
+  if (v < 2) s.hdGraphics = s.view !== 'original';      // HD pixel art arrived in version 2
+  s.settingsVersion = SETTINGS_VERSION;
+  return s;
+}
 function loadSettings() {
-  try { return { ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem('bts.settings') || '{}') }; } catch (e) { return { ...DEFAULT_SETTINGS }; }
+  try { return migrateSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem('bts.settings') || '{}') }); } catch (e) { return { ...DEFAULT_SETTINGS }; }
 }
 function saveSettings(s) { try { localStorage.setItem('bts.settings', JSON.stringify(s)); } catch (e) { /* ignore */ } }
 
@@ -40,7 +48,7 @@ export function boot() {
   input.attach(window);
   const game = new Game({ input, measureText, fontHas });
   const canvas = document.getElementById('game');
-  const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics });
+  const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, hdGraphics: settings.hdGraphics, onResize: () => fitCanvas() });
   const hud = new HUD(document.getElementById('hud'), game, DEFAULT_BINDINGS);
   const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); });
   const sound = new Sound();
@@ -63,11 +71,13 @@ export function boot() {
     if (renderer.columns !== s.columns || renderer.options.retroStatus !== s.retroStatus) renderer.resize(s.columns, s.retroStatus);
     game.config.freezeOnMessages = s.freezeOnMessages;
     renderer.options.originalGraphics = !!s.originalGraphics;
+    renderer.options.hdGraphics = !!s.hdGraphics;
     // Blackboard wrapping and bubble timing follow whichever font is on screen.
     game.measureText = s.originalGraphics ? originalMeasure : measureText;
     game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
     sound.enabled = s.sound;
     document.documentElement.classList.toggle('view-original', s.view === 'original');
+    document.documentElement.classList.toggle('view-modern', s.view !== 'original');
     hud.setView(s.view);
     tapeLoader.update(s.view);
     hud.setGraphicsStatus(s.view, renderer.original.ready);
@@ -92,11 +102,11 @@ export function boot() {
     const border = settings.view === 'original' ? 48 : 0;   // the Spectrum's blue border
     const avail = (stage.clientWidth || window.innerWidth) - border;
     // Half-pixel steps keep pixels reasonably even while using the width well.
-    let scale = Math.max(1, Math.floor((avail / canvas.width) * 2) / 2);
+    let scale = Math.max(0.5, Math.floor((avail / canvas.width) * 2) / 2);
     // Height: everything above the stage (the HUD in the modern view) plus a small margin.
     const top = stage.getBoundingClientRect().top + window.scrollY;
     const availH = window.innerHeight - top - border - 12;
-    scale = Math.min(scale, Math.max(1, Math.floor((availH / canvas.height) * 2) / 2));
+    scale = Math.min(scale, Math.max(0.5, Math.floor((availH / canvas.height) * 2) / 2));
     if (settings.view === 'original') scale = Math.max(1, Math.floor(scale));   // whole pixels for the original
     canvas.style.width = `${canvas.width * scale}px`;
     canvas.style.height = `${canvas.height * scale}px`;

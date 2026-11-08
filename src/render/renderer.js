@@ -18,9 +18,11 @@ import { getSprite, clearSpriteCache } from './sprites.js';
 import { drawText, drawTextCentred, measureText, LINE_HEIGHT } from './font.js';
 import { THEMES } from './theme.js';
 import { OriginalPainter, originalMeasure, originalFontHas } from './original.js';
+import { ModernPainter } from './hd/painter.js';
 export { originalMeasure, originalFontHas };
 
 const C = SKOOL.cell;
+const SPRITE_W = 24, SPRITE_H = 32;   // a sprite frame in game pixels (3 x 4 cells)
 
 export class Renderer {
   constructor(canvas, game, options = {}) {
@@ -28,8 +30,9 @@ export class Renderer {
     this.game = game;
     this.ctx = canvas.getContext('2d');
     this.ctx.imageSmoothingEnabled = false;
-    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, ...options };
+    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, hdGraphics: true, onResize: null, ...options };
     this.original = new OriginalPainter();   // the 1985 artwork, used when originalGraphics is on
+    this.scale = 1;                          // canvas pixels per game pixel (the HD painter asks for 2)
     this.setTheme(this.options.theme);
     this.cameraX = 0;               // left edge of the view, in pixels
     this.positions = new Map();     // id -> {x, y} eased pixel positions
@@ -42,21 +45,35 @@ export class Renderer {
     this.options.theme = name;
     this.backdrop = buildBackdrop(this.theme);
     clearSpriteCache();
+    if (!this.hd) this.hd = new ModernPainter(this.theme); else this.hd.setTheme(this.theme);
   }
 
+  // The view's width in game pixels (the canvas may be a multiple of this).
+  get viewW() { return this.columns * C; }
+
   // retroStatus adds the original's three status rows under the play area.
-  resize(columns, retroStatus = this.options.retroStatus) {
+  resize(columns, retroStatus = this.options.retroStatus, scale = this.scale) {
     this.columns = columns;
     this.options.retroStatus = retroStatus;
-    this.canvas.width = columns * C;
-    this.canvas.height = (SKOOL.height + (retroStatus ? 3 : 0)) * C;
+    this.scale = scale;
+    this.canvas.width = columns * C * scale;
+    this.canvas.height = (SKOOL.height + (retroStatus ? 3 : 0)) * C * scale;
     this.ctx.imageSmoothingEnabled = false;
+    if (this.options.onResize) this.options.onResize();
+  }
+
+  // The HD path runs at the painter's scale, the others at 1. The right scale
+  // can change mid-session (the tape loads, an option is toggled), so this is
+  // checked every frame.
+  ensureScale() {
+    const want = this.useOriginal() ? 1 : this.useHd() ? this.hd.scale : 1;
+    if (want !== this.scale) this.resize(this.columns, this.options.retroStatus, want);
   }
 
   // ---- Camera ----------------------------------------------------------------
   updateCamera() {
     const eric = this.game.cast.eric;
-    const viewW = this.canvas.width;
+    const viewW = this.viewW;
     const maxX = SKOOL.width * C - viewW;
     let target = eric.x * C + 12 - viewW / 2;
     target = Math.max(0, Math.min(maxX, target));
@@ -91,13 +108,17 @@ export class Renderer {
 
   // True when the view should use the genuine Spectrum graphics.
   useOriginal() { return this.options.originalGraphics && this.original.ready; }
+  // True when the view should use the HD pixel art (modern palette only).
+  useHd() { return !this.useOriginal() && this.options.hdGraphics && !!this.theme.hd; }
 
   // ---- The frame -------------------------------------------------------------
   draw() {
     const { ctx, game, theme } = this;
     this.updateCamera();
+    this.ensureScale();
     const cam = Math.round(this.cameraX);
     if (this.useOriginal()) return this.drawOriginal(cam);
+    if (this.useHd()) return this.drawHd(cam);
     ctx.save();
     ctx.translate(-cam, 0);
     const viewFrom = cam - 32, viewTo = cam + this.canvas.width + 32;
@@ -128,11 +149,38 @@ export class Renderer {
     if (this.options.retroStatus) this.drawStatus();
   }
 
+  // The frame in HD pixel art. Anything without HD art yet is drawn with the
+  // painted stand-in, enlarged, so nothing is ever missing from the screen.
+  drawHd(cam) {
+    const p = this.hd, S = p.scale, { ctx, game } = this, viewW = this.viewW;
+    ctx.save();
+    ctx.translate(-cam * S, 0);
+    p.drawBackdrop(ctx, cam, viewW);
+    ctx.save(); ctx.scale(S, S); this.drawFurniture(cam - 32, cam + viewW + 32); ctx.restore();
+    const viewFrom = cam - 32, viewTo = cam + viewW + 32;
+    for (const d of game.cast.drawables) {
+      if (!d.visible || d.x * C + SPRITE_W < viewFrom || d.x * C > viewTo) continue;
+      const [x, y] = this.spritePos(d);
+      if (d.group !== 'OBJ' && d.isStanding?.()) p.drawShadow(ctx, x, y);
+      if (!p.drawSprite(ctx, d.group, d.animatoryState, d.direction, d.look, x, y)) {
+        ctx.drawImage(getSprite(d.group, d.animatoryState, d.direction, d.look), Math.round(x * S), Math.round(y * S), SPRITE_W * S, SPRITE_H * S);
+      }
+    }
+    ctx.save(); ctx.scale(S, S);
+    for (const c of game.cast.characterList) if (c.bubble) this.drawBubble(c);
+    ctx.restore();
+    ctx.restore();
+    ctx.save(); ctx.scale(S, S);
+    if (game.messageBox) this.drawMessageBox(game.messageBox, cam);
+    if (this.options.retroStatus) this.drawStatus();
+    ctx.restore();
+  }
+
   // The same frame, drawn entirely with the original artwork.
   drawOriginal(cam) {
     const { ctx, game } = this;
     const o = this.original;
-    const w = this.canvas.width;
+    const w = this.viewW;
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, this.canvas.height);
     ctx.save();
     ctx.translate(-cam, 0);
@@ -167,7 +215,7 @@ export class Renderer {
   drawStatus() {
     const { ctx, game, theme } = this;
     const top = SKOOL.height * C;
-    const w = this.canvas.width;
+    const w = this.viewW;
     const rect = (x, y, ww, hh, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, ww, hh); };
     rect(0, top, w, 3 * C, theme.statusPaper);
     // Score box: columns 0-7
@@ -288,7 +336,7 @@ export class Renderer {
     const h = lines.length * LINE_HEIGHT + 6;
     let x = box.x * C - cam + 4 - w / 2;
     let y = box.y * C - h - 2;
-    x = Math.max(0, Math.min(this.canvas.width - w, x));
+    x = Math.max(0, Math.min(this.viewW - w, x));
     y = Math.max(0, y);
     const paper = box.paper === 'eric' ? theme.boxEric : box.paper === 'other' ? theme.boxOther : box.paper === 'alarm' ? theme.boxAlarm : theme.boxSecret;
     const ink = box.paper === 'alarm' ? theme.boxInkAlarm : theme.boxInk;

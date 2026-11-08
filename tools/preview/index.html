@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <title>Sprite preview</title>
+  <style>
+    body { margin: 0; padding: 16px; background: #26292e; color: #e8ecf1; font: 14px/1.4 Ubuntu, system-ui, sans-serif; }
+    h1, h2 { font-weight: 400; margin: 18px 0 8px; }
+    canvas { image-rendering: pixelated; display: block; background: #3a3f47; border: 1px solid #555; }
+    .note { color: #a9b2bd; }
+    .row { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1>HD sprite preview</h1>
+  <p class="note">Every group and state at 3x, facing right then left. Magenta frames mean "no HD art yet" (the game shows the painted stand-in there). Add <code>?zoom=4</code> to enlarge.</p>
+  <div id="out"></div>
+  <script type="module" src="preview.js"></script>
+</body>
+</html>
