@@ -15,7 +15,7 @@
 import { SKOOL } from '../../data/skool.js';
 import { DECOR } from '../../data/decor.js';
 import { makeCanvas, shade, layer, compose } from './pixelart.js';
-import { drawText, measureText } from '../font.js';
+import { drawHdText, measureHd } from './font.js';
 
 const FLOOR_Y = { top: 3, middle: 10, ground: 17 };
 const STOREY_TOP = { top: 0, middle: 7, ground: 14 };
@@ -93,15 +93,13 @@ export function buildHdBackdrop(theme, S) {
   paintPlayground(ctx, hd, C, feet(17));
 
   // ---- Room plaques ---------------------------------------------------------------------
-  ctx.save(); ctx.scale(S, S);
   for (const z of DECOR.zones) {
     if (!z.plaque) continue;
-    const cx = ((z.x0 + z.x1) / 2) * SKOOL.cell, y = STOREY_TOP[z.storey] * SKOOL.cell + 4;
-    const w = measureText(z.plaque) + 8;
-    ctx.fillStyle = hd.plaque; ctx.fillRect(Math.round(cx - w / 2), y - 2, w, 11);
-    drawText(ctx, z.plaque, Math.round(cx - measureText(z.plaque) / 2), y, hd.plaqueInk);
+    const cx = ((z.x0 + z.x1) / 2) * C, y = STOREY_TOP[z.storey] * C + 8;
+    const w = measureHd(z.plaque) + 16;
+    rect(cx - w / 2, y - 4, w, 22, hd.plaque);
+    drawHdText(ctx, z.plaque, Math.round(cx - measureHd(z.plaque) / 2), y, hd.plaqueInk);
   }
-  ctx.restore();
   return canvas;
 }
 

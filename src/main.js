@@ -110,6 +110,7 @@ export function boot() {
     if (settings.view === 'original') scale = Math.max(1, Math.floor(scale));   // whole pixels for the original
     canvas.style.width = `${canvas.width * scale}px`;
     canvas.style.height = `${canvas.height * scale}px`;
+    document.documentElement.style.setProperty('--screen-width', canvas.style.width);   // the HUD strip matches it
   }
   window.addEventListener('resize', fitCanvas);
 

@@ -15,6 +15,15 @@ import { personLayers } from './people.js';
 import { objectLayers } from './objects.js';
 import { buildHdBackdrop } from './backdrop.js';
 import { drawFurniture, clearFurnitureCache } from './furniture.js';
+import { drawHdText, drawHdTextCentred, measureHd, HD_LINE_HEIGHT } from './font.js';
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+}
 
 export class ModernPainter {
   constructor(theme) {
@@ -37,9 +46,63 @@ export class ModernPainter {
     ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
   }
 
-  // Doors, windows, cups and the rest of the live furniture. `drawChalk`
-  // writes the blackboard text (the renderer supplies it until the HD font lands).
-  drawFurniture(ctx, game, drawChalk) { drawFurniture(ctx, game, this.scale, drawChalk); }
+  // Doors, windows, cups and the rest of the live furniture, then the chalk.
+  drawFurniture(ctx, game) { drawFurniture(ctx, game, this.scale, () => this.drawChalk(ctx, game)); }
+
+  // Chalk on the blackboards. A column a teacher has wiped is restored from
+  // the clean board in the backdrop.
+  drawChalk(ctx, game) {
+    const S = this.scale, C = SKOOL.cell * S, b = this.ensureBackdrop();
+    for (const room of game.world.rooms.values()) {
+      const board = room.blackboard;
+      if (!board || !board.lines.length) continue;
+      const x = board.x * C, y = board.y * C;
+      board.lines.forEach((line, i) => drawHdText(ctx, line, x + 4, y + 4 + i * HD_LINE_HEIGHT, this.theme.chalk));
+      for (const col of board.wipedColumns) ctx.drawImage(b, x + col * C, y, C, board.height * C, x + col * C, y, C, board.height * C);
+    }
+  }
+
+  // A speech bubble: a rounded panel with a lip, the words scrolling through
+  // it in 8-pixel steps exactly as the original did (the engine's timing).
+  drawBubble(ctx, c) {
+    const S = this.scale, C = SKOOL.cell * S, b = c.bubble, hd = this.hd;
+    const x = b.x * C, y = b.y * C, w = 8 * C, h = 3 * C;
+    ctx.fillStyle = hd.bubbleShadow; roundRect(ctx, x + 2, y + 3, w, h - 8, 6); ctx.fill();
+    ctx.fillStyle = hd.bubbleEdge; roundRect(ctx, x, y, w, h - 8, 6); ctx.fill();
+    ctx.fillStyle = hd.bubbleFill; roundRect(ctx, x + 2, y + 2, w - 4, h - 12, 5); ctx.fill();
+    const lipX = x + b.lipPos * C + 4;                                                  // the lip points at the speaker
+    ctx.fillStyle = hd.bubbleEdge; ctx.beginPath(); ctx.moveTo(lipX - 2, y + h - 10); ctx.lineTo(lipX + 12, y + h - 10); ctx.lineTo(lipX + 2, y + h); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = hd.bubbleFill; ctx.beginPath(); ctx.moveTo(lipX + 1, y + h - 11); ctx.lineTo(lipX + 8, y + h - 11); ctx.lineTo(lipX + 3, y + h - 4); ctx.closePath(); ctx.fill();
+    const textWidth = measureHd(b.words);
+    const insetX = (4 - 8 * Math.min(0, b.shift)) * S;
+    const textX = Math.max(0, b.shift) * 8 * S;
+    const width = Math.min((4 + 56) * S - insetX, textWidth - textX);
+    if (width > 0) {
+      ctx.save(); ctx.beginPath(); ctx.rect(x + insetX, y + 4 * S, width, 8 * S); ctx.clip();
+      drawHdText(ctx, b.words, x + insetX - textX, y + 5 * S, hd.bubbleInk);
+      ctx.restore();
+    }
+  }
+
+  // A reprimand or a secret: a rounded box in the colour of its kind, in
+  // screen space (cam/viewW in game pixels).
+  drawMessageBox(ctx, box, cam, viewW) {
+    const S = this.scale, C = SKOOL.cell * S, hd = this.hd, theme = this.theme;
+    const lines = box.lines;
+    const w = Math.max(8 * C, ...lines.map((l) => measureHd(l) + 12 * S));
+    const h = lines.length * HD_LINE_HEIGHT + 10 * S;
+    let x = (box.x * SKOOL.cell - cam + 4) * S - w / 2;
+    let y = box.y * C - h - 2 * S;
+    x = Math.max(2, Math.min(viewW * S - w - 2, x)); y = Math.max(2, y);
+    x = Math.round(x); y = Math.round(y);
+    const paper = box.paper === 'eric' ? theme.boxEric : box.paper === 'other' ? theme.boxOther : box.paper === 'alarm' ? theme.boxAlarm : theme.boxSecret;
+    const ink = box.paper === 'alarm' ? theme.boxInkAlarm : theme.boxInk;
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'; roundRect(ctx, x + 3, y + 4, w, h, 8); ctx.fill();
+    ctx.fillStyle = hd.boxEdge; roundRect(ctx, x, y, w, h, 8); ctx.fill();
+    ctx.fillStyle = paper; roundRect(ctx, x + 2, y + 2, w - 4, h - 4, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.25)'; roundRect(ctx, x + 2, y + 2, w - 4, 6, 6); ctx.fill();
+    lines.forEach((l, i) => drawHdTextCentred(ctx, l, x + w / 2, y + 5 * S + i * HD_LINE_HEIGHT, ink));
+  }
 
   // A soft ellipse under a standing character's feet.
   drawShadow(ctx, x, y) {

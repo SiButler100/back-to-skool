@@ -78,6 +78,8 @@ export const THEMES = {
       wallStone: '#b8b2a4', iron: '#2b2b33', ironLight: '#5a5a66',
       trunk: '#5a3a1e', trunkLight: '#7a5230',
       plaque: 'rgba(60,40,20,0.55)', plaqueInk: '#fff6e0',
+      bubbleFill: '#fffdf6', bubbleEdge: '#2a2430', bubbleInk: '#1b1626', bubbleShadow: 'rgba(0,0,0,0.25)',
+      boxEdge: '#1b1626',
     },
   },
   // The 1985 machine: eight colours, black ink figures, hard edges.

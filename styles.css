@@ -64,6 +64,7 @@ a { color: inherit; }
   font-size: 13px; color: var(--muted); max-width: 100%;
 }
 .keys-strip .k { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.keys-strip .k[hidden] { display: none; }
 .keys-strip kbd {
   font: inherit; font-size: 12px; padding: 1px 6px; border-radius: 5px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink); min-width: 20px; text-align: center;
@@ -229,3 +230,32 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .tape-loader code { font-size: 12px; }
 .tape-button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); cursor: pointer; white-space: nowrap; }
 .tape-status { font-size: 13px; color: var(--ink); }
+
+/* ---- Modern view chrome ------------------------------------------------------
+   A game-style HUD bar flush on top of the screen, pixel keycaps and plan chips.
+   Only applies with the modern view; the original view keeps its own look. */
+html.view-modern #app { row-gap: 0; }
+html.view-modern #hud { display: flex; justify-content: center; }
+html.view-modern .hud-top {
+  width: var(--screen-width, 100%); max-width: 100%; box-sizing: border-box;
+  background: #1f2530; color: #e8ecf1; border: 0; border-radius: 12px 12px 0 0;
+  padding: 8px 14px; gap: 14px; grid-template-columns: 220px 1fr auto auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+html.view-modern #stage { margin-top: 0; }
+html.view-modern #game { border-radius: 0 0 12px 12px; }
+html.view-modern .hud-top .lesson-teacher, html.view-modern .hud-top .stat-label { color: #a9b2bd; }
+html.view-modern .hud-top .lesson-bar { background: #39414f; }
+html.view-modern .hud-top .lesson-bar-fill { background: repeating-linear-gradient(90deg, var(--accent) 0 4px, transparent 4px 6px); transition: none; }
+html.view-modern .hud-top .stat-value { font-size: 22px; }
+html.view-modern .hud-top .inventory .empty { color: #a9b2bd; }
+html.view-modern .hud-top .menu-button { background: #2b3340; color: #e8ecf1; border-color: #4a5468; }
+html.view-modern .hud-top .menu-button:hover { border-color: #e8ecf1; }
+.inventory .item.pix { position: relative; display: inline-grid; place-items: center; width: 30px; height: 30px; background: #2b3340; border-radius: 6px; }
+.inventory .item.pix img { width: 24px; height: 24px; image-rendering: pixelated; }
+.inventory .item.pix b { position: absolute; right: -4px; bottom: -4px; font-size: 11px; font-weight: 400; background: var(--accent); color: var(--accent-ink); border-radius: 999px; min-width: 14px; height: 14px; line-height: 14px; text-align: center; }
+html.view-modern .keys-strip kbd { border-radius: 4px; border-bottom-width: 3px; }
+html.view-modern .quest-steps .step { border-radius: 6px; }
+html.view-modern .quest-steps .step .tick { border-radius: 4px; }
+html.view-modern .panel h2::after { content: ''; display: block; height: 2px; margin-top: 6px; background: repeating-linear-gradient(90deg, var(--line) 0 4px, transparent 4px 6px); }
+@media (max-width: 800px) { html.view-modern .hud-top { grid-template-columns: 1fr 1fr; } }

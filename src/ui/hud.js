@@ -8,6 +8,8 @@
 // The key strip under the canvas is always visible, in both views.
 // ============================================================================
 
+import { iconUrl } from '../render/hd/icons.js';
+
 const ITEM_ICONS = {
   SAFE_KEY: ['🗝️', 'Safe key'],
   STOREROOM_KEY: ['🔑', 'Storeroom key'],
@@ -89,6 +91,8 @@ export class HUD {
   onMenu(h) { this.menuHandlers.push(h); }
   onToggleView(h) { this.viewHandlers.push(h); }
   setView(view) {
+    this.view = view;
+    if (this.lastInventory) this.renderInventory(...this.lastInventory);
     const k = this.bindings.view.map(pretty).join('/');
     this.viewToggle.innerHTML = view === 'original' ? `<kbd>${k}</kbd> modern view` : `<kbd>${k}</kbd> original view`;
   }
@@ -131,8 +135,16 @@ export class HUD {
   }
 
   renderInventory(items, mice) {
-    const parts = items.map((id) => { const [icon, label] = ITEM_ICONS[id] || ['❔', id]; return `<span class="item" title="${label}">${icon}</span>`; });
-    if (mice > 0) parts.push(`<span class="item" title="${mice} mice">🐭×${mice}</span>`);
+    this.lastInventory = [items, mice];
+    const pixel = this.view === 'modern';
+    const parts = items.map((id) => {
+      const [icon, label] = ITEM_ICONS[id] || ['❔', id];
+      if (!pixel) return `<span class="item" title="${label}">${icon}</span>`;
+      const m = id.match(/^STINKBOMBS(\d)$/);
+      const url = iconUrl(m ? 'STINKBOMB' : id);
+      return url ? `<span class="item pix" title="${label}"><img src="${url}" alt="${label}">${m ? `<b>${m[1]}</b>` : ''}</span>` : `<span class="item" title="${label}">${icon}</span>`;
+    });
+    if (mice > 0) parts.push(pixel ? `<span class="item pix" title="${mice} mice"><img src="${iconUrl('MOUSE')}" alt="mice"><b>${mice}</b></span>` : `<span class="item" title="${mice} mice">🐭×${mice}</span>`);
     this.el.inventory.innerHTML = parts.join('') || '<span class="item empty">pockets empty</span>';
   }
 

@@ -156,7 +156,7 @@ export class Renderer {
     ctx.save();
     ctx.translate(-cam * S, 0);
     p.drawBackdrop(ctx, cam, viewW);
-    p.drawFurniture(ctx, game, () => { ctx.save(); ctx.scale(S, S); this.drawChalk(); ctx.restore(); });
+    p.drawFurniture(ctx, game);
     const viewFrom = cam - 32, viewTo = cam + viewW + 32;
     for (const d of game.cast.drawables) {
       if (!d.visible || d.x * C + SPRITE_W < viewFrom || d.x * C > viewTo) continue;
@@ -166,14 +166,10 @@ export class Renderer {
         ctx.drawImage(getSprite(d.group, d.animatoryState, d.direction, d.look), Math.round(x * S), Math.round(y * S), SPRITE_W * S, SPRITE_H * S);
       }
     }
-    ctx.save(); ctx.scale(S, S);
-    for (const c of game.cast.characterList) if (c.bubble) this.drawBubble(c);
+    for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c);
     ctx.restore();
-    ctx.restore();
-    ctx.save(); ctx.scale(S, S);
-    if (game.messageBox) this.drawMessageBox(game.messageBox, cam);
-    if (this.options.retroStatus) this.drawStatus();
-    ctx.restore();
+    if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW);
+    if (this.options.retroStatus) { ctx.save(); ctx.scale(S, S); this.drawStatus(); ctx.restore(); }
   }
 
   // The same frame, drawn entirely with the original artwork.
