@@ -154,7 +154,7 @@ export class Menu {
       <h1>Controls</h1>
       <p class="lede">The cursor keys to move and four action keys in a row under your left hand. The game works out which tool fits what is in front of Eric.</p>
       <table class="keys"><tbody>${rows}</tbody></table>
-      <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
+      <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter or simply walk off with a cursor key. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
       <div class="menu-actions"><button type="button" data-action="back" class="primary">Back</button></div>`;
   }
 

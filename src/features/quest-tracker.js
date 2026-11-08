@@ -20,7 +20,7 @@ const STEPS = [
   ['bikeDigits', 'Four bike digits',
     'Fill a cup by the toilets with the pistol (X from the ground floor), then knock the cup with the catapult (X from the stairs beside it) as a master walks under it. Each master you soak mutters a digit. Known so far: {digits}'],
   ['bikeUnchained', 'Bike combination',
-    'Stand beside a clean blackboard, press C, type the four digits in any order, then Enter. The bike appears by the tree.'],
+    'Stand beside a clean blackboard, press C, type the four digits in any order, then press Enter or walk off. The bike appears by the tree.'],
   ['sherry', 'Sherry in the pistol',
     'Miss Take opens her drinks cabinet only while the boys\' school door is shut. Be inside when Albert locks up, drop a stinkbomb (V) as Mr Wacker passes the middle-floor window, water the plant below the window, jump onto its pot and let it lift you, step out of the window, grow the plant by the gate the same way and climb over, then jump (Space) at the open cabinet upstairs in the girls\' school.'],
   ['storeroomLetters', 'Four storeroom letters',

@@ -26,7 +26,7 @@ The cursor keys to move and four action keys in a row under the left hand. The g
 | Esc | Pause / menu |
 | Tab | Switch between the original (1985) and modern views |
 
-Eric gets up by himself after being knocked down. Writing on a blackboard: stand beside it, press C, type, press Enter. Bike: alternate ← and → to pedal, ↑ to stand on the saddle, ↓ to dismount. The plan under the game lists the eleven steps of the caper, ticks them off as you go, and gives a hint when you hover over one.
+Eric gets up by himself after being knocked down. Writing on a blackboard: stand beside it, press C, type, then press Enter (or just walk off with a cursor key). Bike: alternate ← and → to pedal, ↑ to stand on the saddle, ↓ to dismount. The plan under the game lists the eleven steps of the caper, ticks them off as you go, and gives a hint when you hover over one.
 
 The *How to play* screen inside the game has the School Rules and your brother's invisible-ink notes, which explain the whole caper.
 

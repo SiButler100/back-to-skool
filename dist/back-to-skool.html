@@ -79,6 +79,7 @@ a { color: inherit; }
   border: 1px solid var(--line); background: var(--surface); color: var(--ink); min-width: 20px; text-align: center;
 }
 .keys-strip .ui { opacity: 0.8; }
+.keys-strip .writing-hint { flex-basis: 100%; justify-content: center; color: var(--accent); }
 .keys-strip button.view-toggle { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 0; }
 .keys-strip button.view-toggle:hover kbd { border-color: var(--ink); }
 .keys-strip .gfx-status { padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--line); color: var(--ink); }
@@ -8042,17 +8043,19 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       if (e.repeat) return;
       if (e.target && ["INPUT", "SELECT", "TEXTAREA", "BUTTON"].includes(e.target.tagName) && e.code !== "Escape") return;
       const action = this.actionFor(e.code);
-      if (action === "pause" || action === "view" && !this.writing) {
+      if (action === "pause" && !this.writing || action === "view" && !this.writing) {
         this.uiHandlers[action].forEach((h) => h());
         e.preventDefault();
         return;
       }
       if (!this.enabled) return;
       if (this.writing) {
-        if (e.key === "Enter") this.typed.push("\n");
+        if (e.key === "Enter" || e.key === "Escape" || e.key.startsWith("Arrow")) this.typed.push("\n");
         else if (e.key.length === 1) this.typed.push(e.key);
-        e.preventDefault();
-        return;
+        if (!e.key.startsWith("Arrow")) {
+          e.preventDefault();
+          return;
+        }
       }
       if (action) {
         this.held.add(e.code);
@@ -8175,6 +8178,7 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       <span class="k"><kbd>${key("act")}</kbd> write \xB7 catch \xB7 mount \xB7 kiss \xB7 punch</span>
       <span class="k"><kbd>${key("drop")}</kbd> stinkbomb \xB7 mice</span>
       <span class="k ui"><kbd>${key("pause")}</kbd> menu</span>
+      <span class="k writing-hint" id="writing-hint" hidden>Writing on the board: type, then <kbd>Enter</kbd> or a cursor key to finish</span>
       <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (${key("view")})"></button>
       <span class="gfx-status" id="gfx-status" hidden></span>`;
       strip.querySelector("#view-toggle").addEventListener("click", () => this.viewHandlers.forEach((h) => h()));
@@ -8253,6 +8257,9 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
     // Called every frame for things that change continuously.
     update() {
       this.el.clock.style.width = `${(this.game.timetable.progress() * 100).toFixed(1)}%`;
+      const hint = document.getElementById("writing-hint");
+      const writing = !!this.game.cast.eric.writing;
+      if (hint && hint.hidden === writing) hint.hidden = !writing;
     }
   };
   var QUEST_TEXT = {
@@ -8440,7 +8447,7 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
       <h1>Controls</h1>
       <p class="lede">The cursor keys to move and four action keys in a row under your left hand. The game works out which tool fits what is in front of Eric.</p>
       <table class="keys"><tbody>${rows}</tbody></table>
-      <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
+      <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter or simply walk off with a cursor key. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
       <div class="menu-actions"><button type="button" data-action="back" class="primary">Back</button></div>`;
     }
     render_howto() {
@@ -9189,7 +9196,7 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
     [
       "bikeUnchained",
       "Bike combination",
-      "Stand beside a clean blackboard, press C, type the four digits in any order, then Enter. The bike appears by the tree."
+      "Stand beside a clean blackboard, press C, type the four digits in any order, then press Enter or walk off. The bike appears by the tree."
     ],
     [
       "sherry",

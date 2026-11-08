@@ -70,17 +70,18 @@ export class Input {
     if (e.repeat) return;
     if (e.target && ['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON'].includes(e.target.tagName) && e.code !== 'Escape') return;
     const action = this.actionFor(e.code);
-    if (action === 'pause' || (action === 'view' && !this.writing)) {
+    if (action === 'pause' && !this.writing || (action === 'view' && !this.writing)) {
       this.uiHandlers[action].forEach((h) => h());
       e.preventDefault();
       return;
     }
     if (!this.enabled) return;
     if (this.writing) {
-      if (e.key === 'Enter') this.typed.push('\n');
+      // Typing goes on the board. Enter, Escape or any cursor key ends the
+      // writing (a cursor key then moves Eric away as normal).
+      if (e.key === 'Enter' || e.key === 'Escape' || e.key.startsWith('Arrow')) this.typed.push('\n');
       else if (e.key.length === 1) this.typed.push(e.key);
-      e.preventDefault();
-      return;
+      if (!e.key.startsWith('Arrow')) { e.preventDefault(); return; }
     }
     if (action) {
       this.held.add(e.code);

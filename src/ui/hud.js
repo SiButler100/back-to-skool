@@ -79,6 +79,7 @@ export class HUD {
       <span class="k"><kbd>${key('act')}</kbd> write · catch · mount · kiss · punch</span>
       <span class="k"><kbd>${key('drop')}</kbd> stinkbomb · mice</span>
       <span class="k ui"><kbd>${key('pause')}</kbd> menu</span>
+      <span class="k writing-hint" id="writing-hint" hidden>Writing on the board: type, then <kbd>Enter</kbd> or a cursor key to finish</span>
       <button type="button" class="k ui view-toggle" id="view-toggle" title="Switch view (${key('view')})"></button>
       <span class="gfx-status" id="gfx-status" hidden></span>`;
     strip.querySelector('#view-toggle').addEventListener('click', () => this.viewHandlers.forEach((h) => h()));
@@ -146,6 +147,9 @@ export class HUD {
   // Called every frame for things that change continuously.
   update() {
     this.el.clock.style.width = `${(this.game.timetable.progress() * 100).toFixed(1)}%`;
+    const hint = document.getElementById('writing-hint');
+    const writing = !!this.game.cast.eric.writing;
+    if (hint && hint.hidden === writing) hint.hidden = !writing;
   }
 }
 

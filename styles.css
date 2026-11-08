@@ -69,6 +69,7 @@ a { color: inherit; }
   border: 1px solid var(--line); background: var(--surface); color: var(--ink); min-width: 20px; text-align: center;
 }
 .keys-strip .ui { opacity: 0.8; }
+.keys-strip .writing-hint { flex-basis: 100%; justify-content: center; color: var(--accent); }
 .keys-strip button.view-toggle { border: 0; background: none; cursor: pointer; color: var(--muted); padding: 0; }
 .keys-strip button.view-toggle:hover kbd { border-color: var(--ink); }
 .keys-strip .gfx-status { padding: 1px 8px; border-radius: 999px; font-size: 12px; background: var(--line); color: var(--ink); }
