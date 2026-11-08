@@ -47,6 +47,12 @@ export const PALETTE = {
   O: '#b5651d',   // sherry / conker
   X: '#f5d300',   // gold (stars, keys)
   Q: '#c07030',   // Eric's hair (for pictures that include him)
+  J: '#5e3a18',   // dark wood
+  I: '#b8824a',   // light wood
+  U: '#bfe3ff',   // window glass
+  H: '#dff1ff',   // pale sky seen through an open window
+  F: 'rgba(120,160,60,0.72)',   // stinkbomb fog
+  E: '#2b2b33',   // iron (gate, bike frame)
 };
 
 export const SLOT_LETTERS = 'tupqhikoe';

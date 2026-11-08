@@ -19,6 +19,7 @@
 
 import { layer, Grid } from './pixelart.js';
 import { ADULTS, PEOPLE } from './palette.js';
+import { BIKE } from './objects.js';
 
 // ---- Heads -------------------------------------------------------------------------
 
@@ -304,15 +305,7 @@ const KID_TORSO_BEND = layer(15, 38, new Grid(22, 10)
   .rect(8, 2, 10, 4, 't').rect(12, 0, 8, 4, 't').rect(14, 0, 6, 2, 'u')
   .rows(), 'kid torso bend');
 
-// The bike, with pedalling legs; the rider's body uses the ordinary parts.
-const BIKE_FRAME = layer(0, 40, new Grid(48, 24)
-  .rect(2, 14, 12, 10, 'D').rect(4, 16, 8, 6, 'G').rect(6, 18, 4, 2, 'D')
-  .rect(34, 14, 12, 10, 'D').rect(36, 16, 8, 6, 'G').rect(38, 18, 4, 2, 'D')
-  .rect(8, 10, 26, 2, 'R').rect(22, 4, 2, 8, 'R').rect(34, 4, 2, 8, 'R')
-  .rect(14, 10, 2, 8, 'R').rect(32, 10, 2, 8, 'R')
-  .rect(18, 2, 8, 2, 'K')
-  .rect(32, 2, 8, 2, 'D').rect(38, 0, 2, 4, 'D')
-  .rows(), 'bike');
+// The bike comes from objects.js; these are the rider's pedalling legs.
 const RIDE_LEGS = {
   0: layer(20, 42, new Grid(14, 14).rect(2, 0, 6, 6, 'p').rect(6, 6, 4, 4, 'S').rect(6, 10, 4, 2, 'k').rect(5, 12, 7, 2, 'o').rows(), 'ride legs 0'),
   1: layer(16, 42, new Grid(14, 14).rect(6, 0, 6, 5, 'p').rect(2, 5, 4, 4, 'S').rect(2, 9, 4, 2, 'k').rect(1, 11, 7, 2, 'o').rows(), 'ride legs 1'),
@@ -415,8 +408,8 @@ const POSES = {
   // Grown-ups: sitting up on the floor, dazed, legs out.
   KNOCKED_OVER: (b, l) => [b.legsFloor, [b.torsoShort, -3, 24], ...headLayers(b, l, -3, 22), [b.arms.down, FRONT_X - BACK_X - 3, 8], STARS],
   BENDING_OVER: (b, l) => [b.legs.stand, b.torsoBend || b.torso, ...headLayers(b, l, 13, 12), b.arms.reach],
-  RIDING_BIKE0: (b, l) => [BIKE_FRAME, RIDE_LEGS[0], [b.torsoShort, 2, -2], ...headLayers(b, l, 2, -2), [b.arms.fwd, 2, -2]],
-  RIDING_BIKE1: (b, l) => [BIKE_FRAME, RIDE_LEGS[1], [b.torsoShort, 2, -2], ...headLayers(b, l, 2, -2), [b.arms.fwd, 2, -2]],
+  RIDING_BIKE0: (b, l) => [BIKE, RIDE_LEGS[0], [b.torsoShort, 2, -2], ...headLayers(b, l, 2, -2), [b.arms.fwd, 2, -2]],
+  RIDING_BIKE1: (b, l) => [BIKE, RIDE_LEGS[1], [b.torsoShort, 2, -2], ...headLayers(b, l, 2, -2), [b.arms.fwd, 2, -2]],
   KISSING_ERIC: () => [KISS],
 };
 

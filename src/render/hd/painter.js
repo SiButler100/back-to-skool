@@ -14,6 +14,7 @@ import { dressFor, lookKey } from './palette.js';
 import { personLayers } from './people.js';
 import { objectLayers } from './objects.js';
 import { buildHdBackdrop } from './backdrop.js';
+import { drawFurniture, clearFurnitureCache } from './furniture.js';
 
 export class ModernPainter {
   constructor(theme) {
@@ -23,7 +24,7 @@ export class ModernPainter {
     this.backdrop = null;         // built on first use
   }
 
-  setTheme(theme) { this.theme = theme; this.cache.clear(); this.backdrop = null; }
+  setTheme(theme) { this.theme = theme; this.cache.clear(); clearFurnitureCache(); this.backdrop = null; }
 
   get hd() { return this.theme.hd || {}; }
 
@@ -35,6 +36,10 @@ export class ModernPainter {
     const h = SKOOL.height * SKOOL.cell * S;
     ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
   }
+
+  // Doors, windows, cups and the rest of the live furniture. `drawChalk`
+  // writes the blackboard text (the renderer supplies it until the HD font lands).
+  drawFurniture(ctx, game, drawChalk) { drawFurniture(ctx, game, this.scale, drawChalk); }
 
   // A soft ellipse under a standing character's feet.
   drawShadow(ctx, x, y) {

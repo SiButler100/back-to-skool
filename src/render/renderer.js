@@ -156,7 +156,7 @@ export class Renderer {
     ctx.save();
     ctx.translate(-cam * S, 0);
     p.drawBackdrop(ctx, cam, viewW);
-    ctx.save(); ctx.scale(S, S); this.drawFurniture(cam - 32, cam + viewW + 32); ctx.restore();
+    p.drawFurniture(ctx, game, () => { ctx.save(); ctx.scale(S, S); this.drawChalk(); ctx.restore(); });
     const viewFrom = cam - 32, viewTo = cam + viewW + 32;
     for (const d of game.cast.drawables) {
       if (!d.visible || d.x * C + SPRITE_W < viewFrom || d.x * C > viewTo) continue;
@@ -292,19 +292,24 @@ export class Renderer {
       else if (cup.contents === 'SHERRY') rect(x + 2, y + 1, 5, 2, theme.cupSherry);
       else if (cup.frogs.length) rect(x + 2, y, 5, 3, '#3e9b3e');
     }
-    // Chalk on blackboards
+    this.drawChalk();
+    // Conker in the tree (when not falling)
+    if (!game.cast.conker.visible) { rect(100 * C + 6, 3 * C + 2, 4, 4, '#6b3a1a'); rect(100 * C + 7, 3 * C + 2, 1, 1, '#d2a06a'); }
+    // Chained bike leaning on the tree
+    if (game.cast.bike.chained) { rect(97 * C, 20 * C - 2, 16, 4, '#444'); rect(97 * C + 2, 20 * C - 1, 12, 2, '#9a9a9a'); rect(96 * C + 4, 18 * C + 2, 2, 12, '#888'); }
+  }
+
+  // Chalk on the blackboards, and the columns a teacher has wiped so far.
+  drawChalk() {
+    const { ctx, game, theme } = this;
     for (const room of game.world.rooms.values()) {
       const b = room.blackboard;
       if (!b || !b.lines.length) continue;
       const x = b.x * C, y = b.y * C;
       b.lines.forEach((line, i) => drawText(ctx, line, x + 2, y + 2 + i * LINE_HEIGHT, theme.chalk));
-      // partially wiped columns
-      for (const col of b.wipedColumns) rect(x + col * C, y, C, b.height * C, theme.blackboard);
+      ctx.fillStyle = theme.blackboard;
+      for (const col of b.wipedColumns) ctx.fillRect(x + col * C, y, C, b.height * C);
     }
-    // Conker in the tree (when not falling)
-    if (!game.cast.conker.visible) { rect(100 * C + 6, 3 * C + 2, 4, 4, '#6b3a1a'); rect(100 * C + 7, 3 * C + 2, 1, 1, '#d2a06a'); }
-    // Chained bike leaning on the tree
-    if (game.cast.bike.chained) { rect(97 * C, 20 * C - 2, 16, 4, '#444'); rect(97 * C + 2, 20 * C - 1, 12, 2, '#9a9a9a'); rect(96 * C + 4, 18 * C + 2, 2, 12, '#888'); }
   }
 
   drawBubble(c) {

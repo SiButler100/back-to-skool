@@ -11,6 +11,7 @@ import { ModernPainter } from '../../src/render/hd/painter.js';
 import { THEMES } from '../../src/render/theme.js';
 import { SPRITE_GROUPS, CHARACTERS, ERIC } from '../../src/data/cast.js';
 import { FRAME_W, FRAME_H } from '../../src/render/hd/pixelart.js';
+import { OBJECT_ART } from '../../src/render/hd/objects.js';
 
 const zoom = Number(new URLSearchParams(location.search).get('zoom') || 3);
 const painter = new ModernPainter(THEMES.modern);
@@ -42,6 +43,23 @@ for (const [group, states] of Object.entries(SPRITE_GROUPS)) {
       else { ctx.strokeStyle = '#ff2fd0'; ctx.lineWidth = 2; ctx.strokeRect(x + 1, y + 17, FRAME_W * zoom - 2, FRAME_H * zoom - 2); if (r === 0) missing.push(`${group}/${state}`); }
       ctx.fillStyle = '#cfd6de'; ctx.font = '11px Ubuntu, sans-serif'; ctx.fillText(state, x, y + 11);
     });
+  });
+  out.appendChild(canvas);
+}
+
+// Objects: one frame per state.
+section('Objects');
+{
+  const states = Object.keys(OBJECT_ART);
+  const cellW = FRAME_W * zoom + 8, cellH = FRAME_H * zoom + 22;
+  const canvas = document.createElement('canvas'); canvas.width = states.length * cellW; canvas.height = cellH;
+  const ctx = canvas.getContext('2d'); ctx.imageSmoothingEnabled = false;
+  states.forEach((state, i) => {
+    const x = i * cellW;
+    ctx.fillStyle = '#2f343b'; ctx.fillRect(x, 16, FRAME_W * zoom, FRAME_H * zoom);
+    const s = painter.sprite('OBJ', state, 1, {});
+    if (s) ctx.drawImage(s, x, 16, FRAME_W * zoom, FRAME_H * zoom);
+    ctx.fillStyle = '#cfd6de'; ctx.font = '11px Ubuntu, sans-serif'; ctx.fillText(state, x, 11);
   });
   out.appendChild(canvas);
 }
