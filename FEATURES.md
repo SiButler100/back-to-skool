@@ -20,7 +20,7 @@
 - **Options**: view preset, game speed, sound; advanced: palette, view width (32 to 96 columns), status rows on canvas, smooth motion, retro scrolling, freeze-on-lines.
 - Smooth camera and eased sprite movement (switchable), synthesised sound, hi-score saved in the browser.
 - The modern view uses painted sprites and a painted backdrop (every colour is one line to change). The original view uses the 1985 artwork extracted in the browser from the player's own tape image or snapshot (`src/render/extract.js`, a port of Pyskool's extractor); no copyrighted graphics are in the repository or the build.
-- Headless engine with scenario tests.
+- Headless engine with two kinds of test: `tools/scenarios.mjs` checks each mechanic in isolation, and `tools/playthrough.mjs` plays the entire game from the first playtime to the safe by simulated key presses along the real routes. The playthrough found and fixed three faults in the port: plant pots were one row too low (Eric could never jump onto one, so the window and gate climbs were impossible), plants grew and wilted three times too fast, and the plant pot on the girls' side of the gate was missing from the map.
 
 ## Not done yet (honest list)
 

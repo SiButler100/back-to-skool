@@ -55,11 +55,14 @@ Press **V** for the 1985 screen. The first time, a panel under the game asks for
 The engine runs without a browser, so the rules can be checked automatically:
 
 ```
-node tools/scenarios.mjs     # walks Eric through the quest mechanics and checks each step
+node tools/playthrough.mjs   # plays the whole game by simulated key presses, start to safe, and checks every step
+node tools/scenarios.mjs     # checks each quest mechanic in isolation
 node tools/headless.mjs      # runs the whole school for a few thousand ticks and prints what happened
 node tools/build-single-file.mjs   # rebuilds dist/back-to-skool.html
 node tools/check-extraction.mjs game.z80 [reference-png-dir]   # checks the in-browser graphics extractor
 ```
+
+The playthrough is the strongest check: a scripted Eric walks the real routes (no teleporting), finds the pistol and stinkbombs, soaks the masters, writes the combinations, stinkbombs Mr Wacker into opening the window, climbs out on the plant, slips past Albert, climbs the gate, gets the sherry, catches the frog, rides the bike into the girls' school, drops the frog in the cup, knocks Miss Take over beneath it, takes the key and jumps up to the safe. It takes about half an hour of game time and a few minutes of real time. The only concession is that lines are uncapped during the run, because a scripted Eric loiters near teachers far more than a player would.
 
 ## Credits and licence
 

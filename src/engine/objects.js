@@ -214,9 +214,11 @@ export class Bike extends Thing {
 // ---- Plants ------------------------------------------------------------------
 export class Plant extends Thing {
   constructor(id, services, pot) {
-    super(id, services, [['Grow', 12, 19, 26]], 1);
+    // A plant grows at a running character's pace (one step every few ticks):
+    // half-grown after 12 steps, fully grown after 19, and it wilts after 26.
+    super(id, services, [['Grow', 12, 19, 26]], services.config.goFast);
     this.pot = pot; pot.plant = this;
-    this.growX = pot.x; this.y = pot.y;
+    this.growX = pot.x; this.y = pot.plantY;
     this.headHeight = 0; this.growing = false;
     this.animatoryState = 'PLANT_GROWING';
   }

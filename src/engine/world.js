@@ -271,7 +271,10 @@ export class World {
     for (const [roomId, xs] of Object.entries(data.desks)) xs.forEach((x) => this.rooms.get(roomId).desks.push(new Desk(this.rooms.get(roomId), x)));
     this.noGoZones = data.noGoZones.map((z) => new NoGoZone(z));
     this.cups = new Map(data.cups.map((c) => [c.id, new Cup(c)]));
-    this.plantPots = data.plants.map((p) => ({ id: p.id, x: p.x, y: p.y, plant: null }));
+    // A plant pot sits on the floor, so standing "on the pot" puts Eric one
+    // row above the floor (he jumps up onto it). The plant itself grows from
+    // the floor row, which is kept as plantY.
+    this.plantPots = data.plants.map((p) => ({ id: p.id, x: p.x, y: p.y - 1, plantY: p.y, plant: null }));
     this.locations = data.locations;
     this.safe = data.safe;
     this.animationPhases = data.animationPhases;

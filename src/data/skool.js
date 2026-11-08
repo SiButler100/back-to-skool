@@ -159,6 +159,7 @@ export const SKOOL = {
     { id: 'MiddleFloorPlant', x: 93,  y: 10 },
     { id: 'LeftGatePlant',    x: 132, y: 17 },
     { id: 'RightGatePlant',   x: 135, y: 17 },
+    { id: 'RightGatePlant',   x: 135, y: 17 },
   ],
 
   // The conker in the tree: a pellet landing in this box knocks it down.

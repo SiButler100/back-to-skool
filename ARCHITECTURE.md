@@ -124,7 +124,7 @@ flowchart TD
 
 ## Coordinates, briefly
 
-Everything in the engine is measured in **cells** of 8 pixels. The school is 192 cells wide and 21 tall. A character's `(x, y)` is the top-left of a 3-wide, 4-tall sprite, so someone standing on the ground floor has `y = 17` (their feet are in row 20). Floors are at `y = 17, 10, 3`. Staircases are diagonals: one cell across for each cell up. The renderer multiplies by 8 and the page scales the canvas up from there.
+Everything in the engine is measured in **cells** of 8 pixels. The school is 192 cells wide and 21 tall. A character's `(x, y)` is the top-left of a 3-wide, 4-tall sprite, so someone standing on the ground floor has `y = 17` (their feet are in row 20). Floors are at `y = 17, 10, 3`. Staircases are diagonals: one cell across for each cell up. A plant pot counts as standing room one row *above* its floor (Eric jumps up onto it, and the growing plant lifts him two rows more), which is why `world.plantPots` stores `y - 1`. The renderer multiplies by 8 and the page scales the canvas up from there.
 
 ## Events the engine emits
 
@@ -132,4 +132,4 @@ Everything in the engine is measured in **cells** of 8 pixels. The school is 192
 
 ## Why it is organised like this
 
-The original is a simulation first and a game second: thirty characters follow timetables whether or not you watch. Keeping that simulation pure (no DOM, no canvas) means it can be tested in seconds (`tools/scenarios.mjs`) and re-skinned at will. The data layer is deliberately boring JavaScript objects rather than JSON so that it can carry comments and small helpers, and so that a mistake shows up as a clear error at load time.
+The original is a simulation first and a game second: thirty characters follow timetables whether or not you watch. Keeping that simulation pure (no DOM, no canvas) means it can be tested in seconds (`tools/scenarios.mjs` for single mechanics) or played right through by a script (`tools/playthrough.mjs`, which drives Eric with a fake keyboard along the real routes and checks every step of the quest) and re-skinned at will. The data layer is deliberately boring JavaScript objects rather than JSON so that it can carry comments and small helpers, and so that a mistake shows up as a clear error at load time.
