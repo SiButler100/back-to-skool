@@ -8,3 +8,5 @@ assets/original/
 *.tzx
 *.z80
 *.sna
+# Comparison screenshots live outside the repository
+/*.png
