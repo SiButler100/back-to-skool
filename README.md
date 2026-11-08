@@ -38,14 +38,20 @@ src/main.js                 boots everything and runs the loop
 src/config.js               tuning numbers (speeds, delays, probabilities, scores)
 src/data/                   THE GAME AS DATA: map, cast, timetable, AI scripts, words
 src/engine/                 the rules: world, characters, commands, lessons, game loop
-src/render/                 drawing: font, sprites, backdrop, renderer, themes, original view, tape extractor
+src/render/                 drawing: font, painted stand-ins, renderer, themes, original view, tape extractor
+src/render/hd/              the modern view's HD pixel art: the format, people, objects, furniture, building, font, icons
+src/data/decor.js           how each room looks in the HD view (decoration only; the engine never reads it)
 src/ui/                     HUD, menus, keyboard, sound
 src/features/               plug-in extras (quest tracker, minimap, teacher radar) — add yours here
-tools/                      headless test runs and the single-file build
+tools/                      headless test runs, the sprite preview page and the single-file build
 dist/                       the built single-file game
 ```
 
 `ARCHITECTURE.md` explains how the pieces fit, with a diagram. `FEATURES.md` lists what is faithful to the original, what is new, what is not done yet, and how to add things.
+
+## The modern view
+
+The modern view is HD pixel art, drawn entirely by code: every sprite, room and icon is a small text bitmap or drawing routine under `src/render/hd/`, at twice the Spectrum's resolution. People are built from shared parts (legs, torso, arms, head, hat) dressed in each character's colours, so a new pupil needs no artwork. The building is painted from the map data plus `src/data/decor.js`, which describes what each room looks like. Open `tools/preview/index.html` from a local server to see every sprite and the whole backdrop at once. The "HD pixel art" option under Advanced switches back to the simple painted graphics.
 
 ## The original view
 
@@ -62,6 +68,8 @@ node tools/headless.mjs      # runs the whole school for a few thousand ticks an
 node tools/build-single-file.mjs   # rebuilds dist/back-to-skool.html
 node tools/check-extraction.mjs game.z80 [reference-png-dir]   # checks the in-browser graphics extractor
 ```
+
+For the artwork, serve the folder (any static server) and open `tools/preview/index.html`: every character and state, every object, and the backdrop, with any state still on a painted stand-in outlined in magenta.
 
 The playthrough is the strongest check: a scripted Eric walks the real routes (no teleporting), finds the pistol and stinkbombs, soaks the masters, writes the combinations, stinkbombs Mr Wacker into opening the window, climbs out on the plant, slips past Albert, climbs the gate, gets the sherry, catches the frog, rides the bike into the girls' school, drops the frog in the cup, knocks Miss Take over beneath it, takes the key and jumps up to the safe. It takes about half an hour of game time and a few minutes of real time. The only concession is that lines are uncapped during the run, because a scripted Eric loiters near teachers far more than a player would.
 

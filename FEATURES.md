@@ -19,7 +19,7 @@
 - **Four-action controls**: the original's fourteen keys are folded into the cursor keys plus jump, fire, act and drop (Z X C V); fire picks the water pistol when a cup or plant is in range, act does whatever is in front of Eric, drop is for stinkbombs and mice. Eric gets up by himself after being floored. The key strip under the canvas is always visible.
 - **Options**: view preset, game speed, sound; advanced: palette, view width (32 to 96 columns), status rows on canvas, smooth motion, retro scrolling, freeze-on-lines.
 - Smooth camera and eased sprite movement (switchable), synthesised sound, hi-score saved in the browser.
-- The modern view uses painted sprites and a painted backdrop (every colour is one line to change). The original view uses the 1985 artwork extracted in the browser from the player's own tape image or snapshot (`src/render/extract.js`, a port of Pyskool's extractor); no copyrighted graphics are in the repository or the build.
+- **HD pixel art in the modern view**, drawn entirely by code: sprites at twice the Spectrum's detail built from shared body parts in each character's colours, objects and furniture as pixel pictures, a building painted from the map data with an accurate floor plan (library, toilets, lab and storeroom, assembly hall and stage, cloakroom, dinner halls, the head's and Miss Take's studies, the girls' kitchen), a doubled font with a real lowercase, rounded speech bubbles and reprimand boxes, and pixel pocket icons in a game-style HUD bar. A developer preview page (`tools/preview/`) shows it all. The painted stand-ins remain behind an option. The original view uses the 1985 artwork extracted in the browser from the player's own tape image or snapshot (`src/render/extract.js`, a port of Pyskool's extractor); no copyrighted graphics are in the repository or the build.
 - Headless engine with two kinds of test: `tools/scenarios.mjs` checks each mechanic in isolation, and `tools/playthrough.mjs` plays the entire game from the first playtime to the safe by simulated key presses along the real routes. The playthrough found and fixed three faults in the port: plant pots were one row too low (Eric could never jump onto one, so the window and gate climbs were impossible), plants grew and wilted three times too fast, and the plant pot on the girls' side of the gate was missing from the map.
 
 ## Not done yet (honest list)
@@ -28,10 +28,10 @@
 
 - **Save and load** mid-game. Settings and hi-score persist; a game in progress does not.
 - **Touch controls** for phones and tablets. The page lays out responsively but there are no on-screen buttons.
-- **Lowercase blackboard text** is drawn as small capitals rather than a true lowercase font.
+- **Lowercase blackboard text** is small capitals in the original view's stand-ins; the HD view has a real lowercase.
 - **Special playtimes** (the original's occasional variant playtimes, e.g. the mumps) are not in the timetable data.
 - **Speech bubbles** scroll a single line, as the original did; a "show the whole sentence" modern mode would be a nice option.
-- **Sprite polish (modern view)**: the painted figures are deliberately simple. Each pose is a short painting routine in `src/render/sprites.js`; replacing them with hand-drawn pixel art is the obvious next visual step.
+- **Modern presentation, second pass**: motion polish (walk cycles with more frames, parallax, particles for water and stinkbombs, hit flashes), restyled menus and a title screen, and a soundtrack are not done; this pass changed the look only.
 - **Sound** is minimal beeps. The original tune and the up-a-year tune are not transcribed.
 - **Key rebinding UI**: bindings live in `src/ui/input.js` and are easy to edit, but there is no screen for it yet.
 - **Throwing the water pistol away** (the original's T key, which put a fresh water pistol back in a desk) is not mapped. Practical consequence: collect the four bike digits with water before you fill the pistol with sherry.

@@ -8,7 +8,7 @@ The game is split into three layers that only talk downwards:
 
 1. **Data** describes the school: the map, the people, the timetable, the AI scripts and every line of dialogue. It is just JavaScript objects. Change a number here and the game changes.
 2. **Engine** is the rulebook. It knows nothing about pixels. It can run headless in Node, which is how the tests work.
-3. **Presentation** draws the engine's state (renderer, HUD, menus, sound) and feeds it keyboard input. Swap this layer to change the look completely.
+3. **Presentation** draws the engine's state (renderer, HUD, menus, sound) and feeds it keyboard input. The renderer has three painters: the HD pixel-art view (`src/render/hd/`), the genuine 1985 graphics (`original.js`), and simple painted stand-ins; the engine is the same underneath all three.
 
 **Features** sit beside the presentation layer. They subscribe to the engine's events and add panels or behaviour without editing anything else.
 
@@ -20,6 +20,7 @@ flowchart TD
     tt[timetable.js<br/>64 periods + who does what]
     cl[commandLists.js<br/>AI scripts]
     msg[messages.js<br/>every word spoken or written]
+    decor[decor.js<br/>how rooms look in HD]
   end
 
   subgraph Engine["src/engine — the rules (no graphics)"]
@@ -36,12 +37,23 @@ flowchart TD
 
   subgraph Render["src/render — drawing"]
     font[font.js 5x7 bitmap font]
-    sprites[sprites.js painted sprites]
-    backdrop[backdrop.js the building]
+    sprites[sprites.js painted stand-ins]
+    backdrop[backdrop.js painted building]
     renderer[renderer.js camera + frame]
     theme[theme.js palettes]
     original[original.js 1985 painter]
     extract[extract.js tape → graphics]
+    subgraph HD["src/render/hd — HD pixel art"]
+      pixelart[pixelart.js the text bitmap format]
+      palette[palette.js wardrobe + slots]
+      people[people.js bodies from parts]
+      hdobjects[objects.js things]
+      furniture[furniture.js doors, cups, safe]
+      hdbackdrop[backdrop.js the building]
+      hdfont[font.js 2x face + lowercase]
+      icons[icons.js HUD pictures]
+      painter[painter.js ModernPainter]
+    end
   end
 
   subgraph UI["src/ui"]
@@ -87,6 +99,19 @@ flowchart TD
   theme --> renderer
   original --> renderer
   extract --> original
+  painter --> renderer
+  pixelart --> people
+  pixelart --> hdobjects
+  pixelart --> furniture
+  palette --> painter
+  people --> painter
+  hdobjects --> painter
+  furniture --> painter
+  hdbackdrop --> painter
+  hdfont --> painter
+  decor --> hdbackdrop
+  font --> hdfont
+  icons --> hud
   main --> game
   main --> renderer
   main --> hud
@@ -117,8 +142,9 @@ flowchart TD
 | Rename a character, change hair/clothes, add a pupil | `src/data/cast.js` (and `RANDOM_LOCATIONS`), then add them to each lesson in `src/data/timetable.js` |
 | Change what teachers write or say | `src/data/messages.js` |
 | Give a character a new routine | `src/data/commandLists.js`; new verbs go in `src/engine/commands.js` |
-| Change the look of the building | `src/render/backdrop.js` and `src/render/theme.js` |
-| Change how people look | `src/render/sprites.js` (modern view); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
+| Change the look of the building | `src/data/decor.js` (which room is where, its wall colour, its props) and `src/render/hd/backdrop.js` (how props are painted); colours in `theme.js` under `hd` |
+| Change how people look | `src/render/hd/palette.js` (each group's colours) and `src/render/hd/people.js` (the body parts, drawn as text bitmaps); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
+| Draw a new object or icon | `src/render/hd/objects.js`, `src/render/hd/icons.js`; the bitmap alphabet is explained at the top of `src/render/hd/pixelart.js` |
 | Add a panel, an overlay, a new rule | a new file in `src/features/`, registered in `src/features/index.js` |
 | Change the HUD or menus | `src/ui/hud.js`, `src/ui/menu.js`, `styles.css` |
 
