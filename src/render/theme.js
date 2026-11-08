@@ -62,6 +62,22 @@ export const THEMES = {
     // has this block; the Spectrum palette keeps the painted stand-ins.
     hd: {
       shadow: 'rgba(0,0,0,0.22)',
+      sky: ['#7fc3ef', '#dff1ff'],
+      skyline: 'rgba(90,120,160,0.18)',
+      ground: '#6c9a3f', groundEdge: '#4f7a2c', tarmac: '#8a8a8a',
+      brick: { boys: '#b9634c', boysDark: '#8e4634', girls: '#d7c39b', girlsDark: '#a68e68' },
+      plaster: { blue: '#bfe0f0', green: '#c8e3bd', yellow: '#f6e6a8', cream: '#f3e9d6', study: '#a9c8a2', cyan: '#c6ecea', tiles: '#f4f4f2', hall: '#ead9b9' },
+      grout: '#d8d8d2',
+      floorboard: '#8a5a35', floorboardLight: '#a66f3f', floorboardDark: '#5b3a22', floorShadow: 'rgba(0,0,0,0.28)',
+      wall: '#4a3324', wallLight: '#7a5a44',
+      doorFrame: '#5e3a18', doorway: '#2a1a0a',
+      stairs: '#7a4a28', stairsLight: '#a66f3f', stairsDark: '#4a2a14',
+      boardFrame: '#8a5a35', boardFrameLight: '#b07a3c',
+      wood: '#9a6a3c', woodLight: '#b8824a', woodDark: '#6a4524',
+      chair: '#7a5230', chairLight: '#9a6a3c', chairDark: '#5a3a20',
+      wallStone: '#b8b2a4', iron: '#2b2b33', ironLight: '#5a5a66',
+      trunk: '#5a3a1e', trunkLight: '#7a5230',
+      plaque: 'rgba(60,40,20,0.55)', plaqueInk: '#fff6e0',
     },
   },
   // The 1985 machine: eight colours, black ink figures, hard edges.
