@@ -8,7 +8,7 @@ The game is split into three layers that only talk downwards:
 
 1. **Data** describes the school: the map, the people, the timetable, the AI scripts and every line of dialogue. It is just JavaScript objects. Change a number here and the game changes.
 2. **Engine** is the rulebook. It knows nothing about pixels. It can run headless in Node, which is how the tests work.
-3. **Presentation** draws the engine's state (renderer, HUD, menus, sound) and feeds it keyboard input. The renderer has three painters: the HD pixel-art view (`src/render/hd/`), the genuine 1985 graphics (`original.js`), and simple painted stand-ins; the engine is the same underneath all three.
+3. **Presentation** draws the engine's state (renderer, HUD, menus, sound) and feeds it keyboard input. The renderer has four painters: illustrated artwork (`src/render/art/`, hand-painted-style pictures loaded from `assets/illustrated/`), the HD pixel-art view (`src/render/hd/`, which also stands in for any illustrated picture that is missing), the genuine 1985 graphics (`original.js`), and simple painted stand-ins; the engine is the same underneath all four.
 
 **Features** sit beside the presentation layer. They subscribe to the engine's events and add panels or behaviour without editing anything else.
 
@@ -54,6 +54,20 @@ flowchart TD
       icons[icons.js HUD pictures]
       painter[painter.js ModernPainter]
     end
+    subgraph Art["src/render/art — illustrated artwork"]
+      artassets[assets.js loads manifest + images]
+      illustrated[illustrated.js IllustratedPainter]
+    end
+  end
+
+  subgraph Assets["assets/illustrated — pictures"]
+    manifest[manifest.json which frame is where]
+    sheets[characters/*.png sprite sheets]
+  end
+
+  subgraph ArtTools["tools/art — the art pipeline"]
+    jobs[jobs.json every generation, recorded]
+    build[build.py slice, align, pack]
   end
 
   subgraph UI["src/ui"]
@@ -100,6 +114,14 @@ flowchart TD
   original --> renderer
   extract --> original
   painter --> renderer
+  painter --> illustrated
+  artassets --> illustrated
+  illustrated --> renderer
+  manifest --> artassets
+  sheets --> artassets
+  jobs --> build
+  build --> manifest
+  build --> sheets
   pixelart --> people
   pixelart --> hdobjects
   pixelart --> furniture
@@ -143,7 +165,8 @@ flowchart TD
 | Change what teachers write or say | `src/data/messages.js` |
 | Give a character a new routine | `src/data/commandLists.js`; new verbs go in `src/engine/commands.js` |
 | Change the look of the building | `src/data/decor.js` (which room is where, its wall colour, its props) and `src/render/hd/backdrop.js` (how props are painted); colours in `theme.js` under `hd` |
-| Change how people look | `src/render/hd/palette.js` (each group's colours) and `src/render/hd/people.js` (the body parts, drawn as text bitmaps); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
+| Change how a character looks in the illustrated view | regenerate their sheet: the prompt is in `tools/art/characters.json`, the generation record in `tools/art/jobs.json`; drop the new picture in `art-src/` and run `python3 tools/art/build.py <job>` (see `tools/art/prompts.md`) |
+| Change how people look in pixel art | `src/render/hd/palette.js` (each group's colours) and `src/render/hd/people.js` (the body parts, drawn as text bitmaps); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
 | Draw a new object or icon | `src/render/hd/objects.js`, `src/render/hd/icons.js`; the bitmap alphabet is explained at the top of `src/render/hd/pixelart.js` |
 | Add a panel, an overlay, a new rule | a new file in `src/features/`, registered in `src/features/index.js` |
 | Change the HUD or menus | `src/ui/hud.js`, `src/ui/menu.js`, `styles.css` |

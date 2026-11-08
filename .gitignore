@@ -10,3 +10,5 @@ assets/original/
 *.sna
 # Comparison screenshots live outside the repository
 /*.png
+art-src/
+art-work/

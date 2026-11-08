@@ -19,6 +19,8 @@ import { drawText, drawTextCentred, measureText, LINE_HEIGHT } from './font.js';
 import { THEMES } from './theme.js';
 import { OriginalPainter, originalMeasure, originalFontHas } from './original.js';
 import { ModernPainter } from './hd/painter.js';
+import { IllustratedPainter } from './art/illustrated.js';
+import { ArtAssets } from './art/assets.js';
 export { originalMeasure, originalFontHas };
 
 const C = SKOOL.cell;
@@ -30,7 +32,7 @@ export class Renderer {
     this.game = game;
     this.ctx = canvas.getContext('2d');
     this.ctx.imageSmoothingEnabled = false;
-    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, hdGraphics: true, onResize: null, ...options };
+    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, artwork: 'illustrated', onResize: null, ...options };
     this.original = new OriginalPainter();   // the 1985 artwork, used when originalGraphics is on
     this.scale = 1;                          // canvas pixels per game pixel (the HD painter asks for 2)
     this.setTheme(this.options.theme);
@@ -45,8 +47,21 @@ export class Renderer {
     this.options.theme = name;
     this.backdrop = buildBackdrop(this.theme);
     clearSpriteCache();
-    if (!this.hd) this.hd = new ModernPainter(this.theme); else this.hd.setTheme(this.theme);
+    if (!this.painters) {
+      // Two painters for the modern view: hand-made pixel art, and the
+      // illustrated artwork loaded from assets/illustrated (which falls back
+      // to the pixel art while loading or for anything it lacks).
+      this.assets = new ArtAssets();
+      this.painters = { pixel: new ModernPainter(this.theme), illustrated: new IllustratedPainter(this.theme, this.assets) };
+      this.assets.load();
+    } else {
+      this.painters.pixel.setTheme(this.theme); this.painters.illustrated.setTheme(this.theme);
+    }
+    this.hd = this.painters.pixel;   // the preview page and tests look here
   }
+
+  // The painter the artwork option asks for.
+  get painter() { return this.options.artwork === 'illustrated' ? this.painters.illustrated : this.painters.pixel; }
 
   // The view's width in game pixels (the canvas may be a multiple of this).
   get viewW() { return this.columns * C; }
@@ -66,7 +81,7 @@ export class Renderer {
   // can change mid-session (the tape loads, an option is toggled), so this is
   // checked every frame.
   ensureScale() {
-    const want = this.useOriginal() ? 1 : this.useHd() ? this.hd.scale : 1;
+    const want = this.useOriginal() ? 1 : this.useHd() ? this.painter.scale : 1;
     if (want !== this.scale) this.resize(this.columns, this.options.retroStatus, want);
   }
 
@@ -108,8 +123,8 @@ export class Renderer {
 
   // True when the view should use the genuine Spectrum graphics.
   useOriginal() { return this.options.originalGraphics && this.original.ready; }
-  // True when the view should use the HD pixel art (modern palette only).
-  useHd() { return !this.useOriginal() && this.options.hdGraphics && !!this.theme.hd; }
+  // True when the view should use the HD painters (modern palette only).
+  useHd() { return !this.useOriginal() && this.options.artwork !== 'painted' && !!this.theme.hd; }
 
   // ---- The frame -------------------------------------------------------------
   draw() {
@@ -152,7 +167,8 @@ export class Renderer {
   // The frame in HD pixel art. Anything without HD art yet is drawn with the
   // painted stand-in, enlarged, so nothing is ever missing from the screen.
   drawHd(cam) {
-    const p = this.hd, S = p.scale, { ctx, game } = this, viewW = this.viewW;
+    const p = this.painter, S = p.scale, { ctx, game } = this, viewW = this.viewW;
+    ctx.imageSmoothingEnabled = !!p.smooth;     // smooth for illustrations, crisp for pixel art
     ctx.save();
     ctx.translate(-cam * S, 0);
     p.drawBackdrop(ctx, cam, viewW);

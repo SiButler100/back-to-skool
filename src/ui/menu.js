@@ -139,7 +139,9 @@ export class Menu {
         <label class="opt"><span>Palette</span>
           <select data-setting="theme"><option value="modern" ${s.theme === 'modern' ? 'selected' : ''}>Modern</option><option value="spectrum" ${s.theme === 'spectrum' ? 'selected' : ''}>Spectrum</option></select></label>
         <label class="opt"><span>View width <output data-out="columns">${formatSetting('columns', s.columns)}</output></span><input type="range" min="32" max="96" step="8" value="${s.columns}" data-setting="columns"><small>32 columns is what the original showed.</small></label>
-        ${check('hdGraphics', 'HD pixel art', 'Hand-drawn pixel sprites and rooms at twice the detail, in the modern palette. Off shows the simple painted graphics.')}
+        <label class="opt"><span>Artwork</span>
+          <select data-setting="artwork"><option value="illustrated" ${s.artwork === 'illustrated' ? 'selected' : ''}>Illustrated</option><option value="pixel" ${s.artwork === 'pixel' ? 'selected' : ''}>HD pixel art</option><option value="painted" ${s.artwork === 'painted' ? 'selected' : ''}>Painted stand-ins</option></select>
+          <small>Illustrated is the lifelike artwork; pixel art is the hand-drawn 2x set; painted stand-ins are the simple shapes. Modern palette only.</small></label>
         ${check('originalGraphics', 'Original 1985 graphics', 'The Spectrum game\'s own school, sprites and font, loaded from your own tape image or snapshot in the original view.')}
         ${check('retroStatus', 'Status rows on the canvas', 'Score, lines and lesson drawn under the play area, as in 1985.')}
         ${check('smoothMotion', 'Smooth motion', 'Ease sprites between steps instead of 8-pixel hops.')}

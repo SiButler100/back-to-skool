@@ -1,0 +1,378 @@
+{
+  "notes": "One entry per generated sheet. 'source' is the downloaded file (art-src/, not committed); 'poses' names the cell contents in reading order (null = empty cell); 'nudge' moves a pose by HD pixels after alignment.",
+  "jobs": [
+    {
+      "id": "eric-1",
+      "kind": "characters",
+      "group": "ERIC",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "c8ca2ab3-5e92-42d8-9746-94118fb4bf63",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_215606_c8ca2ab3-5e92-42d8-9746-94118fb4bf63.png",
+      "source": "art-src/eric-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 4,
+        "cols": 4
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT",
+        "ARM_UP",
+        "HITTING0",
+        "HITTING1",
+        "CATAPULT0",
+        "CATAPULT1",
+        "WATERPISTOL",
+        "RIDING_BIKE0",
+        "RIDING_BIKE1",
+        "BENDING_OVER",
+        null
+      ],
+      "nudge": {},
+      "notes": "The model returned a transparent background, so no keying."
+    },
+    {
+      "id": "boy-1",
+      "kind": "characters",
+      "group": "BOY",
+      "variant": "A",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "4f3bacef-9830-4eda-ad82-b37c34bba748",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_221105_4f3bacef-9830-4eda-ad82-b37c34bba748.png",
+      "source": "art-src/boy-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: a young English schoolboy pupil in a 1985 school uniform, navy blazer, white shirt, red and navy striped tie, grey shorts, grey knee socks, black shoes, neat short dark brown hair, ordinary friendly face. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: cartoon dizzy, lying on the back on the floor after a comedy fall, head to the left, little cartoon stars above the head.",
+      "notes": "First attempt was blocked by the safety filter; reworded and resubmitted."
+    },
+    {
+      "id": "girl-1",
+      "kind": "characters",
+      "group": "GIRL",
+      "variant": "A",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "fa79bcde-0d0a-462b-ac52-8584759addd1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220939_fa79bcde-0d0a-462b-ac52-8584759addd1.png",
+      "source": "art-src/girl-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: a twelve-year-old English schoolgirl in a 1985 uniform, royal-blue pinafore dress over a white blouse, white knee socks, black buckled shoes, shoulder-length brown hair held back with a blue hairband, friendly face. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: lying flat on the back knocked out, head to the left, little stars above the head."
+    },
+    {
+      "id": "swot-1",
+      "kind": "characters",
+      "group": "SWOT",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "132fd05d-bdc1-4744-a1ea-cd45d8e70ce1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220940_132fd05d-bdc1-4744-a1ea-cd45d8e70ce1.png",
+      "source": "art-src/swot-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Einstein, a thin, pale fourteen-year-old English schoolboy, the class swot, round wire-rimmed glasses, neatly combed brown hair with a side parting, navy blazer over a green V-neck jumper, white shirt, striped tie, grey shorts, grey knee socks, black shoes, earnest expression. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: lying flat on the back knocked out, head to the left, little stars above the head."
+    },
+    {
+      "id": "bully-1",
+      "kind": "characters",
+      "group": "BULLY",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "400975ab-0b04-479c-9e7c-1c885ed88286",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220938_400975ab-0b04-479c-9e7c-1c885ed88286.png",
+      "source": "art-src/bully-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 3,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT",
+        "HITTING0",
+        "HITTING1",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 3 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Angelface, a big heavy-set fourteen-year-old English schoolboy, the class bully, square jaw, scowl, short black hair, navy blazer straining at the shoulders, white shirt with the tie loosened, grey shorts, grey socks, scuffed black shoes. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: lying flat on the back knocked out, head to the left, little stars above the head; cell 7: standing with the fist pulled back ready to punch; cell 8: punching straight forward; cell 9: standing with arms folded."
+    },
+    {
+      "id": "tearaway-1",
+      "kind": "characters",
+      "group": "TEARAWAY",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "b1a1a11c-c778-4765-a956-c1fef9350177",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220939_b1a1a11c-c778-4765-a956-c1fef9350177.png",
+      "source": "art-src/tearaway-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 3,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT",
+        "ARM_UP",
+        "CATAPULT0",
+        "CATAPULT1"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 3 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Boy Wander, a wiry fourteen-year-old English schoolboy, the tearaway, untidy spiky blond hair, mischievous grin, navy blazer worn open, shirt untucked, tie askew, grey shorts, one grey sock fallen down, black shoes. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: lying flat on the back knocked out, head to the left, little stars above the head; cell 7: standing with the right arm raised straight up, hand open; cell 8: holding a wooden catapult low; cell 9: aiming a wooden catapult straight ahead, elastic drawn back."
+    },
+    {
+      "id": "heroine-1",
+      "kind": "characters",
+      "group": "HEROINE",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "e6502556-9c3b-41bb-a97d-fb11c1e95428",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220940_e6502556-9c3b-41bb-a97d-fb11c1e95428.png",
+      "source": "art-src/heroine-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 3,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT",
+        "ARM_UP",
+        "KISSING_ERIC",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 3 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Hayley, a fourteen-year-old English schoolgirl, the heroine, long golden-blonde hair, kind pretty face, pink dress with a white collar, white socks, black shoes. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: lying flat on the back knocked out, head to the left, little stars above the head; cell 7: standing with the right arm raised straight up, hand open; cell 8: hugging and kissing a boy in a navy blazer and grey shorts on the cheek, little pink hearts; cell 9: standing with arms folded."
+    },
+    {
+      "id": "wacker-1",
+      "kind": "characters",
+      "group": "WACKER",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "9dee3e79-10b0-41fd-84da-2b916ec5a0eb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220941_9dee3e79-10b0-41fd-84da-2b916ec5a0eb.png",
+      "source": "art-src/wacker-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 4,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "ARM_UP",
+        "KNOCKED_OVER",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Mr Wacker, the headmaster, a tall gaunt man in his sixties, severe lined face, thin white hair, black academic gown flowing over a black three-piece suit, white shirt, black tie, black mortarboard with a tassel, black polished shoes. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: standing with the right arm raised straight up, hand open; cell 5: sitting on the floor dazed, legs out in front, little stars circling the head; cell 6: standing with arms folded."
+    },
+    {
+      "id": "withit-1",
+      "kind": "characters",
+      "group": "WITHIT",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "160418ed-95fb-4769-814b-7b4c26638586",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220940_160418ed-95fb-4769-814b-7b4c26638586.png",
+      "source": "art-src/withit-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 4,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "ARM_UP",
+        "KNOCKED_OVER",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Mr Withit, the geography master, a man in his forties, dark full beard and dark hair, green corduroy jacket with elbow patches, brown waistcoat, red tie, dark green trousers, brown brogues. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: standing with the right arm raised straight up, hand open; cell 5: sitting on the floor dazed, legs out in front, little stars circling the head; cell 6: standing with arms folded."
+    },
+    {
+      "id": "rockitt-1",
+      "kind": "characters",
+      "group": "ROCKITT",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "8bb1f665-8183-40e8-8e62-10cecf458725",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220938_8bb1f665-8183-40e8-8e62-10cecf458725.png",
+      "source": "art-src/rockitt-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 4,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "ARM_UP",
+        "KNOCKED_OVER",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Mr Rockitt, the science master, a man in his fifties, grey receding hair, half-moon spectacles, white laboratory coat open over a dark blue suit, blue tie, dark trousers, black shoes. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: standing with the right arm raised straight up, hand open; cell 5: sitting on the floor dazed, legs out in front, little stars circling the head; cell 6: standing with arms folded."
+    },
+    {
+      "id": "creak-1",
+      "kind": "characters",
+      "group": "CREAK",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "b63d1504-aca3-4350-aeb4-3b1be68522b6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220940_b63d1504-aca3-4350-aeb4-3b1be68522b6.png",
+      "source": "art-src/creak-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 4,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "ARM_UP",
+        "KNOCKED_OVER",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Mr Creak, the history master, a very old stooped man, bald on top with wispy white hair at the sides, brown tweed three-piece suit, maroon bow tie, brown trousers, brown shoes, walking slightly hunched forward. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: standing with the right arm raised straight up, hand open; cell 5: sitting on the floor dazed, legs out in front, little stars circling the head; cell 6: standing with arms folded."
+    },
+    {
+      "id": "take-1",
+      "kind": "characters",
+      "group": "TAKE",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "5703cb5e-ae97-44da-b835-7c3bc12b9331",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220939_5703cb5e-ae97-44da-b835-7c3bc12b9331.png",
+      "source": "art-src/take-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 4,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "ARM_UP",
+        "KNOCKED_OVER",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Miss Take, the headmistress of the girls' school, a stern woman in her fifties, brown hair in a tight bun, pearl necklace, long purple dress with a white collar and long sleeves, dark stockings, black court shoes. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: standing with the right arm raised straight up, hand open; cell 5: sitting on the floor dazed, legs out in front, little stars circling the head; cell 6: standing with arms folded."
+    },
+    {
+      "id": "albert-1",
+      "kind": "characters",
+      "group": "ALBERT",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "c59939d5-5bdf-4f60-88bd-b1a424720944",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_220939_c59939d5-5bdf-4f60-88bd-b1a424720944.png",
+      "source": "art-src/albert-1.png",
+      "key": null,
+      "tolerance": 80,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 4,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "ARM_UP",
+        "KNOCKED_OVER",
+        null
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Albert, the school caretaker, a stocky man in his sixties, grey stubble, grey hair under a brown flat cap, brown overall coat over a checked shirt, dark trousers, heavy black boots, a bunch of keys at his belt. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: standing with the right arm raised straight up, hand open; cell 5: sitting on the floor dazed, legs out in front, little stars circling the head; cell 6: standing with arms folded."
+    }
+  ]
+}

@@ -1,0 +1,386 @@
+{
+  "groups": {
+    "ERIC": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "SITTING_ON_CHAIR",
+      "SITTING_ON_FLOOR",
+      "KNOCKED_OUT",
+      "ARM_UP",
+      "HITTING0",
+      "HITTING1",
+      "CATAPULT0",
+      "CATAPULT1",
+      "RIDING_BIKE0",
+      "RIDING_BIKE1",
+      "WATERPISTOL",
+      "BENDING_OVER"
+    ],
+    "BOY": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "SITTING_ON_CHAIR",
+      "SITTING_ON_FLOOR",
+      "KNOCKED_OUT"
+    ],
+    "GIRL": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "SITTING_ON_CHAIR",
+      "SITTING_ON_FLOOR",
+      "KNOCKED_OUT"
+    ],
+    "SWOT": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "SITTING_ON_CHAIR",
+      "SITTING_ON_FLOOR",
+      "KNOCKED_OUT"
+    ],
+    "BULLY": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "SITTING_ON_CHAIR",
+      "SITTING_ON_FLOOR",
+      "KNOCKED_OUT",
+      "HITTING0",
+      "HITTING1"
+    ],
+    "TEARAWAY": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "SITTING_ON_CHAIR",
+      "SITTING_ON_FLOOR",
+      "KNOCKED_OUT",
+      "ARM_UP",
+      "CATAPULT0",
+      "CATAPULT1"
+    ],
+    "HEROINE": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "SITTING_ON_CHAIR",
+      "SITTING_ON_FLOOR",
+      "KNOCKED_OUT",
+      "ARM_UP",
+      "KISSING_ERIC"
+    ],
+    "WACKER": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "KNOCKED_OVER",
+      "ARM_UP"
+    ],
+    "WITHIT": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "KNOCKED_OVER",
+      "ARM_UP"
+    ],
+    "ROCKITT": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "KNOCKED_OVER",
+      "ARM_UP"
+    ],
+    "CREAK": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "KNOCKED_OVER",
+      "ARM_UP"
+    ],
+    "TAKE": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "KNOCKED_OVER",
+      "ARM_UP"
+    ],
+    "ALBERT": [
+      "WALK0",
+      "WALK1",
+      "WALK2",
+      "WALK3",
+      "KNOCKED_OVER",
+      "ARM_UP"
+    ]
+  },
+  "objects": [
+    "FLY",
+    "WATER0",
+    "WATER1",
+    "WATER2",
+    "WATER3",
+    "WATER4",
+    "WATER_DROP",
+    "SHERRY_DROP",
+    "CONKER",
+    "RUN",
+    "SIT",
+    "HOP1",
+    "HOP2",
+    "STINKBOMB",
+    "DESK_EMPTY",
+    "DESK_WATER_PISTOL",
+    "DESK_STINKBOMBS",
+    "BIKE_ON_FLOOR",
+    "BIKE_UPRIGHT",
+    "PLANT_GROWING",
+    "PLANT_GROWN"
+  ],
+  "zones": [
+    {
+      "id": "BlueRoom",
+      "x0": 0,
+      "x1": 24,
+      "storey": "top"
+    },
+    {
+      "id": "Library",
+      "x0": 24,
+      "x1": 40,
+      "storey": "top"
+    },
+    {
+      "id": "YellowRoom",
+      "x0": 40,
+      "x1": 64,
+      "storey": "top"
+    },
+    {
+      "id": "HeadsCorridor",
+      "x0": 64,
+      "x1": 71,
+      "storey": "top"
+    },
+    {
+      "id": "HeadsStudy",
+      "x0": 74,
+      "x1": 84,
+      "storey": "top"
+    },
+    {
+      "id": "Landing",
+      "x0": 87,
+      "x1": 95,
+      "storey": "top"
+    },
+    {
+      "id": "UpperRoom",
+      "x0": 159,
+      "x1": 181,
+      "storey": "top"
+    },
+    {
+      "id": "TakesStudy",
+      "x0": 181,
+      "x1": 192,
+      "storey": "top"
+    },
+    {
+      "id": "Toilets",
+      "x0": 0,
+      "x1": 15,
+      "storey": "middle"
+    },
+    {
+      "id": "Corridor",
+      "x0": 15,
+      "x1": 30,
+      "storey": "middle"
+    },
+    {
+      "id": "ScienceLab",
+      "x0": 30,
+      "x1": 55,
+      "storey": "middle"
+    },
+    {
+      "id": "Storeroom",
+      "x0": 55,
+      "x1": 64,
+      "storey": "middle"
+    },
+    {
+      "id": "HallUpper",
+      "x0": 64,
+      "x1": 77,
+      "storey": "middle"
+    },
+    {
+      "id": "StageUpper",
+      "x0": 77,
+      "x1": 95,
+      "storey": "middle"
+    },
+    {
+      "id": "MiddleRoom",
+      "x0": 159,
+      "x1": 180,
+      "storey": "middle"
+    },
+    {
+      "id": "GirlsCorridor",
+      "x0": 180,
+      "x1": 192,
+      "storey": "middle"
+    },
+    {
+      "id": "Cloakroom",
+      "x0": 0,
+      "x1": 23,
+      "storey": "ground"
+    },
+    {
+      "id": "CupCorridor",
+      "x0": 23,
+      "x1": 42,
+      "storey": "ground"
+    },
+    {
+      "id": "DinnerHall",
+      "x0": 42,
+      "x1": 63,
+      "storey": "ground"
+    },
+    {
+      "id": "AssemblyHall",
+      "x0": 63,
+      "x1": 77,
+      "storey": "ground"
+    },
+    {
+      "id": "Stage",
+      "x0": 77,
+      "x1": 82,
+      "storey": "ground"
+    },
+    {
+      "id": "UnderLanding",
+      "x0": 82,
+      "x1": 93,
+      "storey": "ground"
+    },
+    {
+      "id": "GirlsDinner",
+      "x0": 159,
+      "x1": 181,
+      "storey": "ground"
+    },
+    {
+      "id": "Kitchen",
+      "x0": 181,
+      "x1": 192,
+      "storey": "ground"
+    }
+  ],
+  "furniture": {
+    "door:shut": {
+      "w": 96,
+      "h": 176
+    },
+    "door:open": {
+      "w": 96,
+      "h": 176
+    },
+    "gate:shut": {
+      "w": 128,
+      "h": 144
+    },
+    "gate:open": {
+      "w": 128,
+      "h": 144
+    },
+    "window3x3:shut": {
+      "w": 96,
+      "h": 96
+    },
+    "window3x3:open": {
+      "w": 96,
+      "h": 96
+    },
+    "window2x4:shut": {
+      "w": 64,
+      "h": 128
+    },
+    "window2x4:open": {
+      "w": 64,
+      "h": 128
+    },
+    "cabinet:shut": {
+      "w": 80,
+      "h": 72
+    },
+    "cabinet:open": {
+      "w": 80,
+      "h": 72
+    },
+    "safe": {
+      "w": 80,
+      "h": 56
+    },
+    "cup:EMPTY": {
+      "w": 40,
+      "h": 32
+    },
+    "cup:WATER": {
+      "w": 40,
+      "h": 32
+    },
+    "cup:SHERRY": {
+      "w": 40,
+      "h": 32
+    },
+    "cup:FROG": {
+      "w": 40,
+      "h": 32
+    },
+    "blackboard": {
+      "w": 280,
+      "h": 104
+    },
+    "desk": {
+      "w": 112,
+      "h": 96
+    },
+    "tree": {
+      "w": 448,
+      "h": 640
+    },
+    "railing": {
+      "w": 32,
+      "h": 144
+    },
+    "conker": {
+      "w": 16,
+      "h": 16
+    },
+    "bike": {
+      "w": 96,
+      "h": 64
+    }
+  }
+}

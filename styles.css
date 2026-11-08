@@ -231,6 +231,8 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .tape-button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); cursor: pointer; white-space: nowrap; }
 .tape-status { font-size: 13px; color: var(--ink); }
 
+html.art-illustrated #game { image-rendering: auto; }   /* smooth scaling for the illustrated artwork */
+
 /* ---- Modern view chrome ------------------------------------------------------
    A game-style HUD bar flush on top of the screen, pixel keycaps and plan chips.
    Only applies with the modern view; the original view keeps its own look. */

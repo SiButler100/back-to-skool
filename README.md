@@ -39,7 +39,10 @@ src/config.js               tuning numbers (speeds, delays, probabilities, score
 src/data/                   THE GAME AS DATA: map, cast, timetable, AI scripts, words
 src/engine/                 the rules: world, characters, commands, lessons, game loop
 src/render/                 drawing: font, painted stand-ins, renderer, themes, original view, tape extractor
-src/render/hd/              the modern view's HD pixel art: the format, people, objects, furniture, building, font, icons
+src/render/hd/              HD pixel art: the format, people, objects, furniture, building, font, icons (also the fallback)
+src/render/art/             the illustrated view: loads assets/illustrated/ and draws it, falling back to pixel art
+assets/illustrated/         the illustrated artwork itself (sprite sheets and a manifest saying which frame is where)
+tools/art/                  the art pipeline: prompts, a record of every generation, and the scripts that cut and pack sheets
 src/data/decor.js           how each room looks in the HD view (decoration only; the engine never reads it)
 src/ui/                     HUD, menus, keyboard, sound
 src/features/               plug-in extras (quest tracker, minimap, teacher radar) — add yours here
@@ -51,7 +54,7 @@ dist/                       the built single-file game
 
 ## The modern view
 
-The modern view is HD pixel art, drawn entirely by code: every sprite, room and icon is a small text bitmap or drawing routine under `src/render/hd/`, at twice the Spectrum's resolution. People are built from shared parts (legs, torso, arms, head, hat) dressed in each character's colours, so a new pupil needs no artwork. The building is painted from the map data plus `src/data/decor.js`, which describes what each room looks like. Open `tools/preview/index.html` from a local server to see every sprite and the whole backdrop at once. The "HD pixel art" option under Advanced switches back to the simple painted graphics.
+The modern view has two kinds of artwork, chosen under Advanced → Artwork. **Illustrated** (the default) draws hand-painted-style characters with human proportions from sprite sheets in `assets/illustrated/`; each frame sits in a 96×128 box at four times the Spectrum's resolution, and the manifest records where its feet are so it stands exactly where the engine says. The pictures were generated with an image model from the prompts in `tools/art/` and processed by the scripts there; anything the manifest lacks is drawn by the pixel-art painter instead, so the game is always complete. **HD pixel art** is drawn entirely by code: every sprite, room and icon is a small text bitmap or drawing routine under `src/render/hd/`, at twice the Spectrum's resolution. The building is painted from the map data plus `src/data/decor.js`, which describes what each room looks like. Open `tools/preview/index.html` from a local server (add `?art=illustrated` for the illustrated frames) to see every sprite and the whole backdrop at once. **Painted stand-ins** are the simple shapes the project started with.
 
 ## The original view
 
@@ -69,7 +72,7 @@ node tools/build-single-file.mjs   # rebuilds dist/back-to-skool.html
 node tools/check-extraction.mjs game.z80 [reference-png-dir]   # checks the in-browser graphics extractor
 ```
 
-For the artwork, serve the folder (any static server) and open `tools/preview/index.html`: every character and state, every object, and the backdrop, with any state still on a painted stand-in outlined in magenta.
+For the artwork, serve the folder (any static server) and open `tools/preview/index.html`: every character and state, every object, and the backdrop, with any state still on a painted stand-in outlined in magenta. Add `?art=illustrated` to see the illustrated frames over their 96×128 boxes; a magenta outline there means the frame is missing from the manifest and pixel art is standing in. `python3 tools/art/build.py --report` lists the same gaps from the command line.
 
 The playthrough is the strongest check: a scripted Eric walks the real routes (no teleporting), finds the pistol and stinkbombs, soaks the masters, writes the combinations, stinkbombs Mr Wacker into opening the window, climbs out on the plant, slips past Albert, climbs the gate, gets the sherry, catches the frog, rides the bike into the girls' school, drops the frog in the cup, knocks Miss Take over beneath it, takes the key and jumps up to the safe. It takes about half an hour of game time and a few minutes of real time. The only concession is that lines are uncapped during the run, because a scripted Eric loiters near teachers far more than a player would.
 
