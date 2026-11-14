@@ -23,10 +23,14 @@ export class Thing {
     this.width = 3; this.height = 4;
     this.moveDelay = moveDelay;
     this.delay = 0;
+    this.template = commandList;
     this.commandList = new CommandList(this);
     this.commandList.setTemplate(commandList);
     this.barrier = null; this.floor = null;
   }
+  // A new game: forget whatever the old game left half done (a pellet in
+  // mid-flight, a mouse about to come out of hiding, a lid half open).
+  restartScript() { this.commandList = new CommandList(this); this.commandList.setTemplate(this.template); this.delay = 0; }
   isEric() { return false; }
   isAdult() { return false; }
   hide() { this.visible = false; this.x = -3; }
@@ -48,7 +52,10 @@ export class Pellet extends Thing {
     super(id, services, [['MovePellet']], 1);
     this.owner = owner;
     this.range = 13; this.hitZone = 5; this.hitXY = [1, 1];
-    this.width = 1; this.height = 1;
+    // Three cells wide, like everything else, when walls and doors are asked
+    // whether they are in the way. (At one cell wide a pellet flying to the
+    // right went straight through shut doors, windows and walls.)
+    this.width = 3; this.height = 1;
     this.animatoryState = 'FLY';
   }
   impeded(bottomY, topY) { return topY <= this.y + 1 && this.y + 1 <= bottomY; }
@@ -125,8 +132,11 @@ export class Conker extends Droppable {
     super(id, services, [1, 3], 'CONKER');
     this.box = box;   // {minX, maxX, minY, maxY}
   }
+  // The conker's box is measured against the pellet's own position (its top-left
+  // cell), which is how the box was laid out; against the pellet's hit point,
+  // one row lower, no pellet could ever reach it.
   hitBy(pellet) {
-    const [px, py] = pellet.hitCoords();
+    const px = pellet.x, py = pellet.y;
     return !this.visible && this.box.minX <= px && px <= this.box.maxX && this.box.minY <= py && py <= this.box.maxY;
   }
   hitVictim() {
@@ -152,7 +162,11 @@ export class Mouse extends Thing {
   isBlocked(distance = 0) {
     if (this.world.barrier(this, distance)) return true;
     const s = this.world.staircase(this, distance);
-    return !!(s && s.force);
+    if (s && s.force) return true;
+    // The end of the floor is as good as a wall: no running off the stage into thin air.
+    const floor = this.world.floor(this);
+    const ahead = this.x + this.direction * Math.max(distance, 1);
+    return !!floor && (ahead < floor.minX || ahead > floor.maxX);
   }
   isCatchableAt(x, y) { return this.visible && x === this.x + this.spriteXY[0] && y === this.y + this.spriteXY[1]; }
   scarePeople() { this.cast.scareMusophobes(this); }
@@ -177,7 +191,11 @@ export class Frog extends Thing {
   isBlocked(distance = 0) {
     if (this.world.barrier(this, distance)) return true;
     const s = this.world.staircase(this, distance);
-    return !!(s && s.force);
+    if (s && s.force) return true;
+    // The end of the floor is as good as a wall: no running off the stage into thin air.
+    const floor = this.world.floor(this);
+    const ahead = this.x + this.direction * Math.max(distance, 1);
+    return !!floor && (ahead < floor.minX || ahead > floor.maxX);
   }
   isCatchableAt(x, y) { return this.visible && this.animatoryState === 'SIT' && x === this.x + this.sitXY[0] && y === this.y + this.sitXY[1]; }
   insertIntoCup(cup) { this.trapped = true; this.visible = true; this.x = cup.x - this.sitXY[0]; this.y = cup.y - this.sitXY[1]; cup.frogs.push(this); }

@@ -110,7 +110,7 @@ export class Game {
 
     if (this.timetable.tick()) this.nextLesson(true);
     this.cast.move();
-    this.world.autoShutDoors();
+    for (const door of this.world.autoShutDoors((d) => this.cast.isDoorwayClear(d))) this.events.emit('door', { id: door.id, shut: true });
     this.events.emit('tick', { tick: this.tickCount });
   }
 
@@ -125,6 +125,10 @@ export class Game {
     this.events.emit('linesTotal', { lines: this.lines });
     if (this.lines >= this.config.maxLines && !this.cast.eric.expelled) {
       this.cast.eric.expelled = true;
+      // The clock stops here and now. If the bell could still ring, it would
+      // hand Mr Wacker a new script and Eric would be left expelled but never
+      // thrown out, in a game that could not end.
+      this.stopClock();
       this.expelEric('ExpelEric:TooManyLines');
     }
   }

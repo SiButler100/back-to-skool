@@ -177,6 +177,7 @@ export class Eric extends Character {
   // The Drop key: a stinkbomb while Eric has any; otherwise let the mice go.
   dropAction() {
     if (this.canDropStinkbomb()) return new cmd.DropStinkbomb();
+    if (this.hasStinkbomb()) return null;      // one is still in the air: wait, do not spend the mice instead
     if (this.canReleaseMice()) { this.bendOver(); return new cmd.ReleaseMice(); }
     return null;
   }

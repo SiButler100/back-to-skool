@@ -344,7 +344,13 @@ export class World {
   // ---- Doors -----------------------------------------------------------------
   isDoorShut(id) { const d = this.getDoor(id); return d ? d.isShut() : false; }
   moveDoor(id, shut) { const d = this.getDoor(id); if (d) d.move(shut); return d; }
-  autoShutDoors() { for (const d of this.doors.values()) if (d.autoShut()) d.move(true); }
+  // Self-closing doors shut when their time is up and the doorway is clear;
+  // returns the doors that shut this tick.
+  autoShutDoors(isClear = () => true) {
+    const shut = [];
+    for (const d of this.doors.values()) if (d.autoShut() && isClear(d)) { d.move(true); shut.push(d); }
+    return shut;
+  }
 
   // ---- Safe, cabinet, cups, desks -------------------------------------------
   isSafeAt(x, y) { return this.safe.x === x && this.safe.y === y; }

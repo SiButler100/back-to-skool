@@ -519,7 +519,7 @@ export class HitNowAndThen extends HitOrFireNowAndThen {
   ready() {
     const c = this.character;
     if (!super.ready()) return false;
-    if (!c.getPunchee(1)) return false;
+    if (!c.getPunchee(3)) return false;    // wind up when the victim is three cells off: he is at two (in reach) when the fist lands
     return c.willHit();
   }
   getCommand() { return new Hit(); }
@@ -866,7 +866,7 @@ export class Kiss extends ComplexCommand {
   finishKiss() {
     const c = this.character;
     if (this.kissee) {
-      if (this.kissee.isKissingEric()) { c.kiss(); c.unhide(); this.kissee.finishKiss(); }
+      if (this.kissee.isKissingEric()) { c.unhide(); c.kiss(); this.kissee.finishKiss(); }   // back in view first, so the kiss is announced where it happened
       else { this.kissee.lowerArm(); c.deck(); }
       this.kissee.resume();
     } else {

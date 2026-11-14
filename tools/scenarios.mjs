@@ -248,5 +248,94 @@ function press(game, input, action, ticks, settle = 12) {
   check('A pellet through empty cups reports each one', empties.join(',') === 'MiddleCup,RightCup', empties.join(','));
 }
 
+// ---- Faults found by the independent engine review ----------------------------
+{
+  // A new game begun while Eric is half-way down a stair step.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  place(eric, 21, 16, 1); input.hold('down');
+  for (let i = 0; i < 40 && eric.verticalDirection !== 1; i++) game.tick();
+  input.unhold('down');
+  const wasMidStep = eric.verticalDirection === 1;
+  game.endGame(); game.start(); freezeCast(game);
+  input.hold('left'); run(game, 12); input.unhold('left'); run(game, 40);
+  check('A new game begun mid-step on the stairs does not drop Eric through the floor', wasMidStep && eric.y === 17, `mid-step ${wasMidStep}, y=${eric.y}`);
+}
+{
+  // The conker can be shot out of the tree from the top floor, and it floors Albert.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  game.world.moveDoor('UpperWindow', false);
+  let fell = false;
+  for (let x = 80; x <= 90 && !fell; x++) { place(eric, x, 3, 1); input.tap('fire'); run(game, 60, () => { if (game.cast.conker.visible) fell = true; }); }
+  check('A pellet fired through the open top-floor window knocks the conker out of the tree', fell);
+
+  const g2 = freshGame(); freezeCast(g2.game);
+  const albert = g2.game.cast.get('ALBERT'); const conked = [];
+  g2.game.events.on('conked', ({ victim }) => conked.push(victim.id));
+  place(albert, 100, 17, -1); g2.game.cast.conker.fall(101, 3); run(g2.game, 80);
+  check('The conker knocks Albert out', conked.includes('ALBERT'), conked.join(','));
+}
+{
+  // Pellets stop at shut doors whichever way they fly.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  const door = game.world.doors.get('ScienceLabDoor');
+  let maxX = 0; place(eric, 45, 10, 1); input.tap('fire'); run(game, 40, () => { if (eric.pellet.visible) maxX = Math.max(maxX, eric.pellet.x); });
+  check('A pellet flying right stops at a shut door', door.isShut() && maxX > 45 && maxX < door.x, `door at ${door.x}, pellet reached ${maxX}`);
+}
+{
+  // Mice let go by Eric run along the floor he is standing on.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  place(eric, 120, 17, 1); eric.mice = 3; input.tap('drop'); run(game, 12);
+  const rows = game.cast.mice.filter((m) => !m.immortal).map((m) => m.y);
+  check('Released mice run along the floor', rows.length === 3 && rows.every((y) => y === 17), rows.join(','));
+
+  // With stinkbombs in his pocket, the Drop key never spends the mice.
+  const g2 = freshGame(); freezeCast(g2.game);
+  place(g2.eric, 120, 17, 1); g2.eric.inventory.add('STINKBOMBS3'); g2.eric.mice = 4;
+  g2.input.tap('drop'); run(g2.game, 12); g2.input.tap('drop'); run(g2.game, 12);
+  check('Drop pressed twice quickly drops one stinkbomb and keeps the mice', g2.eric.mice === 4 && g2.eric.inventory.has('STINKBOMBS2'), `mice ${g2.eric.mice}, ${[...g2.eric.inventory].join(',')}`);
+}
+{
+  // A teacher sent running is let off at the next bell.
+  const { game } = freshGame();
+  const creak = game.cast.get('CREAK'); creak.goFast();
+  game.nextLesson(false);
+  check('A teacher who was running walks again after the bell', creak.fixedSpeed === false);
+}
+{
+  // The 10,000th line arriving just before the bell still ends the game.
+  const { game } = freshGame();
+  while (game.timetable.counter > 2) game.tick();
+  game.addLines(game.config.maxLines - game.lines);
+  for (let i = 0; i < 40000 && !game.gameOver; i++) { game.setVisibleColumns(0, 191); game.tick(); }
+  check('Reaching the lines limit just before the bell still gets Eric expelled', game.gameOver, `gameOver ${game.gameOver}`);
+}
+{
+  // A pellet in the air when a game ends does not haunt the next game.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  place(eric, 60, 17, -1); input.tap('fire'); run(game, 9);
+  const inFlight = eric.pellet.visible;
+  game.endGame(); game.start(); freezeCast(game);
+  const xs = []; place(eric, 60, 17, 1); input.tap('fire'); run(game, 30, () => { if (eric.pellet.visible) xs.push(eric.pellet.x); });
+  check('The first shot of a new game flies the way Eric faces', inFlight && xs.length >= 10 && xs[xs.length - 1] > xs[0], xs.join(','));
+}
+{
+  // A self-closing door waits for whoever is standing in it.
+  const { game, eric } = freshGame(); freezeCast(game);
+  const door = game.world.doors.get('StudyBackDoor');
+  place(eric, door.x - 1, 3, 1); game.world.moveDoor(door.id, false); run(game, 80);
+  const waited = !door.isShut();
+  place(eric, door.x - 10, 3, -1); run(game, 60);
+  check('A self-closing door stays open while someone stands in it, then shuts', waited && door.isShut(), `waited ${waited}, shut ${door.isShut()}`);
+}
+{
+  // The kiss is announced with Eric back where he stood, not while he is hidden.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  const hayley = game.cast.get('HEROINE') || game.cast.characters.find((c) => c.canKissEric());
+  const seen = []; game.events.on('kiss', () => seen.push([eric.x, eric.visible]));
+  place(eric, 120, 17, 1); place(hayley, 120 + game.config.kissDistance, 17, -1);
+  input.tap('act'); run(game, 40);
+  check('The kiss is announced with Eric in view', seen.length === 1 && seen[0][0] > 0 && seen[0][1] === true, JSON.stringify(seen));
+}
+
 console.log(failures ? `\n${failures} check(s) failed` : '\nAll checks passed');
 process.exitCode = failures ? 1 : 0;

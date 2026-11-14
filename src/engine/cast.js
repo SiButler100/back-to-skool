@@ -108,6 +108,8 @@ export class Cast {
     this.mice = [this.mouse]; this.mouse.visible = true; [this.mouse.x, this.mouse.y] = [17, 3];
     for (const t of [this.water, this.waterDrop, this.sherryDrop, this.conker, this.stinkbomb, this.deskLid, ...this.pellets]) t.hide();
     for (const p of this.plants) { p.hide(); p.headHeight = 0; p.growing = false; }
+    // Every object starts its script afresh as well.
+    for (const t of this.movables) if (t.restartScript) t.restartScript();
   }
   // Each of the four male teachers knows one digit of the bike combination...
   initialiseBikeCombo() {
@@ -138,7 +140,7 @@ export class Cast {
   }
   getWaterable(x, y) { return this.characterList.find((c) => c.hasBikeSecret() && c.headAt(x, y)) || null; }
   getSherryable(x, y) { return this.characterList.find((c) => c.hasStoreroomSecret() && c.headAt(x, y)) || null; }
-  getConkerable(x, y) { return this.characterList.find((c) => c.isConkerable() && c.headAt(x, y)) || null; }
+  getConkerable(x, y) { return this.characterList.find((c) => (c.isConkerable() || c.isVeryConkerable()) && c.headAt(x, y)) || null; }
   isHome(x) { return this.characterList.every((c) => c.isHome(x)); }
   isStandingOnKid(c) { return this.characterList.some((k) => k.isKnockedOut() && k.x - 1 <= c.x && c.x <= k.x + 1 && c.y === k.y - 1); }
   isBesideEric(c) { const { x, y } = this.eric.getLocation(); return Math.abs(c.x - x) <= this.config.besideEricXRange && c.y === y; }
@@ -210,7 +212,9 @@ export class Cast {
   }
   releaseMice(n, x, y) {
     for (let i = 0; i < n; i++) {
-      const m = new Mouse(`MortalMouse${Date.now()}${i}`, this.services, [x, y], false);
+      // (x, y) is where Eric's hand is; a mouse's box starts one cell left of and
+      // three rows above the mouse itself, so that it runs along the floor.
+      const m = new Mouse(`MortalMouse${Date.now()}${i}`, this.services, [x - 1, y - 3], false);
       m.direction = this.rng.choice([-1, 1]);
       this.mice.push(m);
     }
@@ -222,7 +226,11 @@ export class Cast {
   isBesideBike(c) { return this.bike.visible && this.bike.animatoryState === 'BIKE_ON_FLOOR' && Math.abs(c.x - this.bike.x) <= 1 && c.y === this.bike.y; }
   moveBikeAway(doorId) {
     const door = this.world.getDoor(doorId);
-    if (door && this.bike.visible && Math.abs(this.bike.x - door.x) <= 2 && this.bike.y === door.bottomY - 3) this.bike.x = door.x - 3;
+    if (door && this.bike.visible && Math.abs(this.bike.x - door.x) <= 2 && this.bike.y === door.bottomY - 3) this.bike.x = door.x + 1;   // clear of the door, on the outside
+  }
+  // Is anyone standing in this doorway? (A self-closing door waits for them.)
+  isDoorwayClear(door) {
+    return ![...this.characters, this.eric].some((c) => c.visible && door.x - 2 <= c.x && c.x <= door.x + 1 && c.impeded(door.bottomY, door.topY));
   }
   unchainBike() { this.bike.unchain(); }
   waterPlant(pot, liquid) { if (liquid === 'WATER' && pot.plant) pot.plant.grow(); }

@@ -74,6 +74,11 @@ export class Character {
     this.bubble = null; this.linesMessage = null; this.lesson = null;
     this.speed = 1; this.fixedSpeed = false; this.speedChangeDelay = 1; this.walkDelay = 1;
     this.kisses = this.config.kissCounter; this.changesSeats = true; this.paused = false; this.stopEric = false;
+    // Anything left over from the middle of a movement must go too: a new game
+    // can begin while someone is half-way down a stair step or wiping a board,
+    // and the leftover would drop them through the floor on their first step.
+    this.verticalDirection = 0; this.wipingBoard = false; this.action = 0;
+    this.room = null; this.floor = null; this.staircase = null; this.barrier = null;
     this.commandList = new CommandList(this);
   }
 
@@ -391,7 +396,9 @@ export class Character {
   jumpIfShut(doorId, offset) { if (this.world.isDoorShut(doorId)) this.commandList.jump(offset); }
   jumpIfOpen(doorId, offset) { if (!this.world.isDoorShut(doorId)) this.commandList.jump(offset); }
   changeCommandList(id) { this.cast.changeCommandList(this.id, id); }
-  setCommandListTemplate(template) { this.commandList.setTemplate(template); }
+  // A new script (at every bell) also releases a speed that the old script had
+  // fixed: otherwise a teacher sent running after Eric runs for the rest of the game.
+  setCommandListTemplate(template) { this.commandList.setTemplate(template); this.lesson = null; this.triggerSpeedChange(); }
   stalk(characterId) { this.commandList.setGoToDestination(this.getDestination(characterId)); }
   getDestination(characterId) { const c = this.cast.get(characterId); return c ? c.commandList.getGoToDestination() : null; }
   getCommandListId(lessonId) { return this.lessonCommandLists[lessonId]; }

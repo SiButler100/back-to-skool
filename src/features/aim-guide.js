@@ -24,7 +24,8 @@ export function standingPlaces(world) {
   const places = [];
   const seen = new Set();
   const add = (x, y) => { const k = `${x},${y}`; if (!seen.has(k)) { seen.add(k); places.push([x, y]); } };
-  for (const f of world.floors) for (let x = f.minX; x <= f.maxX; x++) add(x, f.y);
+  // Eric is three cells wide, so the last place he fits is three short of the world's edge.
+  for (const f of world.floors) for (let x = f.minX; x <= Math.min(f.maxX, world.width - 3); x++) add(x, f.y);
   for (const s of new Set(world.staircases.values())) {
     for (let i = 0; i <= s.bottom.y - s.top.y; i++) add(s.bottom.x + i * s.direction, s.bottom.y - i);
   }
@@ -37,7 +38,7 @@ export function standingPlaces(world) {
 export function pelletCups(world, pellet, x, y, d) {
   const cups = [];
   // A stand-in for the pellet, so the engine's own wall test can be asked.
-  const probe = { x: x + d, y, direction: d, width: 1, impeded: (bottomY, topY) => topY <= y + 1 && y + 1 <= bottomY };
+  const probe = { x: x + d, y, direction: d, width: pellet.width, impeded: (bottomY, topY) => topY <= y + 1 && y + 1 <= bottomY };
   for (let count = pellet.range - 1; count > 0; count--) {
     if (world.barrier(probe)) break;
     if (count <= pellet.hitZone) {
