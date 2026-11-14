@@ -22,6 +22,7 @@ import { ModernPainter } from './hd/painter.js';
 import { IllustratedPainter } from './art/illustrated.js';
 import { ArtAssets } from './art/assets.js';
 import { Motion } from './motion.js';
+import { Effects } from './fx.js';
 export { originalMeasure, originalFontHas };
 
 const C = SKOOL.cell;
@@ -47,6 +48,9 @@ export class Renderer {
     this.motion = new Motion();     // where everything appears to be between the engine's steps
     this.positions = this.motion.tracks;   // (older scripts clear this map to snap everything)
     this.lastDraw = 0;              // time of the previous frame, for time-based easing
+    this.fx = new Effects(game, (thing) => this.spritePos(thing));   // splashes, stars, floating numbers (HD views only)
+    this.onFootstep = null;         // called when Eric's foot lands, for the sound of it
+    this.lastStepFrame = -1;
     this.tint = document.createElement('canvas'); this.tint.width = 24; this.tint.height = 32;
     this.resize(this.options.viewportColumns);
   }
@@ -123,6 +127,9 @@ export class Renderer {
       if (offset >= this.columns - 10) this.cameraX = Math.min(maxX, (col + 8) * C);
       else if (offset <= 9 && col > 0) this.cameraX = Math.max(0, (col - 8) * C);
       if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;
+    } else if (this.options.attract) {
+      // Behind the title screen: drift slowly along the school and back.
+      this.cameraX = maxX * (0.5 - 0.5 * Math.cos(performance.now() / 90000 * Math.PI * 2 + 2.2));
     } else {
       // Follow where Eric is DRAWN (which glides), not his cell (which jumps).
       const [ex] = this.spritePos(eric);
@@ -143,6 +150,7 @@ export class Renderer {
   updateCameraY(dt) {
     const maxY = this.worldH - this.viewH;
     if (maxY <= 0) { this.cameraY = this.cameraTargetY = 0; return; }
+    if (this.options.attract) { this.cameraY = this.cameraTargetY = maxY; return; }   // the title screen shows the ground floor
     const [, ey] = this.spritePos(this.game.cast.eric);
     const lowest = ey + SPRITE_H + (this.margin || 0) - this.viewH;    // any higher than this cuts off Eric's feet
     const highest = ey - 3 * C;                                         // any lower than this cuts off the space above his head
@@ -228,17 +236,20 @@ export class Renderer {
   // enlarged, so nothing is ever missing from the screen.
   drawHd() {
     const p = this.painter, S = p.scale, { ctx, game } = this, viewW = this.viewW;
+    const dt0 = this.frameDt || 0;
     // The camera may sit between game pixels: at scale S there are S canvas
     // pixels to each one, so scrolling is S times finer than the old view.
     const cam = Math.round(this.cameraX * S) / S, camY = Math.round(this.cameraY * S) / S, viewH = this.viewH;
     ctx.imageSmoothingEnabled = !!p.smooth;     // smooth for illustrations, crisp for pixel art
+    this.fx.update(dt0);
+    const [shakeX, shakeY] = this.options.smoothMotion ? this.fx.shakeOffset() : [0, 0];
     ctx.save();
-    ctx.translate(-cam * S, -camY * S);
+    ctx.translate(Math.round((-cam + shakeX) * S), Math.round((-camY + shakeY) * S));
     p.drawBackdrop(ctx, cam, viewW, camY, viewH);
     p.drawFurniture(ctx, game);
     const viewFrom = cam - 48, viewTo = cam + viewW + 48;
     const cycles = !!p.hasCycle;                // only the illustrated painter has walk cycles
-    const dt = this.frameDt || 0;
+    const dt = dt0;
 
     // People first, back lane to front lane, then whatever stands in front of
     // them (desks), then objects (pellets, water, the frog...) on top.
@@ -271,8 +282,14 @@ export class Renderer {
     people.forEach(drawOne);
     if (p.drawForeground) p.drawForeground(ctx, game);
     objects.forEach(drawOne);
+    this.fx.draw(ctx, S);
     for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c, this.spritePos(c));
+    // A footstep sounds when Eric's walk cycle reaches a frame where a foot lands.
+    const em = this.motion.sample(game.cast.eric, this.options.smoothMotion);
+    const stepFrame = em.walking && (em.cycle === 3 || em.cycle === 7) ? em.cycle : -1;
+    if (stepFrame !== this.lastStepFrame) { this.lastStepFrame = stepFrame; if (stepFrame >= 0 && this.onFootstep) this.onFootstep(); }
     ctx.restore();
+    this.fx.drawFlash(ctx, this.canvas.width, this.canvas.height);
     if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY);
     if (this.options.retroStatus) { ctx.save(); ctx.scale(S, S); this.drawStatus(); ctx.restore(); }
   }

@@ -64,6 +64,7 @@ export class Menu {
     this.screen = screen;
     this.data = data;
     this.root.hidden = false;
+    this.root.dataset.screen = screen;                     // lets the stylesheet treat the title screen differently
     this.root.innerHTML = `<div class="menu-card">${this[`render_${screen}`](data)}</div>`;
     this.root.querySelector('button')?.focus();
   }
@@ -83,10 +84,12 @@ export class Menu {
     }
   }
 
+  // The title screen: the school carries on behind it (see "attract" in
+  // main.js), so the card is see-through and sits to one side.
   render_title() {
     return `
-      <p class="eyebrow">A faithful remake, rebuilt to be modified</p>
-      <h1>Back to Skool</h1>
+      <p class="eyebrow">Microsphere's 1985 classic, remade</p>
+      <h1 class="title">Back to <span>Skool</span></h1>
       <p class="lede">Eric has forged his report over the holidays. Now he has to get it back into the Head's safe before anyone notices.</p>
       <div class="menu-actions">
         <button type="button" data-action="new" class="primary">New game</button>
@@ -135,7 +138,8 @@ export class Menu {
           <select data-setting="camera"><option value="close" ${s.camera === 'close' ? 'selected' : ''}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== 'close' ? 'selected' : ''}>Whole school</option></select>
           <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting('speed', s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
-        ${check('sound', 'Sound', 'Synthesised beeps.')}
+        ${check('sound', 'Sound effects', 'Footsteps, splashes, the bell and birdsong, all synthesised.')}
+        ${check('music', 'Music', 'A quiet tune while you play.')}
       </div>
       <h2>Advanced</h2>
       <div class="options">

@@ -40,6 +40,8 @@ flowchart TD
     sprites[sprites.js painted stand-ins]
     backdrop[backdrop.js painted building]
     renderer[renderer.js camera + frame]
+    motion[motion.js steps → steady movement]
+    fx[fx.js splashes, stars, shake]
     theme[theme.js palettes]
     original[original.js 1985 painter]
     extract[extract.js tape → graphics]
@@ -57,14 +59,16 @@ flowchart TD
     subgraph Art["src/render/art — illustrated artwork"]
       artassets[assets.js loads manifest + images]
       illustrated[illustrated.js IllustratedPainter]
-      artbackdrop[backdrop.js rooms over the pixel structure]
+      artbackdrop[backdrop.js sky, rooms, fixtures]
+      artstructure[structure.js floors, stairs, walls, playground]
+      arttext[text.js speech, cards, chalk]
       artfurniture[furniture.js cut-outs per piece]
     end
   end
 
   subgraph Assets["assets/illustrated — pictures"]
     manifest[manifest.json which picture is where]
-    sheets[characters, objects, furniture, rooms]
+    sheets[characters, objects, furniture, rooms, scenes, textures]
   end
 
   subgraph ArtTools["tools/art — the art pipeline"]
@@ -119,6 +123,11 @@ flowchart TD
   painter --> illustrated
   artassets --> illustrated
   artassets --> artbackdrop
+  artstructure --> artbackdrop
+  arttext --> illustrated
+  motion --> renderer
+  fx --> renderer
+  game --> fx
   artbackdrop --> illustrated
   artfurniture --> illustrated
   hdbackdrop --> artbackdrop
@@ -152,6 +161,10 @@ flowchart TD
   fidx --> radar
 ```
 
+## Between ticks: why the modern view moves smoothly
+
+The engine only knows whole cells: a walker is at column 40, then 41. Twenty times a second it may move someone on. The screen redraws sixty times a second or more. `motion.js` fills the gap. For each thing it remembers where it was drawn last frame and where the engine says it is heading, and slides it there over exactly as long as the engine will wait before the next step (the character's own walk delay), so consecutive steps join into a steady glide. The engine's two "mid-stride" walk states mean a step has begun but the cell has not changed yet, so the picture already heads for the half-way point; that is why Eric starts moving the instant a key is pressed. The walk-cycle frame comes from the position itself (two cells per cycle), not from a clock. None of this feeds back into the engine, and the original view switches it off.
+
 ## One tick, start to finish
 
 `main.js` runs a fixed-step loop: twenty engine ticks per second (adjustable), and a screen redraw on every animation frame.
@@ -175,6 +188,11 @@ flowchart TD
 | Change how a character looks in the illustrated view | regenerate their sheet: the prompt is in `tools/art/characters.json`, the generation record in `tools/art/jobs.json`; drop the new picture in `art-src/` and run `python3 tools/art/build.py <job>` (see `tools/art/prompts.md`) |
 | Change how people look in pixel art | `src/render/hd/palette.js` (each group's colours) and `src/render/hd/people.js` (the body parts, drawn as text bitmaps); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
 | Draw a new object or icon | `src/render/hd/objects.js`, `src/render/hd/icons.js`; the bitmap alphabet is explained at the top of `src/render/hd/pixelart.js` |
+| Change how movement feels (glide, walk cycle, pose blend, jump) | `src/render/motion.js`; the camera is in `src/render/renderer.js` (`updateCamera`, `updateCameraY`) |
+| Add or change a visual effect | `src/render/fx.js`: listen for an engine event and add particles |
+| Change floors, stairs, walls, the playground or room signs in the illustrated view | `src/render/art/structure.js` (drawn by code from the swatches in `assets/illustrated/textures/`) |
+| Change speech bubbles, reprimand cards or chalk | `src/render/art/text.js` |
+| Add or change a sound, the tune, footsteps or birdsong | `src/ui/sound.js` |
 | Add a panel, an overlay, a new rule | a new file in `src/features/`, registered in `src/features/index.js` |
 | Change the HUD or menus | `src/ui/hud.js`, `src/ui/menu.js`, `styles.css` |
 

@@ -18,6 +18,7 @@ import { TapeLoader } from './ui/tape-loader.js';
 import { measureText, fontHas } from './render/font.js';
 import { setupFeatures } from './features/index.js';
 import { CONFIG } from './config.js';
+import { SKOOL } from './data/skool.js';
 
 // Two presets. "original" is the 1985 screen: 32 columns, Spectrum colours,
 // 8-pixel steps, scrolling in jumps, status rows on the canvas. "modern" is
@@ -31,7 +32,7 @@ export const VIEW_PRESETS = {
 };
 
 const SETTINGS_VERSION = 4;
-const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
 
 // Settings saved by an older version of the game get the new keys filled in.
 function migrateSettings(s) {
@@ -58,8 +59,15 @@ export function boot() {
   const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); });
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
+  renderer.onFootstep = () => sound.step();
+  // Birdsong while Eric is out in the playground.
+  game.events.on('tick', () => { const e = game.cast.eric; sound.setOutdoors(e.y === 17 && e.x >= SKOOL.playground[0] && e.x <= SKOOL.playground[1]); });
 
   let paused = true;
+  // "Attract" mode: behind the title screen the school runs by itself (no
+  // input, no sound) while the view pans across it.
+  let attract = false;
+  const setAttract = (on) => { attract = on; renderer.options.attract = on; if (on) { game.start(); input.enabled = false; } };
   const menu = new Menu(document.getElementById('overlay'), {
     settings,
     bindings: DEFAULT_BINDINGS,
@@ -68,9 +76,9 @@ export function boot() {
       if (changedKey === 'camera') s.columns = s.camera === 'close' ? CLOSE_COLUMNS : WHOLE_COLUMNS;   // each camera has its natural width
       applySettings(s); saveSettings(s);
     },
-    onNewGame: () => { game.start(); paused = false; input.enabled = true; sound.ensure(); },
+    onNewGame: () => { setAttract(false); game.start(); paused = false; input.enabled = true; sound.ensure(); },
     onResume: () => { paused = false; input.enabled = true; },
-    onQuit: () => { paused = true; menu.show('title'); },
+    onQuit: () => { paused = true; menu.show('title'); setAttract(true); },
   });
 
   function applySettings(s) {
@@ -86,7 +94,7 @@ export function boot() {
     // Blackboard wrapping and bubble timing follow whichever font is on screen.
     game.measureText = s.originalGraphics ? originalMeasure : measureText;
     game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
-    sound.enabled = s.sound;
+    sound.enabled = s.sound; sound.musicEnabled = s.music !== false;
     document.documentElement.classList.toggle('view-original', s.view === 'original');
     document.documentElement.classList.toggle('view-modern', s.view !== 'original');
     document.documentElement.classList.toggle('art-illustrated', s.view !== 'original' && s.artwork === 'illustrated');
@@ -130,19 +138,23 @@ export function boot() {
 
   // Pause key / menu button
   const togglePause = () => {
-    if (!game.started || game.gameOver) return;
+    if (attract || !game.started || game.gameOver) return;
     if (menu.isOpen) { menu.hide(); paused = false; input.enabled = true; }
     else { paused = true; input.enabled = false; menu.show('pause'); }
   };
   input.onMenu(togglePause);
-  hud.onMenu(() => { if (game.started && !game.gameOver) togglePause(); else menu.show('title'); });
-  game.events.on('gameOver', (data) => { paused = true; input.enabled = false; setTimeout(() => menu.show('gameover', data), 600); });
+  hud.onMenu(() => { if (attract) return; if (game.started && !game.gameOver) togglePause(); else { menu.show('title'); setAttract(true); } });
+  game.events.on('gameOver', (data) => {
+    if (attract) { game.start(); return; }             // nobody is playing: just start the term again
+    paused = true; input.enabled = false; setTimeout(() => menu.show('gameover', data), 600);
+  });
 
   // Features
   setupFeatures({ game, renderer, hud, input, settings });
 
   applySettings(settings);
   menu.show('title');
+  setAttract(true);
   let polls = 0;
   const poll = setInterval(() => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); if (++polls > 10) clearInterval(poll); }, 500);
 
@@ -151,8 +163,9 @@ export function boot() {
   function frame(now) {
     const dt = Math.min(0.25, (now - last) / 1000);
     last = now;
-    if (!paused) {
-      acc += dt * settings.speed;
+    sound.setActive(!paused && !attract);
+    if (!paused || attract) {
+      acc += dt * (attract ? 1 : settings.speed);
       const step = 1 / game.config.ticksPerSecond;
       let guard = 0;
       while (acc >= step && guard++ < 10) { game.tick(); acc -= step; }

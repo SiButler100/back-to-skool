@@ -50,3 +50,22 @@ Style anchor + "Straight-on view of the back wall of a [room] in a 1980s
 British [boys'|girls'] school, wide panoramic composition, the floor line
 exactly along the bottom edge, ceiling cropped out, flat even lighting, no
 cast shadows on the floor, no people, no doors, no stairs, no text."
+
+## Walk cycles
+
+Style anchor + a 2 by 4 grid, with the character's first sheet attached as a
+reference image ("the character is exactly the person in the reference
+image") and the eight frames described in order: passing, lift, contact,
+push-off, then the same on the other leg. Every prompt is in `jobs.json`.
+
+## Long rooms
+
+A room wider than about two and a half times its height is generated as "one
+very long wall ... seen from further back", with a picture rail a third of the
+way down and nothing above it, and the first picture of the room attached as a
+reference. The game crops such a picture from the top, so the plain wall above
+the rail is what is lost.
+
+## Playground, textures, fixtures
+
+See the `playground-1`, `textures-1` and `furniture-3` entries in `jobs.json`.

@@ -1,7 +1,7 @@
 <title>Back to Skool</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
 /* ============================================================================
    BACK TO SKOOL — page styling
@@ -188,6 +188,22 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
   backdrop-filter: blur(2px);
 }
 .overlay[hidden] { display: none; }
+/* The title screen: the game runs behind it, so only one side is darkened
+   and the card itself is transparent. */
+.overlay[data-screen="title"] {
+  justify-content: flex-start; align-items: flex-end; padding: 0; backdrop-filter: none;
+  background: linear-gradient(100deg, rgba(12, 16, 24, 0.90) 0%, rgba(12, 16, 24, 0.72) 34%, rgba(12, 16, 24, 0.18) 62%, rgba(12, 16, 24, 0) 78%);
+}
+.overlay[data-screen="title"] .menu-card {
+  background: transparent; color: #f6f1e4; box-shadow: none; max-width: 560px; padding: 40px 44px;
+}
+.overlay[data-screen="title"] .eyebrow { color: #ffd34d; }
+.overlay[data-screen="title"] .small { color: rgba(246, 241, 228, 0.62); }
+.menu-card h1.title { font-size: clamp(44px, 7vw, 84px); font-weight: 300; line-height: 0.98; letter-spacing: -0.02em; margin: 6px 0 16px; }
+.menu-card h1.title span { color: #ffd34d; }
+.overlay[data-screen="title"] .menu-actions button { background: rgba(255, 255, 255, 0.10); color: #f6f1e4; border-color: rgba(255, 255, 255, 0.35); }
+.overlay[data-screen="title"] .menu-actions button:hover { border-color: #ffffff; background: rgba(255, 255, 255, 0.18); }
+.overlay[data-screen="title"] .menu-actions button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .menu-card {
   background: var(--surface);
   color: var(--ink);
@@ -8471,7 +8487,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       { id: "Kitchen", storey: "ground", x0: 181, x1: 192, wall: "tiles", props: [["cooker", 182, 2], ["sink", 184, 2], ["cupboards", 188, 3]] }
     ],
     // Outside: the tree, the low wall with its posts, the gate and the railings.
-    playground: { x0: 96, x1: 159, treeX: 100, wallTopRow: 17, posts: [111, 131], gate: [133, 138] }
+    playground: { x0: 96, x1: 159, treeX: 100, wallTopRow: 17, posts: [111, 131], gate: [133, 138], lamps: [114, 150] }
   };
 
   // src/render/hd/font.js
@@ -9135,10 +9151,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       return this.backdrop;
     }
     // The visible slice of the building. cam/viewW in game pixels.
-    drawBackdrop(ctx, cam, viewW) {
+    drawBackdrop(ctx, cam, viewW, camY = 0, viewH = SKOOL.height * SKOOL.cell) {
       const S = this.scale, b = this.ensureBackdrop();
-      const h = SKOOL.height * SKOOL.cell * S;
-      ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
+      const h = Math.min(viewH * S, b.height - camY * S);
+      ctx.drawImage(b, cam * S, camY * S, viewW * S, h, cam * S, camY * S, viewW * S, h);
     }
     // Doors, windows, cups and the rest of the live furniture, then the chalk.
     drawFurniture(ctx, game) {
@@ -9200,13 +9216,13 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     }
     // A reprimand or a secret: a rounded box in the colour of its kind, in
     // screen space (cam/viewW in game pixels).
-    drawMessageBox(ctx, box, cam, viewW) {
+    drawMessageBox(ctx, box, cam, viewW, camY = 0) {
       const S = this.scale, C5 = SKOOL.cell * S, hd = this.hd, theme = this.theme;
       const lines = box.lines;
       const w = Math.max(8 * C5, ...lines.map((l) => measureHd(l) + 12 * S));
       const h = lines.length * HD_LINE_HEIGHT + 10 * S;
       let x = (box.x * SKOOL.cell - cam + 4) * S - w / 2;
-      let y = box.y * C5 - h - 2 * S;
+      let y = box.y * C5 - camY * S - h - 2 * S;
       x = Math.max(2, Math.min(viewW * S - w - 2, x));
       y = Math.max(2, y);
       x = Math.round(x);
@@ -9258,76 +9274,494 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     }
   };
 
+  // src/render/art/text.js
+  var UI_FONT = '"Ubuntu", system-ui, sans-serif';
+  var CHALK_FONT = '"Patrick Hand", "Ubuntu", system-ui, sans-serif';
+  function loadFonts() {
+    if (typeof document === "undefined" || !document.fonts) return;
+    for (const f of [`400 20px ${UI_FONT}`, `300 20px ${UI_FONT}`, `400 20px ${CHALK_FONT}`]) document.fonts.load(f).catch(() => {
+    });
+  }
+  function wrapText(ctx, text, maxW) {
+    const lines = [];
+    let line = "";
+    for (const word of text.split(/\s+/).filter(Boolean)) {
+      const next = line ? `${line} ${word}` : word;
+      if (line && ctx.measureText(next).width > maxW) {
+        lines.push(line);
+        line = word;
+      } else line = next;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+  function roundedRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+  function drawSpeech(ctx, text, mouth, view, progress, u) {
+    const size = Math.round(23 * u), lh = Math.round(29 * u), padX = Math.round(16 * u), padY = Math.round(11 * u);
+    ctx.save();
+    ctx.font = `400 ${size}px ${UI_FONT}`;
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    try {
+      ctx.letterSpacing = `${(0.4 * u).toFixed(1)}px`;
+    } catch (e) {
+    }
+    const lines = wrapText(ctx, text, 560 * u);
+    const w = Math.max(...lines.map((l) => ctx.measureText(l).width), 40 * u) + padX * 2;
+    const h = lines.length * lh + padY * 2 - Math.round(4 * u);
+    const tail = Math.round(14 * u);
+    let x = Math.max(view.x0 + 8 * u, Math.min(view.x1 - w - 8 * u, mouth.x - w / 2));
+    let y = Math.max(view.y0 + 6 * u, mouth.y - tail - h);
+    x = Math.round(x);
+    y = Math.round(y);
+    const tipX = Math.max(x + 22 * u, Math.min(x + w - 22 * u, mouth.x));
+    const path = () => {
+      roundedRect(ctx, x, y, w, h, 16 * u);
+      ctx.moveTo(tipX - 10 * u, y + h - 1);
+      ctx.lineTo(tipX + 2 * u * Math.sign(mouth.x - tipX || 1), y + h + tail);
+      ctx.lineTo(tipX + 10 * u, y + h - 1);
+      ctx.closePath();
+    };
+    ctx.fillStyle = "rgba(20,24,34,0.28)";
+    ctx.translate(0, 4 * u);
+    path();
+    ctx.fill();
+    ctx.translate(0, -4 * u);
+    ctx.fillStyle = "#fffdf6";
+    path();
+    ctx.fill();
+    ctx.lineWidth = Math.max(1, 1.5 * u);
+    ctx.strokeStyle = "rgba(38,44,60,0.75)";
+    ctx.lineJoin = "round";
+    path();
+    ctx.stroke();
+    ctx.fillStyle = "#fffdf6";
+    ctx.fillRect(tipX - 9 * u, y + h - 2.5 * u, 18 * u, 3 * u);
+    const total = lines.reduce((n, l) => n + l.length, 0);
+    let budget = Math.ceil(total * Math.min(1, progress / 0.55));
+    ctx.fillStyle = "#1d2330";
+    lines.forEach((l, i) => {
+      if (budget <= 0) return;
+      ctx.fillText(l.slice(0, budget), x + padX, y + padY + size * 0.82 + i * lh);
+      budget -= l.length;
+    });
+    ctx.restore();
+  }
+  function drawCard(ctx, lines, centre, view, colours, u) {
+    const size = Math.round(24 * u), lh = Math.round(31 * u), padX = Math.round(20 * u), padY = Math.round(12 * u);
+    ctx.save();
+    ctx.font = `400 ${size}px ${UI_FONT}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    try {
+      ctx.letterSpacing = `${(0.8 * u).toFixed(1)}px`;
+    } catch (e) {
+    }
+    const w = Math.max(...lines.map((l) => ctx.measureText(l).width), 120 * u) + padX * 2;
+    const h = lines.length * lh + padY * 2 - Math.round(5 * u);
+    const x = Math.round(Math.max(view.x0 + 8 * u, Math.min(view.x1 - w - 8 * u, centre.x - w / 2)));
+    const y = Math.round(Math.max(view.y0 + 8 * u, centre.y - h));
+    ctx.fillStyle = "rgba(20,24,34,0.35)";
+    roundedRect(ctx, x + 3 * u, y + 5 * u, w, h, 12 * u);
+    ctx.fill();
+    ctx.fillStyle = colours.paper;
+    roundedRect(ctx, x, y, w, h, 12 * u);
+    ctx.fill();
+    ctx.lineWidth = Math.max(1, 2 * u);
+    ctx.strokeStyle = colours.edge;
+    roundedRect(ctx, x, y, w, h, 12 * u);
+    ctx.stroke();
+    ctx.fillStyle = colours.ink;
+    lines.forEach((l, i) => ctx.fillText(l, x + w / 2, y + padY + size * 0.82 + i * lh));
+    ctx.restore();
+  }
+  function drawChalkLines(ctx, lines, x, y, lineH, maxW, colour, u) {
+    ctx.save();
+    ctx.font = `400 ${Math.round(lineH * 0.86)}px ${CHALK_FONT}`;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = colour;
+    ctx.globalAlpha = 0.92;
+    lines.forEach((line, i) => ctx.fillText(line, x, y + lineH * (i + 0.8), maxW));
+    ctx.restore();
+  }
+
+  // src/render/art/structure.js
+  var GROUND_MARGIN = 4;
+  var TILE = { floorboards: 110, darkwood: 170, brickRed: 150, brickBuff: 150, tarmac: 190, stone: 96 };
+  var TINT = { darkwood: "rgba(46,30,16,0.50)" };
+  var FALLBACK = { floorboards: "#b9813f", darkwood: "#4a241a", brickRed: "#a9523d", brickBuff: "#b08a4c", tarmac: "#6f7072", stone: "#b9b4a6" };
+  var StructurePainter = class {
+    constructor(ctx, theme, S, assets) {
+      this.ctx = ctx;
+      this.theme = theme;
+      this.S = S;
+      this.u = S / 6;
+      this.C = SKOOL.cell * S;
+      this.assets = assets;
+      this.W = SKOOL.width * this.C;
+      this.H = (SKOOL.height * SKOOL.cell + GROUND_MARGIN) * S;
+      this.patterns = /* @__PURE__ */ new Map();
+    }
+    // The walking surface for a character whose box starts at row y.
+    feet(y) {
+      return (y + 4) * this.C;
+    }
+    // A repeating fill made from a swatch, or a flat colour while it is missing.
+    material(name) {
+      if (this.patterns.has(name)) return this.patterns.get(name);
+      let img = this.assets.texture(name);
+      let fill = FALLBACK[name];
+      if (img) {
+        if (TINT[name]) {
+          const c = document.createElement("canvas");
+          c.width = img.width;
+          c.height = img.height;
+          const cx = c.getContext("2d");
+          cx.drawImage(img, 0, 0);
+          cx.fillStyle = TINT[name];
+          cx.fillRect(0, 0, c.width, c.height);
+          img = c;
+        }
+        fill = this.ctx.createPattern(img, "repeat");
+        const k = TILE[name] * this.u * 2 / img.width;
+        if (fill.setTransform) fill.setTransform(new DOMMatrix().scale(k, k));
+      }
+      this.patterns.set(name, fill);
+      return fill;
+    }
+    fill(style, x, y, w, h) {
+      this.ctx.fillStyle = style;
+      this.ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+    }
+    // A vertical or horizontal fade laid over whatever is there (shading).
+    shade(x, y, w, h, from, to, horizontal = false) {
+      const g = horizontal ? this.ctx.createLinearGradient(x, 0, x + w, 0) : this.ctx.createLinearGradient(0, y, 0, y + h);
+      g.addColorStop(0, from);
+      g.addColorStop(1, to);
+      this.fill(g, x, y, w, h);
+    }
+    // ---- 1. Under the rooms: sky, brick, the playground painting -------------------
+    base() {
+      const { ctx, C: C5, u, W: W2, H } = this;
+      const sky = ctx.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, this.theme.hd.sky[0]);
+      sky.addColorStop(1, this.theme.hd.sky[1]);
+      this.fill(sky, 0, 0, W2, H);
+      const p = DECOR.playground, scene = this.assets.scene("playground");
+      if (scene) {
+        const x0 = (p.x0 - 1) * C5, w = (p.x1 - p.x0 + 2) * C5, k = w / scene.img.width, h = scene.img.height * k;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(scene.img, x0, H - h, w, h);
+        this.sceneWallTop = H - h * 0.178;
+      }
+      for (const b of DECOR.buildings) {
+        const x0 = b.x0 * C5, x1 = Math.min(W2, b.x1 * C5);
+        this.fill(this.material(b.brick === "girls" ? "brickBuff" : "brickRed"), x0, 0, x1 - x0, H);
+        this.shade(x0, 0, x1 - x0, H, "rgba(0,0,0,0.10)", "rgba(0,0,0,0.22)");
+      }
+    }
+    // ---- 3. On top of the rooms --------------------------------------------------
+    structure() {
+      this.floors();
+      this.walls();
+      this.doorFrames();
+      for (const s of SKOOL.staircases) this.staircase(s);
+      this.stage();
+      this.outerWalls();
+      this.playground();
+      this.safeShelf();
+      this.plaques();
+    }
+    // Floors: a strip of boards seen slightly from above, with a darker front
+    // edge and a soft shadow on the storey below. People stand on the strip.
+    floors() {
+      const { u, C: C5 } = this;
+      const inside = (x) => DECOR.buildings.some((b) => x >= b.x0 && x < b.x1);
+      for (const f of SKOOL.floors) {
+        if (f.id === "Stage") continue;
+        let run = null;
+        const flush = () => {
+          if (run) this.floorStrip(run[0] * C5, (run[1] + 1) * C5, this.feet(f.y), f.y < 17);
+          run = null;
+        };
+        for (let x = f.minX; x <= f.maxX + 2 && x < SKOOL.width; x++) {
+          if (inside(x)) {
+            if (!run) run = [x, x];
+            else run[1] = x;
+          } else flush();
+        }
+        flush();
+      }
+    }
+    floorStrip(x0, x1, y, shadowBelow) {
+      const { u, ctx } = this, w = x1 - x0;
+      this.fill(this.material("floorboards"), x0, y - 10 * u, w, 22 * u);
+      this.shade(x0, y - 10 * u, w, 22 * u, "rgba(60,30,10,0.38)", "rgba(255,240,210,0.10)");
+      this.fill("rgba(45,25,10,0.55)", x0, y - 10 * u, w, 1.5 * u);
+      this.fill(this.material("darkwood"), x0, y + 12 * u, w, 9 * u);
+      this.shade(x0, y + 12 * u, w, 9 * u, "rgba(255,225,190,0.30)", "rgba(0,0,0,0.35)");
+      if (shadowBelow) this.shade(x0, y + 21 * u, w, 40 * u, "rgba(20,12,6,0.36)", "rgba(20,12,6,0)");
+    }
+    // Interior walls that block the way: a plastered pier with shaded sides.
+    walls() {
+      const { u, C: C5 } = this;
+      for (const w of SKOOL.walls) {
+        if (w.x === 0 || w.x === SKOOL.width - 1) continue;
+        const x = w.x * C5 + 8 * u, y0 = w.topY * C5, y1 = (w.bottomY + 1) * C5 - 10 * u, ww = 32 * u;
+        this.shade(x + ww, y0, 16 * u, y1 - y0, "rgba(30,18,8,0.30)", "rgba(30,18,8,0)", true);
+        this.fill("#cdbb97", x, y0, ww, y1 - y0);
+        this.shade(x, y0, ww, y1 - y0, "rgba(255,250,235,0.30)", "rgba(70,45,20,0.40)", true);
+        this.fill("rgba(50,32,16,0.55)", x, y0, 1.5 * u, y1 - y0);
+        this.fill("rgba(50,32,16,0.55)", x + ww - 1.5 * u, y0, 1.5 * u, y1 - y0);
+        this.fill(this.material("darkwood"), x - 3 * u, y1 - 14 * u, ww + 6 * u, 14 * u);
+        this.fill(this.material("darkwood"), x - 3 * u, y0, ww + 6 * u, 8 * u);
+      }
+    }
+    // Door frames and the dark doorway behind each door (the door itself is
+    // live furniture, drawn every frame).
+    doorFrames() {
+      const { u, C: C5 } = this;
+      for (const d of SKOOL.doors) {
+        if (d.id === "DrinksCabinet" || d.id === "SkoolGate") continue;
+        const [cx, cy] = d.coords, [w, h] = d.size;
+        const x = cx * C5, y = cy * C5, ww = w * C5, hh = h * C5 + 24 * u;
+        this.fill(this.material("darkwood"), x - 13 * u, y - 13 * u, ww + 26 * u, hh + 13 * u);
+        this.shade(x - 13 * u, y - 13 * u, ww + 26 * u, hh + 13 * u, "rgba(255,220,180,0.22)", "rgba(0,0,0,0.25)", true);
+        this.fill("#1b120c", x, y, ww, hh);
+        this.shade(x, y, ww, hh, "rgba(0,0,0,0.55)", "rgba(90,60,35,0.35)");
+      }
+    }
+    // A staircase seen from the side: a sawtooth of treads on a dark stringer,
+    // with a handrail and balusters behind. The tread for a climber at column x
+    // is under the middle of their box, so feet land on it.
+    staircase(s) {
+      const { ctx, u, C: C5 } = this;
+      const [bx, by] = s.bottom, [tx, ty] = s.top;
+      const dir = tx > bx ? 1 : -1, steps = by - ty;
+      const left = (i) => (bx + dir * i) * C5 + C5;
+      const top = (i) => this.feet(by - i);
+      ctx.beginPath();
+      const first = dir > 0 ? 1 : steps, last = dir > 0 ? steps : 1, step = dir > 0 ? 1 : -1;
+      const order = [];
+      for (let i = 0; i <= steps; i++) order.push(i);
+      if (dir < 0) order.reverse();
+      ctx.moveTo(left(order[0]), top(order[0]));
+      for (const i of order) {
+        ctx.lineTo(left(i), top(i));
+        ctx.lineTo(left(i) + C5, top(i));
+      }
+      const drop2 = 46 * u;
+      const a = order[order.length - 1], b = order[0];
+      ctx.lineTo(left(a) + C5, top(a) + drop2 + (dir > 0 ? 0 : C5));
+      ctx.lineTo(left(b), top(b) + drop2 + (dir > 0 ? C5 : 0));
+      ctx.closePath();
+      ctx.save();
+      ctx.clip();
+      const x0 = Math.min(left(0), left(steps)), x1 = Math.max(left(0), left(steps)) + C5;
+      this.fill(this.material("darkwood"), x0, top(steps) - 2, x1 - x0, top(0) - top(steps) + drop2 + C5 + 4);
+      this.shade(x0, top(steps), x1 - x0, top(0) - top(steps) + drop2 + C5, "rgba(255,220,180,0.12)", "rgba(0,0,0,0.38)");
+      ctx.restore();
+      for (let i = 1; i <= steps; i++) {
+        this.fill(this.material("floorboards"), left(i) - 3 * u, top(i), C5 + 6 * u, 9 * u);
+        this.shade(left(i) - 3 * u, top(i), C5 + 6 * u, 9 * u, "rgba(255,245,220,0.25)", "rgba(60,30,10,0.30)");
+        this.shade(left(i), top(i) + 9 * u, C5, 16 * u, "rgba(0,0,0,0.40)", "rgba(0,0,0,0)");
+      }
+      const railUp = 92 * u, mid = (i) => left(i) + C5 / 2;
+      ctx.strokeStyle = "#5a3320";
+      ctx.lineWidth = 3 * u;
+      for (let i = 1; i < steps; i++) {
+        ctx.beginPath();
+        ctx.moveTo(mid(i), top(i));
+        ctx.lineTo(mid(i), top(i) - railUp);
+        ctx.stroke();
+      }
+      for (const i of [0, steps]) {
+        this.fill(this.material("darkwood"), mid(i) - 6 * u, top(i) - railUp - 12 * u, 12 * u, railUp + 12 * u);
+        this.fill("#3a2014", mid(i) - 8 * u, top(i) - railUp - 18 * u, 16 * u, 8 * u);
+      }
+      ctx.lineCap = "round";
+      ctx.lineWidth = 8 * u;
+      ctx.strokeStyle = "#4a2a1a";
+      ctx.beginPath();
+      ctx.moveTo(mid(0), top(0) - railUp);
+      ctx.lineTo(mid(steps), top(steps) - railUp);
+      ctx.stroke();
+      ctx.lineWidth = 2.5 * u;
+      ctx.strokeStyle = "rgba(255,215,170,0.45)";
+      ctx.beginPath();
+      ctx.moveTo(mid(0), top(0) - railUp - 2 * u);
+      ctx.lineTo(mid(steps), top(steps) - railUp - 2 * u);
+      ctx.stroke();
+      ctx.lineCap = "butt";
+    }
+    // The assembly-hall stage: a panelled platform (a cut-out) on the hall floor.
+    stage() {
+      const f = this.assets.furniture("stage");
+      const { u, C: C5, ctx } = this, topY = this.feet(14);
+      const x = 77 * C5 - 6 * u, w = 5.5 * C5 + 30 * u;
+      if (f) ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(x), Math.round(topY - 26 * u), Math.round(w), Math.round(this.feet(17) + 12 * u - (topY - 26 * u)));
+      else {
+        this.fill(this.material("floorboards"), x, topY - 10 * u, w, 22 * u);
+        this.fill(this.material("darkwood"), x, topY + 12 * u, w, this.feet(17) - topY);
+      }
+    }
+    // Where each school meets the open air: a brick end wall with a stone base.
+    outerWalls() {
+      const { u, C: C5, H } = this;
+      for (const [x, name] of [[95 * C5 + 20 * u, "brickRed"], [159 * C5 - 4 * u, "brickBuff"]]) {
+        this.fill(this.material(name), x, 0, 32 * u, H);
+        this.shade(x, 0, 32 * u, H, "rgba(255,255,255,0.10)", "rgba(0,0,0,0.38)", true);
+        this.fill("rgba(40,22,12,0.6)", x, 0, 1.5 * u, H);
+        this.fill("rgba(40,22,12,0.6)", x + 30.5 * u, 0, 1.5 * u, H);
+        this.fill(this.material("stone"), x - 4 * u, H - 40 * u, 40 * u, 40 * u);
+      }
+    }
+    // Outdoors: the gateway through the painted boundary wall, its piers, and
+    // the street lamps. (The tree and the gate itself are drawn elsewhere.)
+    playground() {
+      const { u, C: C5, H, ctx } = this, p = DECOR.playground;
+      const pier = this.assets.furniture("pier"), lamp = this.assets.furniture("lamp");
+      const ground = this.feet(17);
+      if (this.sceneWallTop) {
+        const gx0 = p.gate[0] * C5 + C5 / 2, gx1 = p.gate[1] * C5 + C5 / 2, top = this.sceneWallTop - 6 * u;
+        this.fill(this.material("tarmac"), gx0, top, gx1 - gx0, ground - 20 * u - top);
+        this.shade(gx0, top, gx1 - gx0, ground - 20 * u - top, "rgba(10,14,20,0.32)", "rgba(255,255,255,0.08)");
+      }
+      const stand = (f, cx, sink = 10) => {
+        if (f) ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(cx - f.w / 2), Math.round(ground + sink * u - f.h), f.w, f.h);
+      };
+      for (const gx of p.gate) stand(pier, gx * C5 + C5 / 2);
+      for (const lx of p.lamps || []) stand(lamp, lx * C5 + C5 / 2, 6);
+    }
+    safeShelf() {
+      const { u, C: C5 } = this, s = SKOOL.safe;
+      this.fill(this.material("darkwood"), s.x * C5 - 12 * u, s.y * C5 + 60 * u, 120 * u, 9 * u);
+      this.shade(s.x * C5 - 12 * u, s.y * C5 + 69 * u, 120 * u, 10 * u, "rgba(0,0,0,0.28)", "rgba(0,0,0,0)");
+    }
+    // Room names: an enamel sign on the wall near the ceiling.
+    plaques() {
+      const { ctx, u, C: C5 } = this;
+      ctx.save();
+      ctx.font = `400 ${Math.round(19 * u)}px ${UI_FONT}`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      try {
+        ctx.letterSpacing = `${(2.2 * u).toFixed(1)}px`;
+      } catch (e) {
+      }
+      for (const z of DECOR.zones) {
+        if (!z.plaque) continue;
+        const r = zoneRect(z), cx = (r.x0 + r.x1) / 2 * C5, y = r.top * C5 + 16 * u;
+        const w = ctx.measureText(z.plaque).width + 34 * u, h = 34 * u;
+        ctx.fillStyle = "rgba(0,0,0,0.25)";
+        roundedRect(ctx, cx - w / 2 + 2 * u, y + 3 * u, w, h, 5 * u);
+        ctx.fill();
+        ctx.fillStyle = "#26402f";
+        roundedRect(ctx, cx - w / 2, y, w, h, 5 * u);
+        ctx.fill();
+        ctx.strokeStyle = "#efe6cf";
+        ctx.lineWidth = 1.5 * u;
+        roundedRect(ctx, cx - w / 2 + 3 * u, y + 3 * u, w - 6 * u, h - 6 * u, 3 * u);
+        ctx.stroke();
+        ctx.fillStyle = "#f4ecd6";
+        ctx.fillText(z.plaque, cx, y + h / 2 + 1 * u);
+      }
+      ctx.restore();
+    }
+  };
+
   // src/render/art/backdrop.js
   var PIXEL_SCALE = 2;
+  var DESK_UNIT = { dx: 19 };
   function buildIllustratedBackdrop(theme, S, assets) {
     const C5 = SKOOL.cell * S, P = PIXEL_SCALE, up = S / P;
-    const u = S / 4;
-    const W2 = SKOOL.width * C5, H = SKOOL.height * C5;
+    const u = S / 6;
+    const W2 = SKOOL.width * C5, rowsH = SKOOL.height * C5, H = rowsH + GROUND_MARGIN * S;
     const canvas = makeCanvas(W2, H);
     const ctx = canvas.getContext("2d");
-    const hasBoards = !!assets.furniture("blackboard"), hasDesks = !!assets.furniture("desk");
-    const hasTree = !!assets.furniture("tree"), hasRailings = !!assets.furniture("railing");
-    const base = makeCanvas(W2 / up, H / up);
-    paintBase(base.getContext("2d"), theme, P);
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(base, 0, 0, W2, H);
+    const hasBoards = !!assets.furniture("blackboard"), hasDesks = !!assets.furniture("chair");
+    const hasTree = !!assets.furniture("tree");
+    const painted = assets.ready && !!assets.texture("floorboards");
+    const sp = new StructurePainter(ctx, theme, S, assets);
+    if (painted) {
+      sp.base();
+    } else {
+      const base = makeCanvas(W2 / up, rowsH / up);
+      paintBase(base.getContext("2d"), theme, P);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(base, 0, 0, W2, rowsH);
+      ctx.fillStyle = theme.hd.floorboardDark;
+      ctx.fillRect(0, rowsH, W2, H - rowsH);
+    }
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
-    let painted = 0;
+    let rooms = 0;
     for (const z of DECOR.zones) {
       const pic = assets.room(z.id);
-      if (!pic) continue;
       const r = zoneRect(z);
-      fitRoom(ctx, pic.img, r.x0 * C5, r.top * C5, (r.x1 - r.x0) * C5, (r.floor - r.top) * C5);
-      painted++;
+      const x = r.x0 * C5, y = r.top * C5, w = (r.x1 - r.x0) * C5, h = (r.floor - r.top) * C5;
+      if (pic) {
+        fitRoom(ctx, pic.img, x, y, w, h);
+        rooms++;
+      } else if (painted) {
+        ctx.fillStyle = theme.hd.plaster[z.wall] || theme.hd.plaster.cream;
+        ctx.fillRect(x, y, w, h);
+      }
     }
     if (assets.room("HallUpper") && assets.room("AssemblyHall")) {
       ctx.fillStyle = theme.hd.wall;
-      ctx.fillRect(63 * C5, 14 * C5 - 2 * up, 14 * C5, 4 * up);
+      ctx.fillRect(63 * C5, 14 * C5 - 3 * u, 14 * C5, 6 * u);
       ctx.fillStyle = theme.hd.wallLight;
-      ctx.fillRect(63 * C5, 14 * C5 - 2 * up, 14 * C5, up);
+      ctx.fillRect(63 * C5, 14 * C5 - 3 * u, 14 * C5, 1.5 * u);
     }
-    const over = makeCanvas(W2 / up, H / up);
-    paintStructure(over.getContext("2d"), theme, P, { boards: hasBoards, desks: hasDesks, tree: hasTree, railings: hasRailings });
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(over, 0, 0, W2, H);
+    if (painted) {
+      sp.structure();
+    } else {
+      const over = makeCanvas(W2 / up, rowsH / up);
+      paintStructure(over.getContext("2d"), theme, P, { boards: hasBoards, desks: hasDesks, tree: hasTree, railings: false });
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(over, 0, 0, W2, rowsH);
+    }
     ctx.imageSmoothingEnabled = true;
     const stamp = (f, x, y, w, h) => ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(x), Math.round(y), Math.round(w), Math.round(h));
     if (hasBoards) {
       const f = assets.furniture("blackboard");
       for (const b of SKOOL.blackboards) {
         const x = b.topLeft[0] * C5, y = b.topLeft[1] * C5, w = b.size[0] * C5, h = b.size[1] * C5;
-        stamp(f, x - 12 * u, y - 12 * u, w + 24 * u, h + 32 * u);
+        stamp(f, x - 18 * u, y - 18 * u, w + 36 * u, h + 48 * u);
       }
     }
     if (hasDesks) {
-      const f = assets.furniture("desk");
+      const f = assets.furniture("chair");
       for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
         const room = SKOOL.rooms.find((r) => r.id === roomId);
         const floor = (room.bottomRight[1] + 1) * C5;
-        for (const x of xs) stamp(f, x * C5 - 40 * u, floor - 96 * u, 112 * u, 96 * u);
+        for (const x of xs) stamp(f, x * C5 + DESK_UNIT.dx * u, floor - f.h, f.w, f.h);
       }
-    }
-    if (hasRailings) {
-      const f = assets.furniture("railing"), p = DECOR.playground;
-      const y = 16 * C5, x1 = p.x1 * C5;
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(p.gate[1] * C5 + C5, y, x1 - p.gate[1] * C5 - C5, f.h);
-      ctx.clip();
-      for (let x = p.gate[1] * C5 + C5; x < x1; x += f.w) stamp(f, x, y, f.w, f.h);
-      ctx.restore();
     }
     if (hasTree) {
       const f = assets.furniture("tree"), tx = DECOR.playground.treeX * C5 + C5 / 2;
-      stamp(f, tx - f.w / 2, SKOOL.height * C5 - f.h, f.w, f.h);
+      stamp(f, tx - f.w / 2, rowsH + 8 * u - f.h, f.w, f.h);
     }
-    canvas.painted = painted;
+    canvas.painted = rooms;
     return canvas;
   }
   function fitRoom(ctx, img, x, y, w, h) {
-    const scale = Math.max(h / img.height, Math.min(w / img.width, 1.15 * h / img.height));
+    const scale = Math.max(h / img.height, Math.min(w / img.width, h / img.height / 0.55));
     const sw = img.width * scale, sh = img.height * scale;
     const srcY = (sh - h) / scale;
     ctx.save();
@@ -9395,6 +9829,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       }
       if (m.objects?.image) out.add(m.objects.image);
       for (const r of Object.values(m.rooms || {})) if (r.image) out.add(r.image);
+      for (const r of Object.values(m.scenes || {})) if (r.image) out.add(r.image);
       for (const f of Object.values(m.furniture || {})) if (f.image) out.add(f.image);
       for (const t of Object.values(m.textures || {})) if (typeof t === "string") out.add(t);
       else if (t?.image) out.add(t.image);
@@ -9447,6 +9882,12 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const img = this.image(r?.image);
       return r && img ? { img, ...r } : null;
     }
+    // A big backdrop painting (the playground).
+    scene(name) {
+      const r = this.manifest?.scenes?.[name];
+      const img = this.image(r?.image);
+      return r && img ? { img, ...r } : null;
+    }
     texture(name) {
       const t = this.manifest?.textures?.[name];
       const path = typeof t === "string" ? t : t?.image;
@@ -9460,8 +9901,13 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const f = assets.furniture(p.key);
       if (f) {
         ctx.imageSmoothingEnabled = true;
-        ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(p.x), Math.round(p.y), Math.round(p.w), Math.round(p.h));
+        if (f.place) {
+          ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(p.x + p.w + f.right - f.w), Math.round(p.y + p.h + f.bottom - f.h), f.w, f.h);
+        } else {
+          ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(p.x), Math.round(p.y), Math.round(p.w), Math.round(p.h));
+        }
         if (stats) stats.drawn++;
+      } else if (p.key === "chain" && assets.furniture("bike")) {
       } else {
         ctx.imageSmoothingEnabled = false;
         ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
@@ -9477,12 +9923,15 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       super(theme);
       this.scale = ART_SCALE;
       this.smooth = true;
+      this.marginBottom = GROUND_MARGIN;
       this.assets = assets;
       this.flips = /* @__PURE__ */ new Map();
       this.stats = { drawn: 0, fallback: 0 };
       assets.onReady(() => {
         this.backdrop = null;
       });
+      this.view = { x0: 0, x1: 0, y0: 0, y1: 0 };
+      loadFonts();
     }
     setTheme(theme) {
       super.setTheme(theme);
@@ -9550,36 +9999,66 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       if (!this.backdrop) this.backdrop = buildIllustratedBackdrop(this.theme, this.scale, this.assets);
       return this.backdrop;
     }
-    drawBackdrop(ctx, cam, viewW) {
+    drawBackdrop(ctx, cam, viewW, camY = 0, viewH = SKOOL.height * SKOOL.cell + GROUND_MARGIN) {
       const S = this.scale, b = this.ensureBackdrop();
-      const h = SKOOL.height * SKOOL.cell * S;
-      ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
+      const h = Math.min(viewH * S, b.height - camY * S);
+      this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: camY * S, y1: camY * S + h };
+      ctx.drawImage(b, cam * S, camY * S, viewW * S, h, cam * S, camY * S, viewW * S, h);
+    }
+    // Desks are drawn AFTER the people, so a seated pupil's knees go under the
+    // desk and anyone walking along the row passes behind it. (The chairs are
+    // in the backdrop, behind everyone.)
+    drawForeground(ctx) {
+      const f = this.assets.furniture("desk");
+      if (!f) return;
+      const S = this.scale, C5 = SKOOL.cell * S, u = S / 6;
+      for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
+        const room = SKOOL.rooms.find((r) => r.id === roomId);
+        const floor = (room.bottomRight[1] + 1) * C5;
+        for (const x of xs) {
+          const left = x * C5 + DESK_UNIT.dx * u;
+          if (left + f.w < this.view.x0 || left > this.view.x1) continue;
+          ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(left), floor - f.h, f.w, f.h);
+        }
+      }
     }
     // ---- Furniture, chalk, bubbles, boxes --------------------------------------------
     drawFurniture(ctx, game) {
       drawIllustratedFurniture(ctx, game, this.scale, this.assets, this.stats);
       this.drawChalk(ctx, game);
     }
-    // Chalk is the 2x font drawn through the 2x scale; a wiped column is
-    // restored from our own backdrop so the illustrated board comes back.
+    // Chalk in a hand. The engine wrapped each line to fit the board with the
+    // Spectrum font, so the lines always fit; a wiped column is restored from
+    // our own backdrop so the board shows through again.
     drawChalk(ctx, game) {
-      const S = this.scale, C5 = SKOOL.cell * S, b = this.ensureBackdrop();
+      const S = this.scale, C5 = SKOOL.cell * S, u = S / 6, b = this.ensureBackdrop();
       for (const room of game.world.rooms.values()) {
         const board = room.blackboard;
         if (!board || !board.lines.length) continue;
-        this.atPixelScale(ctx, () => {
-          const x2 = board.x * SKOOL.cell * PIXEL_SCALE2, y2 = board.y * SKOOL.cell * PIXEL_SCALE2;
-          board.lines.forEach((line, i) => drawHdText(ctx, line, x2 + 4, y2 + 4 + i * HD_LINE_HEIGHT, this.theme.chalk));
-        });
         const x = board.x * C5, y = board.y * C5;
+        drawChalkLines(ctx, board.lines, x + 8 * u, y + 2 * u, C5 * 0.96, board.width * C5 - 16 * u, this.theme.chalk, u);
         for (const col of board.wipedColumns) ctx.drawImage(b, x + col * C5, y, C5, board.height * C5, x + col * C5, y, C5, board.height * C5);
       }
     }
-    drawBubble(ctx, c) {
-      this.atPixelScale(ctx, () => super.drawBubble(ctx, c));
+    // The whole sentence in a bubble above the speaker (see art/text.js).
+    // `pos` is where the speaker is drawn, in game pixels.
+    drawBubble(ctx, c, pos) {
+      const S = this.scale, u = S / 6, b = c.bubble;
+      const [px2, py] = pos || [c.x * SKOOL.cell, c.y * SKOOL.cell];
+      const text = String(b.words).trim();
+      if (!text) return;
+      const total = text.length * 6 + 64;
+      const progress = Math.max(0, Math.min(1, (b.shift + 8) * 8 / total));
+      const headTop = c.isAdult?.() ? 8 : c.isSitting?.() ? 80 : 54;
+      const mouth = { x: (px2 + 12 + 5 * c.direction) * S, y: py * S + (headTop - 6) * u };
+      drawSpeech(ctx, text, mouth, this.view, progress, u);
     }
-    drawMessageBox(ctx, box, cam, viewW) {
-      this.atPixelScale(ctx, () => super.drawMessageBox(ctx, box, cam, viewW));
+    drawMessageBox(ctx, box, cam, viewW, camY = 0) {
+      const S = this.scale, C5 = SKOOL.cell * S, u = S / 6, t = this.theme;
+      const paper = box.paper === "eric" ? t.boxEric : box.paper === "other" ? t.boxOther : box.paper === "alarm" ? t.boxAlarm : t.boxSecret;
+      const ink = box.paper === "alarm" ? t.boxInkAlarm : t.boxInk;
+      const view = { x0: 0, x1: viewW * S, y0: 0 };
+      drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C5 - camY * S - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
     }
   };
 
@@ -9703,24 +10182,259 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     }
   };
 
+  // src/render/fx.js
+  var TAU = Math.PI * 2;
+  var rand = (a, b) => a + Math.random() * (b - a);
+  var Effects = class {
+    constructor(game, whereIs) {
+      this.game = game;
+      this.whereIs = whereIs;
+      this.parts = [];
+      this.shake = 0;
+      this.flash = null;
+      this.lastScore = 0;
+      this.enabled = true;
+      const on = (name, fn) => game.events.on(name, (p) => {
+        if (this.enabled) fn(p || {});
+      });
+      on("start", () => {
+        this.parts.length = 0;
+        this.shake = 0;
+        this.flash = null;
+        this.lastScore = 0;
+      });
+      on("splash", ({ victim, liquid }) => victim && this.splash(this.head(victim), liquid === "SHERRY" ? "#d98a2b" : "#7fc4ff", 16));
+      on("cup", ({ cup: cup2, contents }) => {
+        if (cup2 && contents) this.splash([cup2.x * 8 + 4, cup2.y * 8 + 6], contents === "SHERRY" ? "#d98a2b" : "#7fc4ff", 8);
+      });
+      on("decked", ({ character }) => {
+        if (character) {
+          this.stars(this.head(character), 7);
+          this.ring(this.head(character));
+          this.shake = Math.max(this.shake, character === game.cast.eric ? 2.2 : 1.2);
+        }
+      });
+      on("conked", ({ victim }) => {
+        if (victim) {
+          this.stars(this.head(victim), 9);
+          this.ring(this.head(victim));
+          this.shake = Math.max(this.shake, 1.6);
+        }
+      });
+      on("stinkbomb", ({ x, y }) => this.stink([x * 8 + 12, y * 8 + 26]));
+      on("kiss", () => this.hearts(this.head(game.cast.eric)));
+      on("found", () => this.sparkle(this.chest(game.cast.eric)));
+      on("upAYear", () => this.confetti());
+      on("lines", ({ recipient, amount }) => {
+        if (!recipient) return;
+        const eric = recipient === game.cast.eric;
+        this.text(this.head(recipient), `${amount} LINES`, eric ? "#e5383b" : "#59606e", eric ? 9 : 7);
+        if (eric) {
+          this.shake = Math.max(this.shake, 1.8);
+          this.flash = { colour: "229,56,59", t: 0, life: 380 };
+        }
+      });
+      on("score", ({ score }) => {
+        const gain = score - this.lastScore;
+        this.lastScore = score;
+        if (gain > 0 && gain < 5e3) this.text(this.head(game.cast.eric), `+${gain}`, "#c98a12", 8);
+      });
+    }
+    // Where to aim an effect on a character, in game pixels.
+    head(c) {
+      const [x, y] = this.whereIs(c);
+      return [x + 12, y + (c.isAdult?.() ? 3 : 10)];
+    }
+    chest(c) {
+      const [x, y] = this.whereIs(c);
+      return [x + 12, y + 18];
+    }
+    add(p) {
+      if (this.parts.length < 400) this.parts.push({ age: 0, vx: 0, vy: 0, g: 0, drag: 0, spin: 0, rot: 0, ...p });
+    }
+    splash([x, y], colour, n) {
+      for (let i = 0; i < n; i++) {
+        const a = rand(-Math.PI, 0);
+        const v = rand(18, 52);
+        this.add({ kind: "drop", x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 10, g: 150, life: rand(420, 700), size: rand(0.7, 1.5), colour });
+      }
+    }
+    stars([x, y], n) {
+      for (let i = 0; i < n; i++) {
+        const a = rand(0, TAU);
+        const v = rand(14, 34);
+        this.add({ kind: "star", x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 14, g: 40, drag: 1.6, life: rand(500, 900), size: rand(1.6, 2.6), colour: "#ffd34d", spin: rand(-6, 6) });
+      }
+    }
+    ring([x, y]) {
+      this.add({ kind: "ring", x, y, life: 260, size: 9, colour: "255,255,255" });
+    }
+    stink([x, y]) {
+      for (let i = 0; i < 14; i++) this.add({ kind: "puff", x: x + rand(-6, 6), y: y + rand(-2, 3), vx: rand(-7, 7), vy: rand(-16, -5), drag: 0.5, life: rand(1400, 2600), size: rand(4, 8), colour: "168,196,78", delay: i * 60 });
+    }
+    hearts([x, y]) {
+      for (let i = 0; i < 6; i++) this.add({ kind: "heart", x: x + rand(-5, 5), y, vx: rand(-6, 6), vy: rand(-22, -12), life: rand(900, 1400), size: rand(2, 3.2), colour: "#ff6f91", delay: i * 90 });
+    }
+    sparkle([x, y]) {
+      for (let i = 0; i < 12; i++) {
+        const a = rand(0, TAU);
+        const v = rand(10, 30);
+        this.add({ kind: "star", x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, drag: 2.2, life: rand(500, 900), size: rand(1.2, 2.2), colour: "#fff1a8", spin: rand(-8, 8) });
+      }
+    }
+    confetti() {
+      const [x, y] = this.head(this.game.cast.eric);
+      const colours = ["#e5383b", "#ffd34d", "#4aa3ff", "#62c370", "#ff6f91", "#ffffff"];
+      for (let i = 0; i < 90; i++) this.add({ kind: "bit", x: x + rand(-90, 90), y: y - rand(30, 60), vx: rand(-20, 20), vy: rand(0, 30), g: 46, drag: 0.8, life: rand(1800, 3200), size: rand(1.2, 2.2), colour: colours[i % colours.length], spin: rand(-10, 10), delay: rand(0, 600) });
+    }
+    text([x, y], words, colour, size) {
+      this.add({ kind: "text", x, y: y - 6, vy: -13, drag: 1.2, life: 1500, size, colour, words });
+    }
+    update(dt) {
+      const s = dt / 1e3;
+      this.shake = Math.max(0, this.shake - dt * 8e-3);
+      if (this.flash) {
+        this.flash.t += dt;
+        if (this.flash.t >= this.flash.life) this.flash = null;
+      }
+      for (const p of this.parts) {
+        if (p.delay > 0) {
+          p.delay -= dt;
+          continue;
+        }
+        p.age += dt;
+        p.vy += p.g * s;
+        p.vx -= p.vx * p.drag * s;
+        p.vy -= p.vy * p.drag * s;
+        p.x += p.vx * s;
+        p.y += p.vy * s;
+        p.rot += p.spin * s;
+      }
+      this.parts = this.parts.filter((p) => p.age < p.life);
+    }
+    // A small random offset for the whole view while a shake plays out.
+    shakeOffset() {
+      return this.shake > 0.05 ? [rand(-1, 1) * this.shake, rand(-1, 1) * this.shake] : [0, 0];
+    }
+    // Draw the particles. The context is already moved to world space; `S` is
+    // canvas pixels per game pixel.
+    draw(ctx, S) {
+      ctx.save();
+      for (const p of this.parts) {
+        if (p.delay > 0) continue;
+        const k = p.age / p.life, x = p.x * S, y = p.y * S, r = p.size * S;
+        ctx.globalAlpha = Math.max(0, Math.min(1, (1 - k) * 2));
+        if (p.kind === "drop") {
+          ctx.fillStyle = p.colour;
+          ctx.beginPath();
+          ctx.ellipse(x, y, r * 0.8, r * 1.2, Math.atan2(p.vy, p.vx) + Math.PI / 2, 0, TAU);
+          ctx.fill();
+          ctx.fillStyle = "rgba(255,255,255,0.7)";
+          ctx.beginPath();
+          ctx.arc(x - r * 0.25, y - r * 0.3, r * 0.25, 0, TAU);
+          ctx.fill();
+        } else if (p.kind === "star") {
+          ctx.fillStyle = p.colour;
+          ctx.translate(x, y);
+          ctx.rotate(p.rot);
+          ctx.beginPath();
+          for (let i = 0; i < 10; i++) {
+            const rr = i % 2 ? r * 0.45 : r;
+            const a = i / 10 * TAU - Math.PI / 2;
+            ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr);
+          }
+          ctx.closePath();
+          ctx.fill();
+          ctx.rotate(-p.rot);
+          ctx.translate(-x, -y);
+        } else if (p.kind === "ring") {
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = `rgba(${p.colour},${(1 - k) * 0.9})`;
+          ctx.lineWidth = Math.max(1, (1 - k) * 1.2 * S);
+          ctx.beginPath();
+          ctx.arc(x, y, r * (0.3 + k), 0, TAU);
+          ctx.stroke();
+        } else if (p.kind === "puff") {
+          const rr = r * (0.6 + k * 1.6);
+          const g = ctx.createRadialGradient(x, y, 0, x, y, rr);
+          g.addColorStop(0, `rgba(${p.colour},${0.5 * (1 - k)})`);
+          g.addColorStop(1, `rgba(${p.colour},0)`);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(x, y, rr, 0, TAU);
+          ctx.fill();
+        } else if (p.kind === "heart") {
+          ctx.fillStyle = p.colour;
+          ctx.beginPath();
+          ctx.moveTo(x, y + r * 0.9);
+          ctx.bezierCurveTo(x - r * 1.6, y - r * 0.2, x - r * 0.7, y - r * 1.3, x, y - r * 0.4);
+          ctx.bezierCurveTo(x + r * 0.7, y - r * 1.3, x + r * 1.6, y - r * 0.2, x, y + r * 0.9);
+          ctx.fill();
+        } else if (p.kind === "bit") {
+          ctx.fillStyle = p.colour;
+          ctx.translate(x, y);
+          ctx.rotate(p.rot);
+          ctx.fillRect(-r, -r * 0.5, r * 2, r);
+          ctx.rotate(-p.rot);
+          ctx.translate(-x, -y);
+        } else if (p.kind === "text") {
+          ctx.font = `400 ${Math.round(p.size * S * 0.62)}px ${UI_FONT}`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.lineWidth = Math.max(2, 0.7 * S);
+          ctx.strokeStyle = "rgba(255,253,246,0.95)";
+          ctx.lineJoin = "round";
+          ctx.strokeText(p.words, x, y);
+          ctx.fillStyle = p.colour;
+          ctx.fillText(p.words, x, y);
+        }
+      }
+      ctx.restore();
+    }
+    // A tint over the whole view (screen space), e.g. red when Eric gets lines.
+    drawFlash(ctx, w, h) {
+      if (!this.flash) return;
+      const k = this.flash.t / this.flash.life, a = 0.34 * (1 - k);
+      const g = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.3, w / 2, h / 2, Math.max(w, h) * 0.75);
+      g.addColorStop(0, `rgba(${this.flash.colour},0)`);
+      g.addColorStop(1, `rgba(${this.flash.colour},${a})`);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+    }
+  };
+
   // src/render/renderer.js
   var C4 = SKOOL.cell;
   var SPRITE_W = 24;
   var SPRITE_H = 32;
+  var CLOSE_ROWS = 14;
+  var LANE_STEP = 0.75;
+  var FLOOR_ROWS = new Set(SKOOL.floors.map((f) => f.y));
+  var laneHash = (id) => {
+    let h = 0;
+    for (const ch of String(id)) h = h * 31 + ch.charCodeAt(0) >>> 0;
+    return h;
+  };
   var Renderer = class {
     constructor(canvas, game, options = {}) {
       this.canvas = canvas;
       this.game = game;
       this.ctx = canvas.getContext("2d");
       this.ctx.imageSmoothingEnabled = false;
-      this.options = { theme: "modern", smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, artwork: "illustrated", onResize: null, ...options };
+      this.options = { theme: "modern", smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, artwork: "illustrated", camera: "whole", onResize: null, ...options };
       this.original = new OriginalPainter();
       this.scale = 1;
       this.setTheme(this.options.theme);
       this.cameraX = 0;
+      this.cameraY = 0;
+      this.cameraTargetY = 0;
       this.motion = new Motion();
       this.positions = this.motion.tracks;
       this.lastDraw = 0;
+      this.fx = new Effects(game, (thing) => this.spritePos(thing));
+      this.onFootstep = null;
+      this.lastStepFrame = -1;
       this.tint = document.createElement("canvas");
       this.tint.width = 24;
       this.tint.height = 32;
@@ -9749,13 +10463,28 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     get viewW() {
       return this.columns * C4;
     }
+    // The world's height in game pixels: 21 rows of cells, plus the strip of
+    // ground an HD painter may show below them.
+    get worldH() {
+      return SKOOL.height * C4 + (this.margin || 0);
+    }
+    // How much of that height the view shows. The close camera shows two
+    // storeys (14 rows) and follows Eric up and down; otherwise everything.
+    get viewH() {
+      return this.closeCamera() ? CLOSE_ROWS * C4 + (this.margin || 0) : this.worldH;
+    }
+    closeCamera() {
+      return this.options.camera === "close" && this.useHd();
+    }
     // retroStatus adds the original's three status rows under the play area.
     resize(columns, retroStatus = this.options.retroStatus, scale = this.scale) {
       this.columns = columns;
       this.options.retroStatus = retroStatus;
       this.scale = scale;
+      this.margin = this.useHd() ? this.painter.marginBottom || 0 : 0;
+      this.close = this.closeCamera();
       this.canvas.width = columns * C4 * scale;
-      this.canvas.height = (SKOOL.height + (retroStatus ? 3 : 0)) * C4 * scale;
+      this.canvas.height = (this.viewH + (retroStatus ? 3 * C4 : 0)) * scale;
       this.ctx.imageSmoothingEnabled = false;
       if (this.options.onResize) this.options.onResize();
     }
@@ -9764,7 +10493,8 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     // checked every frame.
     ensureScale() {
       const want = this.useOriginal() ? 1 : this.useHd() ? this.painter.scale : 1;
-      if (want !== this.scale) this.resize(this.columns, this.options.retroStatus, want);
+      const margin = this.useHd() ? this.painter.marginBottom || 0 : 0;
+      if (want !== this.scale || margin !== this.margin || this.closeCamera() !== this.close) this.resize(this.columns, this.options.retroStatus, want);
     }
     // ---- Camera ----------------------------------------------------------------
     // `dt` is the time since the last frame in milliseconds, so the camera
@@ -9781,6 +10511,8 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         if (offset >= this.columns - 10) this.cameraX = Math.min(maxX, (col + 8) * C4);
         else if (offset <= 9 && col > 0) this.cameraX = Math.max(0, (col - 8) * C4);
         if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;
+      } else if (this.options.attract) {
+        this.cameraX = maxX * (0.5 - 0.5 * Math.cos(performance.now() / 9e4 * Math.PI * 2 + 2.2));
       } else {
         const [ex] = this.spritePos(eric);
         const target = clamp(ex + 12 - viewW / 2);
@@ -9790,6 +10522,47 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       }
       const from = Math.floor(this.cameraX / C4), to = from + this.columns;
       this.game.setVisibleColumns(from, to);
+      this.updateCameraY(dt);
+    }
+    // The close camera shows two of the three storeys. It only moves when it
+    // has to: on the ground floor it shows the bottom two storeys, on the top
+    // floor the top two, and on the middle floor it stays wherever it was, so
+    // climbing one flight does not always drag the view with it.
+    updateCameraY(dt) {
+      const maxY = this.worldH - this.viewH;
+      if (maxY <= 0) {
+        this.cameraY = this.cameraTargetY = 0;
+        return;
+      }
+      if (this.options.attract) {
+        this.cameraY = this.cameraTargetY = maxY;
+        return;
+      }
+      const [, ey] = this.spritePos(this.game.cast.eric);
+      const lowest = ey + SPRITE_H + (this.margin || 0) - this.viewH;
+      const highest = ey - 3 * C4;
+      this.cameraTargetY = Math.max(0, Math.min(maxY, Math.max(lowest, Math.min(highest, this.cameraTargetY))));
+      if (Math.abs(this.cameraY - this.cameraTargetY) > this.viewH) this.cameraY = this.cameraTargetY;
+      else this.cameraY += (this.cameraTargetY - this.cameraY) * (1 - Math.exp(-dt / 260));
+      if (Math.abs(this.cameraY - this.cameraTargetY) < 0.05) this.cameraY = this.cameraTargetY;
+    }
+    // Depth on a flat floor. Everyone in the game stands on the same line, so a
+    // crowd used to pile into one blob. Walkers are given one of three lanes a
+    // little apart (-1 back, 0 middle, 1 front; the further lanes drawn first),
+    // which separates feet and shadows; Eric takes the front lane so he is never
+    // hidden. Anyone sitting, lying or on the stairs keeps to the middle line,
+    // where chairs and steps are.
+    laneOf(d, m, dt) {
+      const onFloor = Number.isInteger(d.y) && FLOOR_ROWS.has(d.y);
+      let want = 0;
+      if (m.walkState && onFloor && !d.staircase) {
+        want = d === this.game.cast.eric ? 1 : d.isAdult?.() ? 0 : laneHash(d.id) % 3 - 1;
+      }
+      const tr = this.motion.tracks.get(d.id);
+      if (tr.lane === void 0) tr.lane = want;
+      tr.lane += (want - tr.lane) * (1 - Math.exp(-dt / 140));
+      if (Math.abs(tr.lane - want) < 0.02) tr.lane = want;
+      return tr.lane;
     }
     // Where a thing is drawn this frame, in game pixels (see render/motion.js).
     spritePos(thing) {
@@ -9809,6 +10582,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const { ctx, game, theme } = this;
       const dt = Math.max(0, Math.min(100, now - this.lastDraw));
       this.lastDraw = now;
+      this.frameDt = dt;
       this.motion.begin(now, 1e3 / (game.config.ticksPerSecond * (this.options.gameSpeed || 1)));
       this.updateCamera(dt);
       this.ensureScale();
@@ -9842,18 +10616,28 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     // enlarged, so nothing is ever missing from the screen.
     drawHd() {
       const p = this.painter, S = p.scale, { ctx, game } = this, viewW = this.viewW;
-      const cam = Math.round(this.cameraX * S) / S;
+      const dt0 = this.frameDt || 0;
+      const cam = Math.round(this.cameraX * S) / S, camY = Math.round(this.cameraY * S) / S, viewH = this.viewH;
       ctx.imageSmoothingEnabled = !!p.smooth;
+      this.fx.update(dt0);
+      const [shakeX, shakeY] = this.options.smoothMotion ? this.fx.shakeOffset() : [0, 0];
       ctx.save();
-      ctx.translate(-cam * S, 0);
-      p.drawBackdrop(ctx, cam, viewW);
+      ctx.translate(Math.round((-cam + shakeX) * S), Math.round((-camY + shakeY) * S));
+      p.drawBackdrop(ctx, cam, viewW, camY, viewH);
       p.drawFurniture(ctx, game);
       const viewFrom = cam - 48, viewTo = cam + viewW + 48;
       const cycles = !!p.hasCycle;
+      const dt = dt0;
+      const people = [], objects = [];
       for (const d of game.cast.drawables) {
         if (!d.visible || d.x * C4 + SPRITE_W < viewFrom || d.x * C4 > viewTo) continue;
         const m = this.motion.sample(d, this.options.smoothMotion);
-        const x = m.x * C4, y = m.y * C4;
+        if (d.group === "OBJ") objects.push({ d, m, lane: 0 });
+        else people.push({ d, m, lane: p.smooth ? this.laneOf(d, m, dt) : 0 });
+      }
+      people.sort((a, b) => a.lane - b.lane);
+      const drawOne = ({ d, m, lane }) => {
+        const x = m.x * C4, y = m.y * C4 + lane * LANE_STEP;
         if (d.group !== "OBJ" && d.isStanding?.()) p.drawShadow(ctx, x, y);
         let state = d.animatoryState;
         if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : "WALK0";
@@ -9866,10 +10650,21 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           ctx.drawImage(getSprite(d.group, d.animatoryState, d.direction, d.look), Math.round(x * S), Math.round(y * S), SPRITE_W * S, SPRITE_H * S);
         }
         ctx.globalAlpha = 1;
+      };
+      people.forEach(drawOne);
+      if (p.drawForeground) p.drawForeground(ctx, game);
+      objects.forEach(drawOne);
+      this.fx.draw(ctx, S);
+      for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c, this.spritePos(c));
+      const em = this.motion.sample(game.cast.eric, this.options.smoothMotion);
+      const stepFrame = em.walking && (em.cycle === 3 || em.cycle === 7) ? em.cycle : -1;
+      if (stepFrame !== this.lastStepFrame) {
+        this.lastStepFrame = stepFrame;
+        if (stepFrame >= 0 && this.onFootstep) this.onFootstep();
       }
-      for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c);
       ctx.restore();
-      if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW);
+      this.fx.drawFlash(ctx, this.canvas.width, this.canvas.height);
+      if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY);
       if (this.options.retroStatus) {
         ctx.save();
         ctx.scale(S, S);
@@ -10609,7 +11404,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         this.settings[key] = v;
         this.onApply(this.settings, key);
         if (e.target.type === "range") this.root.querySelector(`[data-out="${key}"]`).textContent = formatSetting(key, v);
-        if (key === "view") this.show("options", this.data);
+        if (key === "view" || key === "camera") this.show("options", this.data);
       });
       this.root.addEventListener("input", (e) => {
         const key = e.target.dataset.setting;
@@ -10623,6 +11418,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.screen = screen;
       this.data = data;
       this.root.hidden = false;
+      this.root.dataset.screen = screen;
       this.root.innerHTML = `<div class="menu-card">${this[`render_${screen}`](data)}</div>`;
       this.root.querySelector("button")?.focus();
     }
@@ -10661,10 +11457,12 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           break;
       }
     }
+    // The title screen: the school carries on behind it (see "attract" in
+    // main.js), so the card is see-through and sits to one side.
     render_title() {
       return `
-      <p class="eyebrow">A faithful remake, rebuilt to be modified</p>
-      <h1>Back to Skool</h1>
+      <p class="eyebrow">Microsphere's 1985 classic, remade</p>
+      <h1 class="title">Back to <span>Skool</span></h1>
       <p class="lede">Eric has forged his report over the holidays. Now he has to get it back into the Head's safe before anyone notices.</p>
       <div class="menu-actions">
         <button type="button" data-action="new" class="primary">New game</button>
@@ -10706,8 +11504,12 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         <label class="opt"><span>View</span>
           <select data-setting="view"><option value="modern" ${s.view === "modern" ? "selected" : ""}>Modern</option><option value="original" ${s.view === "original" ? "selected" : ""}>Original (1985)</option></select>
           <small>Press V in the game to switch. Choosing a view resets the advanced options below to that view's defaults.</small></label>
+        <label class="opt"><span>Camera</span>
+          <select data-setting="camera"><option value="close" ${s.camera === "close" ? "selected" : ""}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== "close" ? "selected" : ""}>Whole school</option></select>
+          <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting("speed", s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
-        ${check("sound", "Sound", "Synthesised beeps.")}
+        ${check("sound", "Sound effects", "Footsteps, splashes, the bell and birdsong, all synthesised.")}
+        ${check("music", "Music", "A quiet tune while you play.")}
       </div>
       <h2>Advanced</h2>
       <div class="options">
@@ -10754,62 +11556,198 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   }
 
   // src/ui/sound.js
+  var N = (name) => 440 * 2 ** ((NOTES2[name] - 57) / 12);
+  var NOTES2 = {};
+  ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"].forEach((n, i) => {
+    for (let o = 1; o <= 7; o++) NOTES2[`${n}${o}`] = o * 12 + i;
+  });
+  var jingle = (names, step = 0.09, last = 0.28) => (s, t) => names.forEach((n, i) => s.tone(t + i * step, N(n), i === names.length - 1 ? last : step * 1.6, { vol: 0.5 }));
   var RECIPES = {
-    BELL: [[1760, 0.12, "square"], [1480, 0.12, "square"], [1760, 0.12, "square"], [1480, 0.25, "square"]],
-    LINES1: [[220, 0.08], [196, 0.08], [174, 0.08], [164, 0.12]],
-    LINES2: [[330, 0.06], [294, 0.06], [262, 0.06], [247, 0.1]],
-    ALARM: [[880, 0.1, "sawtooth"], [660, 0.1, "sawtooth"], [880, 0.1, "sawtooth"], [660, 0.1, "sawtooth"]],
-    CATAPULT: [[1200, 0.03, "sawtooth"], [600, 0.04, "sawtooth"]],
-    WATER_PISTOL: [[900, 0.04, "triangle"], [1400, 0.05, "triangle"]],
-    KNOCKED_OUT: [[120, 0.12, "square"], [80, 0.15, "square"]],
-    HIT: [[300, 0.03, "square"], [150, 0.05, "square"]],
-    JUMP: [[440, 0.05, "triangle"], [660, 0.05, "triangle"]],
-    SIT: [[330, 0.04, "triangle"]],
-    DESK: [[660, 0.08], [880, 0.08], [1100, 0.12]],
-    FROG: [[520, 0.08], [700, 0.08], [520, 0.08]],
-    MOUSE: [[1400, 0.05], [1800, 0.05], [1400, 0.05]],
-    BIKE: [[660, 0.08], [880, 0.08], [1100, 0.08], [1320, 0.16]],
-    STOREROOM_KEY: [[660, 0.08], [880, 0.08], [1100, 0.08], [1320, 0.16]],
-    SAFE_KEY: [[523, 0.1], [659, 0.1], [784, 0.1], [1047, 0.3]],
-    SHERRY: [[392, 0.1], [494, 0.1], [587, 0.2]],
-    CONKER: [[200, 0.1, "square"], [100, 0.2, "square"]],
-    KISS: [[880, 0.08], [1175, 0.16]],
-    UP_A_YEAR: [[523, 0.15], [659, 0.15], [784, 0.15], [1047, 0.3], [784, 0.15], [1047, 0.5]]
+    // An electric school bell: a hammer rattling on a gong for a second and a half.
+    BELL: (s, t) => {
+      for (let i = 0; i < 34; i++) {
+        const at = t + i * 0.044;
+        s.tone(at, 1975, 0.1, { type: "sine", vol: 0.34 });
+        s.tone(at, 2962, 0.07, { type: "sine", vol: 0.16 });
+        s.tone(at, 1318, 0.12, { type: "triangle", vol: 0.1 });
+      }
+    },
+    LINES1: (s, t) => {
+      s.tone(t, 247, 0.16, { type: "sawtooth", vol: 0.3, slide: 185, lowpass: 1200 });
+      s.tone(t + 0.17, 196, 0.3, { type: "sawtooth", vol: 0.3, slide: 131, lowpass: 1e3 });
+    },
+    LINES2: (s, t) => {
+      s.tone(t, 330, 0.12, { type: "sawtooth", vol: 0.26, slide: 262, lowpass: 1400 });
+      s.tone(t + 0.13, 262, 0.22, { type: "sawtooth", vol: 0.26, slide: 196, lowpass: 1200 });
+    },
+    ALARM: (s, t) => {
+      for (let i = 0; i < 4; i++) s.tone(t + i * 0.11, i % 2 ? 660 : 880, 0.1, { type: "sawtooth", vol: 0.3, lowpass: 2400 });
+    },
+    CATAPULT: (s, t) => {
+      s.tone(t, 760, 0.14, { vol: 0.4, slide: 190 });
+      s.noise(t, 0.03, { vol: 0.25, band: 3e3 });
+    },
+    WATER_PISTOL: (s, t) => {
+      s.noise(t, 0.16, { vol: 0.32, band: 2200, bandTo: 4200, q: 3 });
+    },
+    KNOCKED_OUT: (s, t) => {
+      s.tone(t, 150, 0.24, { type: "sine", vol: 0.7, slide: 48 });
+      s.noise(t, 0.09, { vol: 0.4, lowpass: 500 });
+    },
+    HIT: (s, t) => {
+      s.noise(t, 0.06, { vol: 0.5, band: 900, q: 1 });
+      s.tone(t, 210, 0.1, { type: "sine", vol: 0.5, slide: 90 });
+    },
+    JUMP: (s, t) => {
+      s.tone(t, 330, 0.13, { vol: 0.32, slide: 640 });
+    },
+    SIT: (s, t) => {
+      s.tone(t, 180, 0.07, { type: "sine", vol: 0.4, slide: 120 });
+    },
+    DESK: jingle(["E5", "A5", "C#6"], 0.08, 0.2),
+    FROG: (s, t) => {
+      for (let i = 0; i < 2; i++) s.tone(t + i * 0.13, 210, 0.09, { type: "square", vol: 0.22, slide: 140, lowpass: 900 });
+    },
+    MOUSE: (s, t) => {
+      for (let i = 0; i < 3; i++) s.tone(t + i * 0.07, 2600, 0.05, { type: "sine", vol: 0.2, slide: 3400 });
+    },
+    BIKE: jingle(["E5", "G5", "B5", "E6"]),
+    STOREROOM_KEY: jingle(["D5", "F#5", "A5", "D6"]),
+    SAFE_KEY: jingle(["C5", "E5", "G5", "C6"], 0.11, 0.4),
+    SHERRY: jingle(["G4", "B4", "D5"], 0.11, 0.3),
+    CONKER: (s, t) => {
+      s.tone(t, 520, 0.05, { type: "sine", vol: 0.5, slide: 300 });
+      s.noise(t, 0.04, { vol: 0.3, lowpass: 900 });
+    },
+    KISS: (s, t) => {
+      s.tone(t, 880, 0.09, { type: "sine", vol: 0.3, slide: 1320 });
+      s.tone(t + 0.12, 1175, 0.2, { type: "sine", vol: 0.3 });
+    },
+    UP_A_YEAR: jingle(["C5", "E5", "G5", "C6", "G5", "C6"], 0.15, 0.6)
   };
+  var MELODY = "E5 G5 E5 C5|D5 F5 D5 B4|C5 E5 G5 E5|D5 - G4 -|E5 G5 E5 C5|D5 F5 D5 B4|C5 D5 E5 D5|C5 - - -|A5 A5 G5 E5|F5 F5 E5 C5|D5 E5 F5 A5|G5 - - -|E5 G5 E5 C5|D5 F5 D5 B4|C5 E5 D5 B4|C5 - C6 -".split("|").map((bar) => bar.split(" "));
+  var BASS = "C3 G2 C3 G2 C3 G2 C3 C3 F2 C3 G2 G2 C3 G2 G2 C3".split(" ");
+  var BEAT = 60 / 126;
   var Sound = class {
     constructor() {
       this.enabled = true;
+      this.musicEnabled = true;
+      this.active = false;
+      this.outdoors = false;
       this.ctx = null;
-      this.volume = 0.15;
+      this.musicAt = 0;
+      this.musicIndex = 0;
+      this.nextBird = 0;
     }
-    // Browsers only allow audio after a user gesture, so we create the context lazily.
+    // Browsers only allow audio after a user gesture, so the context is made lazily.
     ensure() {
       if (!this.ctx) {
         const AC = window.AudioContext || window.webkitAudioContext;
         if (!AC) return null;
         this.ctx = new AC();
+        const limiter = this.ctx.createDynamicsCompressor();
+        limiter.threshold.value = -14;
+        limiter.ratio.value = 6;
+        this.master = this.ctx.createGain();
+        this.master.gain.value = 0.5;
+        this.master.connect(limiter).connect(this.ctx.destination);
+        this.musicBus = this.ctx.createGain();
+        this.musicBus.gain.value = 0;
+        this.musicBus.connect(this.master);
+        this.noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate, this.ctx.sampleRate);
+        const data = this.noiseBuffer.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        setInterval(() => this.pump(), 120);
       }
       if (this.ctx.state === "suspended") this.ctx.resume();
       return this.ctx;
     }
+    // ---- The two ingredients ------------------------------------------------------
+    // A pitched note with a soft start, fading out; `slide` glides to another pitch.
+    tone(t, freq, dur, { type = "triangle", vol = 0.4, slide = 0, lowpass = 0, out = null } = {}) {
+      const ctx = this.ctx, osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, t);
+      if (slide) osc.frequency.exponentialRampToValueAtTime(slide, t + dur);
+      gain.gain.setValueAtTime(1e-4, t);
+      gain.gain.exponentialRampToValueAtTime(vol, t + 8e-3);
+      gain.gain.exponentialRampToValueAtTime(1e-4, t + dur);
+      let node = osc.connect(gain);
+      if (lowpass) {
+        const f = ctx.createBiquadFilter();
+        f.type = "lowpass";
+        f.frequency.value = lowpass;
+        node = node.connect(f);
+      }
+      node.connect(out || this.master);
+      osc.start(t);
+      osc.stop(t + dur + 0.02);
+    }
+    // A burst of noise through a filter: `band` for hissy, `lowpass` for thuddy.
+    noise(t, dur, { vol = 0.3, band = 0, bandTo = 0, lowpass = 0, q = 1.5 } = {}) {
+      const ctx = this.ctx, src = ctx.createBufferSource(), gain = ctx.createGain(), f = ctx.createBiquadFilter();
+      src.buffer = this.noiseBuffer;
+      src.loop = true;
+      f.type = band ? "bandpass" : "lowpass";
+      f.frequency.setValueAtTime(band || lowpass || 800, t);
+      f.Q.value = q;
+      if (bandTo) f.frequency.exponentialRampToValueAtTime(bandTo, t + dur);
+      gain.gain.setValueAtTime(1e-4, t);
+      gain.gain.exponentialRampToValueAtTime(vol, t + 6e-3);
+      gain.gain.exponentialRampToValueAtTime(1e-4, t + dur);
+      src.connect(f).connect(gain).connect(this.master);
+      src.start(t, Math.random() * 0.5);
+      src.stop(t + dur + 0.02);
+    }
+    // ---- Effects --------------------------------------------------------------------
     play(id) {
-      if (!this.enabled) return;
+      if (!this.enabled || !this.active) return;
       const recipe = RECIPES[id];
-      if (!recipe) return;
-      const ctx = this.ensure();
-      if (!ctx) return;
-      let t = ctx.currentTime;
-      for (const [freq, dur, type = "square"] of recipe) {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(this.volume, t);
-        gain.gain.exponentialRampToValueAtTime(1e-3, t + dur);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start(t);
-        osc.stop(t + dur);
-        t += dur;
+      if (!recipe || !this.ensure()) return;
+      recipe(this, this.ctx.currentTime + 5e-3);
+    }
+    // One of Eric's footsteps: a soft tap, crisper on the playground tarmac.
+    step() {
+      if (!this.enabled || !this.active || !this.ctx) return;
+      const t = this.ctx.currentTime;
+      this.stepFlip = !this.stepFlip;
+      if (this.outdoors) this.noise(t, 0.045, { vol: 0.09, band: this.stepFlip ? 1500 : 1250, q: 1.2 });
+      else this.noise(t, 0.05, { vol: 0.11, lowpass: this.stepFlip ? 520 : 440 });
+    }
+    // ---- Things that run on their own: the tune and the birds --------------------------
+    setActive(on) {
+      this.active = on;
+    }
+    setOutdoors(on) {
+      this.outdoors = on;
+    }
+    // Called a few times a second: schedules the next notes a little ahead of time.
+    pump() {
+      const ctx = this.ctx;
+      if (!ctx || ctx.state !== "running") return;
+      const now = ctx.currentTime;
+      const wantMusic = this.active && this.musicEnabled ? 0.16 : 0;
+      this.musicBus.gain.setTargetAtTime(wantMusic, now, 0.4);
+      if (wantMusic) {
+        if (this.musicAt < now) this.musicAt = now + 0.05;
+        while (this.musicAt < now + 0.4) {
+          const bar = Math.floor(this.musicIndex / 4) % MELODY.length, beat = this.musicIndex % 4;
+          const note = MELODY[bar][beat];
+          if (note !== "-") {
+            let hold = 1;
+            for (let k = beat + 1; k < 4 && MELODY[bar][k] === "-"; k++) hold++;
+            this.tone(this.musicAt, N(note), BEAT * hold * 0.95, { type: "triangle", vol: 0.5, out: this.musicBus });
+            this.tone(this.musicAt, N(note) * 2, BEAT * 0.3, { type: "sine", vol: 0.12, out: this.musicBus });
+          }
+          if (beat % 2 === 0) this.tone(this.musicAt, N(BASS[bar]) * (beat ? 1.5 : 1), BEAT * 1.7, { type: "sine", vol: 0.55, out: this.musicBus });
+          this.musicAt += BEAT;
+          this.musicIndex++;
+        }
+      }
+      if (this.active && this.enabled && this.outdoors && now >= this.nextBird) {
+        const base = 2300 + Math.random() * 1700, chirps = 2 + Math.floor(Math.random() * 4);
+        for (let i = 0; i < chirps; i++) this.tone(now + 0.05 + i * 0.09, base * (1 + Math.random() * 0.2), 0.06, { type: "sine", vol: 0.05, slide: base * (1.2 + Math.random() * 0.5) });
+        this.nextBird = now + 0.9 + Math.random() * 3.2;
       }
     }
   };
@@ -11672,18 +12610,24 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   }
 
   // src/main.js
+  var CLOSE_COLUMNS = 32;
+  var WHOLE_COLUMNS = CONFIG.viewportColumns;
   var VIEW_PRESETS = {
-    original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: "painted" },
-    modern: { theme: "modern", columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: "illustrated" }
+    original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: "painted", camera: "whole" },
+    modern: { theme: "modern", columns: CLOSE_COLUMNS, camera: "close", smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: "illustrated" }
   };
-  var SETTINGS_VERSION = 3;
-  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+  var SETTINGS_VERSION = 4;
+  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
   function migrateSettings(s) {
     const v = s.settingsVersion || 1;
     if (v < 2) s.hdGraphics = s.view !== "original";
     if (v < 3) {
       s.artwork = s.hdGraphics === false ? "painted" : "illustrated";
       delete s.hdGraphics;
+    }
+    if (v < 4) {
+      s.camera = s.view === "original" ? "whole" : "close";
+      if (s.camera === "close") s.columns = CLOSE_COLUMNS;
     }
     s.settingsVersion = SETTINGS_VERSION;
     return s;
@@ -11707,7 +12651,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     input.attach(window);
     const game = new Game({ input, measureText, fontHas });
     const canvas = document.getElementById("game");
-    const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, onResize: () => fitCanvas() });
+    const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, camera: settings.camera, onResize: () => fitCanvas() });
     const hud = new HUD(document.getElementById("hud"), game, DEFAULT_BINDINGS);
     const tapeLoader = new TapeLoader(document.getElementById("tape"), renderer, () => {
       tapeLoader.update(settings.view);
@@ -11715,16 +12659,32 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     });
     const sound = new Sound();
     game.events.on("sound", (id) => sound.play(id));
+    renderer.onFootstep = () => sound.step();
+    game.events.on("tick", () => {
+      const e = game.cast.eric;
+      sound.setOutdoors(e.y === 17 && e.x >= SKOOL.playground[0] && e.x <= SKOOL.playground[1]);
+    });
     let paused = true;
+    let attract = false;
+    const setAttract = (on) => {
+      attract = on;
+      renderer.options.attract = on;
+      if (on) {
+        game.start();
+        input.enabled = false;
+      }
+    };
     const menu = new Menu(document.getElementById("overlay"), {
       settings,
       bindings: DEFAULT_BINDINGS,
       onApply: (s, changedKey) => {
         if (changedKey === "view") Object.assign(s, VIEW_PRESETS[s.view]);
+        if (changedKey === "camera") s.columns = s.camera === "close" ? CLOSE_COLUMNS : WHOLE_COLUMNS;
         applySettings(s);
         saveSettings(s);
       },
       onNewGame: () => {
+        setAttract(false);
         game.start();
         paused = false;
         input.enabled = true;
@@ -11737,6 +12697,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       onQuit: () => {
         paused = true;
         menu.show("title");
+        setAttract(true);
       }
     });
     function applySettings(s) {
@@ -11748,9 +12709,11 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       game.config.freezeOnMessages = s.freezeOnMessages;
       renderer.options.originalGraphics = !!s.originalGraphics;
       renderer.options.artwork = s.artwork || "illustrated";
+      renderer.options.camera = s.camera || "whole";
       game.measureText = s.originalGraphics ? originalMeasure : measureText;
       game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
       sound.enabled = s.sound;
+      sound.musicEnabled = s.music !== false;
       document.documentElement.classList.toggle("view-original", s.view === "original");
       document.documentElement.classList.toggle("view-modern", s.view !== "original");
       document.documentElement.classList.toggle("art-illustrated", s.view !== "original" && s.artwork === "illustrated");
@@ -11785,7 +12748,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     }
     window.addEventListener("resize", fitCanvas);
     const togglePause = () => {
-      if (!game.started || game.gameOver) return;
+      if (attract || !game.started || game.gameOver) return;
       if (menu.isOpen) {
         menu.hide();
         paused = false;
@@ -11798,10 +12761,18 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     };
     input.onMenu(togglePause);
     hud.onMenu(() => {
+      if (attract) return;
       if (game.started && !game.gameOver) togglePause();
-      else menu.show("title");
+      else {
+        menu.show("title");
+        setAttract(true);
+      }
     });
     game.events.on("gameOver", (data) => {
+      if (attract) {
+        game.start();
+        return;
+      }
       paused = true;
       input.enabled = false;
       setTimeout(() => menu.show("gameover", data), 600);
@@ -11809,6 +12780,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     setupFeatures({ game, renderer, hud, input, settings });
     applySettings(settings);
     menu.show("title");
+    setAttract(true);
     let polls = 0;
     const poll = setInterval(() => {
       tapeLoader.update(settings.view);
@@ -11819,8 +12791,9 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     function frame(now) {
       const dt = Math.min(0.25, (now - last) / 1e3);
       last = now;
-      if (!paused) {
-        acc += dt * settings.speed;
+      sound.setActive(!paused && !attract);
+      if (!paused || attract) {
+        acc += dt * (attract ? 1 : settings.speed);
         const step = 1 / game.config.ticksPerSecond;
         let guard = 0;
         while (acc >= step && guard++ < 10) {

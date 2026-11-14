@@ -41,6 +41,8 @@ src/engine/                 the rules: world, characters, commands, lessons, gam
 src/render/                 drawing: font, painted stand-ins, renderer, themes, original view, tape extractor
 src/render/hd/              HD pixel art: the format, people, objects, furniture, building, font, icons (also the fallback)
 src/render/art/             the illustrated view: loads assets/illustrated/ and draws it, falling back to pixel art
+src/render/motion.js        turns the engine's cell steps into steady movement and walk cycles
+src/render/fx.js            splashes, stars, floating numbers and screen shake, driven by the engine's events
 assets/illustrated/         the illustrated artwork itself (sprite sheets and a manifest saying which frame is where)
 tools/art/                  the art pipeline: prompts, a record of every generation, and the scripts that cut and pack sheets
 src/data/decor.js           how each room looks in the HD view (decoration only; the engine never reads it)
@@ -54,7 +56,17 @@ dist/                       the built single-file game
 
 ## The modern view
 
-The modern view has two kinds of artwork, chosen under Advanced → Artwork. **Illustrated** (the default) draws hand-painted-style characters with human proportions, painted rooms, furniture cut-outs and objects from `assets/illustrated/`; each character frame sits in a 96×128 box at four times the Spectrum's resolution, and the manifest records where its feet are so it stands exactly where the engine says. Room pictures are fitted to each room's wall and the floors, stairs, walls and door frames are drawn by code on top, so everything lines up with the map. The pictures were generated with an image model from the prompts in `tools/art/` and processed by the scripts there; anything the manifest lacks is drawn by the pixel-art painter instead, so the game is always complete. The single-file builds load the pictures from this project's published site and fall back to pixel art offline. **HD pixel art** is drawn entirely by code: every sprite, room and icon is a small text bitmap or drawing routine under `src/render/hd/`, at twice the Spectrum's resolution. The building is painted from the map data plus `src/data/decor.js`, which describes what each room looks like. Open `tools/preview/index.html` from a local server (add `?art=illustrated` for the illustrated frames) to see every sprite and the whole backdrop at once. **Painted stand-ins** are the simple shapes the project started with.
+The modern view is the same game drawn as a modern one. The engine underneath is untouched: everything below happens on the drawing side, and the original view ignores all of it.
+
+**Artwork.** Advanced → Artwork chooses between three sets. *Illustrated* (the default) draws hand-painted-style people with human proportions, a painting for every room, the playground, furniture cut-outs and objects from `assets/illustrated/`, at six times the Spectrum's resolution. The pictures were generated with an image model from the prompts in `tools/art/` and processed by the scripts there; the manifest records where each frame's feet are so it stands exactly where the engine says. Floors, stairs, walls, door frames and room signs are drawn by code from painted material swatches, so they line up with the map. Anything the manifest lacks is drawn by the pixel-art painter instead, so the game is always complete. *HD pixel art* is drawn entirely by code at twice the Spectrum's resolution (`src/render/hd/`). *Painted stand-ins* are the simple shapes the project started with.
+
+**Motion.** The engine steps people from cell to cell a few times a second, as the 1985 game did. `src/render/motion.js` turns that into steady movement: walkers glide at constant speed, an eight-frame walk cycle is chosen from the distance covered so feet stay planted, poses blend into each other, and the camera follows where Eric is drawn rather than the cell he occupies.
+
+**Staging.** The close camera shows two storeys at a time, as wide as the 1985 screen, and only moves up or down when Eric's floor would leave the view; Options → Camera switches back to the whole school. Pupils sit at desks (chairs behind them, desks in front), walkers are spread over three depth lanes so a crowd does not pile into one blob, speech appears as a whole sentence in a bubble above the speaker, and chalk is written in a hand.
+
+**Feel.** Splashes, stars, stink clouds, floating numbers and a shake of the screen answer the engine's events (`src/render/fx.js`). Sound is synthesised in the browser: effects, Eric's footsteps, birdsong outdoors, the bell and a quiet tune, each with its own switch in Options. Behind the title screen the school runs by itself while the view drifts across it.
+
+Open `tools/preview/index.html` from a local server (add `?art=illustrated` for the illustrated frames) to see every sprite, walk cycle, object and the whole backdrop at once. The single-file download loads the pictures from this project's published site and falls back to pixel art offline.
 
 ## The original view
 

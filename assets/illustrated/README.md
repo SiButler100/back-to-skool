@@ -7,7 +7,9 @@ Pictures for the modern view's illustrated artwork. Nothing here is from the
 
 - `manifest.json` says which picture holds each character's pose, where the
   frame is in the sheet (`x, y, w, h`) and how far its top-left corner sits
-  from the top-left of the character's 96×128 box (`ox, oy`). An `alias`
+  from the top-left of the character's 144×192 box (`ox, oy`). Everything is
+  built for scale 6 (six canvas pixels per Spectrum pixel); the game refuses
+  a manifest built for another scale. An `alias`
   entry reuses another pose's frame. The game reads only this file and the
   images it names, so artwork can be replaced without touching code.
 - `characters/` one sheet per sprite group; the plain boys and girls have
@@ -17,6 +19,11 @@ Pictures for the modern view's illustrated artwork. Nothing here is from the
   desk lids and fallen bike, each placed where the pixel art puts it.
 - `furniture/items.png` doors, windows, gate, cabinet, safe, cups, blackboard,
   desk and chair, railings, bike, conker in the tree, and the tree.
+- `scenes/playground.jpg` the playground painting; `textures/` six material
+  swatches (floorboards, dark wood, two bricks, tarmac, stone), each mirrored
+  into a 2×2 block so it repeats, used for floors, stairs and walls.
+- Each character sheet also holds an eight-frame walk cycle (`CYCLE0`..`CYCLE7`),
+  generated with the character's first sheet as a reference.
 - `rooms/` one JPEG per room zone (see `src/data/decor.js`), fitted to the
   wall by `src/render/art/backdrop.js`; the floor line is the bottom edge.
 

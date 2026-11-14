@@ -183,6 +183,22 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
   backdrop-filter: blur(2px);
 }
 .overlay[hidden] { display: none; }
+/* The title screen: the game runs behind it, so only one side is darkened
+   and the card itself is transparent. */
+.overlay[data-screen="title"] {
+  justify-content: flex-start; align-items: flex-end; padding: 0; backdrop-filter: none;
+  background: linear-gradient(100deg, rgba(12, 16, 24, 0.90) 0%, rgba(12, 16, 24, 0.72) 34%, rgba(12, 16, 24, 0.18) 62%, rgba(12, 16, 24, 0) 78%);
+}
+.overlay[data-screen="title"] .menu-card {
+  background: transparent; color: #f6f1e4; box-shadow: none; max-width: 560px; padding: 40px 44px;
+}
+.overlay[data-screen="title"] .eyebrow { color: #ffd34d; }
+.overlay[data-screen="title"] .small { color: rgba(246, 241, 228, 0.62); }
+.menu-card h1.title { font-size: clamp(44px, 7vw, 84px); font-weight: 300; line-height: 0.98; letter-spacing: -0.02em; margin: 6px 0 16px; }
+.menu-card h1.title span { color: #ffd34d; }
+.overlay[data-screen="title"] .menu-actions button { background: rgba(255, 255, 255, 0.10); color: #f6f1e4; border-color: rgba(255, 255, 255, 0.35); }
+.overlay[data-screen="title"] .menu-actions button:hover { border-color: #ffffff; background: rgba(255, 255, 255, 0.18); }
+.overlay[data-screen="title"] .menu-actions button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .menu-card {
   background: var(--surface);
   color: var(--ink);
