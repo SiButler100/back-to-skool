@@ -18,6 +18,8 @@ import { makeCanvas } from '../hd/pixelart.js';
 import { drawHdText, HD_LINE_HEIGHT } from '../hd/font.js';
 import { buildIllustratedBackdrop } from './backdrop.js';
 import { ART_SCALE } from './assets.js';
+import { DESK_UNIT } from './backdrop.js';
+import { loadFonts, drawSpeech, drawCard, drawChalkLines } from './text.js';
 import { drawIllustratedFurniture } from './furniture.js';
 
 const PIXEL_SCALE = 2;    // the pixel-art painter's scale; ours is three times that
@@ -31,6 +33,8 @@ export class IllustratedPainter extends ModernPainter {
     this.flips = new Map();         // frame key -> flipped copy
     this.stats = { drawn: 0, fallback: 0 };
     assets.onReady(() => { this.backdrop = null; });
+    this.view = { x0: 0, x1: 0, y0: 0, y1: 0 };   // the visible strip in canvas pixels, noted each frame
+    loadFonts();
   }
 
   setTheme(theme) { super.setTheme(theme); this.flips.clear(); }
@@ -94,7 +98,26 @@ export class IllustratedPainter extends ModernPainter {
   drawBackdrop(ctx, cam, viewW) {
     const S = this.scale, b = this.ensureBackdrop();
     const h = SKOOL.height * SKOOL.cell * S;
+    this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: 0, y1: h };
     ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
+  }
+
+  // Desks are drawn AFTER the people, so a seated pupil's knees go under the
+  // desk and anyone walking along the row passes behind it. (The chairs are
+  // in the backdrop, behind everyone.)
+  drawForeground(ctx) {
+    const f = this.assets.furniture('desk');
+    if (!f) return;
+    const S = this.scale, C = SKOOL.cell * S, u = S / 6;
+    for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
+      const room = SKOOL.rooms.find((r) => r.id === roomId);
+      const floor = (room.bottomRight[1] + 1) * C;
+      for (const x of xs) {
+        const left = x * C + DESK_UNIT.dx * u;
+        if (left + f.w < this.view.x0 || left > this.view.x1) continue;
+        ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(left), floor - f.h, f.w, f.h);
+      }
+    }
   }
 
   // ---- Furniture, chalk, bubbles, boxes --------------------------------------------
@@ -103,21 +126,40 @@ export class IllustratedPainter extends ModernPainter {
     this.drawChalk(ctx, game);
   }
 
-  // Chalk is the 2x font drawn through the 2x scale; a wiped column is
-  // restored from our own backdrop so the illustrated board comes back.
+  // Chalk in a hand. The engine wrapped each line to fit the board with the
+  // Spectrum font, so the lines always fit; a wiped column is restored from
+  // our own backdrop so the board shows through again.
   drawChalk(ctx, game) {
-    const S = this.scale, C = SKOOL.cell * S, b = this.ensureBackdrop();
+    const S = this.scale, C = SKOOL.cell * S, u = S / 6, b = this.ensureBackdrop();
     for (const room of game.world.rooms.values()) {
       const board = room.blackboard;
       if (!board || !board.lines.length) continue;
-      this.atPixelScale(ctx, () => {
-        const x = board.x * SKOOL.cell * PIXEL_SCALE, y = board.y * SKOOL.cell * PIXEL_SCALE;
-        board.lines.forEach((line, i) => drawHdText(ctx, line, x + 4, y + 4 + i * HD_LINE_HEIGHT, this.theme.chalk));
-      });
       const x = board.x * C, y = board.y * C;
+      drawChalkLines(ctx, board.lines, x + 8 * u, y + 2 * u, C * 0.96, board.width * C - 16 * u, this.theme.chalk, u);
       for (const col of board.wipedColumns) ctx.drawImage(b, x + col * C, y, C, board.height * C, x + col * C, y, C, board.height * C);
     }
   }
-  drawBubble(ctx, c) { this.atPixelScale(ctx, () => super.drawBubble(ctx, c)); }
-  drawMessageBox(ctx, box, cam, viewW) { this.atPixelScale(ctx, () => super.drawMessageBox(ctx, box, cam, viewW)); }
+
+  // The whole sentence in a bubble above the speaker (see art/text.js).
+  // `pos` is where the speaker is drawn, in game pixels.
+  drawBubble(ctx, c, pos) {
+    const S = this.scale, u = S / 6, b = c.bubble;
+    const [px, py] = pos || [c.x * SKOOL.cell, c.y * SKOOL.cell];
+    const text = String(b.words).trim();
+    if (!text) return;
+    // How far the engine has scrolled the words through its own little window.
+    const total = text.length * 6 + 64;                       // roughly: text width plus the window, in Spectrum pixels
+    const progress = Math.max(0, Math.min(1, ((b.shift + 8) * 8) / total));
+    const headTop = c.isAdult?.() ? 8 : (c.isSitting?.() ? 80 : 54);          // sixths of a pixel below the top of the box
+    const mouth = { x: (px + 12 + 5 * c.direction) * S, y: py * S + (headTop - 6) * u };
+    drawSpeech(ctx, text, mouth, this.view, progress, u);
+  }
+
+  drawMessageBox(ctx, box, cam, viewW) {
+    const S = this.scale, C = SKOOL.cell * S, u = S / 6, t = this.theme;
+    const paper = box.paper === 'eric' ? t.boxEric : box.paper === 'other' ? t.boxOther : box.paper === 'alarm' ? t.boxAlarm : t.boxSecret;
+    const ink = box.paper === 'alarm' ? t.boxInkAlarm : t.boxInk;
+    const view = { x0: 0, x1: viewW * S, y0: 0 };
+    drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
+  }
 }

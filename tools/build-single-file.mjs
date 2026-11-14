@@ -50,7 +50,7 @@ const bodyInner = html.match(/<body>([\s\S]*?)<script type="module"/)[1]
 const fragment = `<title>Back to Skool</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
 ${css}
 </style>

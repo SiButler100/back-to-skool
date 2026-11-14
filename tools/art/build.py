@@ -122,8 +122,27 @@ def build_furniture(job, manifest, sizes):
             continue
         d = os.path.join(WORK, 'furniture'); os.makedirs(d, exist_ok=True)
         cell.save(os.path.join(d, key.replace(':', '_') + '.raw.png'))
+        if key == 'desk':
+            frames.update(split_desk(cell, round(sizes[key]['w'] * U), round(sizes[key]['h'] * U)))
+            continue
         frames[key] = fit_into(cell, round(sizes[key]['w'] * U), round(sizes[key]['h'] * U), FIT.get(key, 'bottom'))
     return frames
+
+
+def split_desk(cell, w, h):
+    """The desk-and-chair picture becomes two layers the same size: the chair
+    (drawn behind a seated pupil) and the desk (drawn in front). The desk is
+    everything left of the chair: the left 60% above seat height, and the left
+    53% below it, where the chair's front leg tucks under the desk top."""
+    import numpy as np
+    a = np.array(cell)
+    H, W = a.shape[:2]
+    xs, ys = np.meshgrid(np.arange(W), np.arange(H))
+    is_desk = (xs < 0.60 * W) & ((ys < 0.46 * H) | (xs < 0.535 * W))
+    desk, chair = a.copy(), a.copy()
+    desk[..., 3] = np.where(is_desk, a[..., 3], 0)
+    chair[..., 3] = np.where(is_desk, 0, a[..., 3])
+    return {'desk': Image.fromarray(desk).resize((w, h), Image.LANCZOS), 'chair': Image.fromarray(chair).resize((w, h), Image.LANCZOS)}
 
 
 def derive_open(frames, sizes):
@@ -198,15 +217,23 @@ def build_objects(job, manifest, footprints, extra=None):
             continue
         d = os.path.join(WORK, 'objects'); os.makedirs(d, exist_ok=True)
         cell.save(os.path.join(d, f'{state}.raw.png'))
-        frames[state] = place_object(cell, footprints[state], OBJECT_ANCHOR.get(state, 'bottom'))
+        frames[state] = place_object(cell, footprints[state], OBJECT_ANCHOR.get(state, 'bottom'), state)
     return frames
 
 
-def place_object(cell, fp, anchor):
+# The open desk replaces the closed desk picture exactly, so it gets its own
+# rectangle (x, y, w, h in sixths of a Spectrum pixel inside the 3 x 4 cell
+# box) instead of the pixel art's footprint. See art/backdrop.js DESK_UNIT.
+OBJECT_RECT = {'DESK_EMPTY': (67, 96, 58, 96), 'DESK_WATER_PISTOL': (67, 96, 58, 96), 'DESK_STINKBOMBS': (67, 96, 58, 96)}
+
+
+def place_object(cell, fp, anchor, state=None):
     """Fit a cut-out into its doubled footprint inside the box; return
     (trimmed image, ox, oy) in the manifest's frame convention."""
     k = SCALE // 2                                  # footprints are in pixel-art pixels (scale 2)
     rx, ry, rw, rh = fp['x'] * k, fp['y'] * k, fp['w'] * k, fp['h'] * k
+    if state in OBJECT_RECT:
+        rx, ry, rw, rh = (round(v * SCALE / 6) for v in OBJECT_RECT[state])
     f = min(rw / cell.size[0], rh / cell.size[1])
     sw, sh = max(1, round(cell.size[0] * f)), max(1, round(cell.size[1] * f))
     small = cell.resize((sw, sh), Image.LANCZOS)

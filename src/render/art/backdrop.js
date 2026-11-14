@@ -22,13 +22,19 @@ import { paintBase, paintStructure, zoneRect } from '../hd/backdrop.js';
 
 const PIXEL_SCALE = 2;
 
+// A desk and its chair are one picture cut into two layers of the same size
+// (tools/art/build.py split_desk). `dx` is how far right of the pupil's box
+// the picture starts, in sixths of a Spectrum pixel, chosen so the chair seat
+// is under a seated pupil and the desk in front of their knees.
+export const DESK_UNIT = { dx: 19 };
+
 export function buildIllustratedBackdrop(theme, S, assets) {
   const C = SKOOL.cell * S, P = PIXEL_SCALE, up = S / P;
   const u = S / 4;                               // sizes below were first measured at scale 4
   const W = SKOOL.width * C, H = SKOOL.height * C;
   const canvas = makeCanvas(W, H);
   const ctx = canvas.getContext('2d');
-  const hasBoards = !!assets.furniture('blackboard'), hasDesks = !!assets.furniture('desk');
+  const hasBoards = !!assets.furniture('blackboard'), hasDesks = !!assets.furniture('chair');
   const hasTree = !!assets.furniture('tree'), hasRailings = !!assets.furniture('railing');
 
   // 1. The pixel base, enlarged crisply.
@@ -70,11 +76,13 @@ export function buildIllustratedBackdrop(theme, S, assets) {
     }
   }
   if (hasDesks) {
-    const f = assets.furniture('desk');
+    // Only the chairs: the desks are drawn each frame in front of the pupils
+    // (IllustratedPainter.drawForeground).
+    const f = assets.furniture('chair');
     for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
       const room = SKOOL.rooms.find((r) => r.id === roomId);
       const floor = (room.bottomRight[1] + 1) * C;
-      for (const x of xs) stamp(f, x * C - 40 * u, floor - 96 * u, 112 * u, 96 * u);
+      for (const x of xs) stamp(f, x * C + DESK_UNIT.dx * (S / 6), floor - f.h, f.w, f.h);
     }
   }
   if (hasRailings) {

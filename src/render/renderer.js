@@ -26,6 +26,9 @@ export { originalMeasure, originalFontHas };
 
 const C = SKOOL.cell;
 const SPRITE_W = 24, SPRITE_H = 32;   // a sprite frame in game pixels (3 x 4 cells)
+const LANE_STEP = 0.75;               // game pixels between depth lanes on a floor
+const FLOOR_ROWS = new Set(SKOOL.floors.map((f) => f.y));
+const laneHash = (id) => { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
 
 export class Renderer {
   constructor(canvas, game, options = {}) {
@@ -116,6 +119,24 @@ export class Renderer {
     this.game.setVisibleColumns(from, to);
   }
 
+  // Depth on a flat floor. Everyone in the game stands on the same line, so a
+  // crowd used to pile into one blob. Walkers are given one of three lanes a
+  // little apart (the further lanes drawn first), which separates feet and
+  // shadows; Eric takes the front lane so he is never hidden. Anyone sitting,
+  // lying or on the stairs moves to the back line, where chairs and steps are.
+  laneOf(d, m, dt) {
+    const onFloor = Number.isInteger(d.y) && FLOOR_ROWS.has(d.y);
+    let want = 0;
+    if (m.walkState && onFloor && !d.staircase) {
+      want = d === this.game.cast.eric ? 2 : (d.isAdult?.() ? 1 : laneHash(d.id) % 3);
+    }
+    const tr = this.motion.tracks.get(d.id);
+    if (tr.lane === undefined) tr.lane = want;
+    tr.lane += (want - tr.lane) * (1 - Math.exp(-dt / 140));
+    if (Math.abs(tr.lane - want) < 0.02) tr.lane = want;
+    return tr.lane;
+  }
+
   // Where a thing is drawn this frame, in game pixels (see render/motion.js).
   spritePos(thing) {
     const m = this.motion.sample(thing, this.options.smoothMotion);
@@ -131,7 +152,7 @@ export class Renderer {
   draw(now = performance.now()) {
     const { ctx, game, theme } = this;
     const dt = Math.max(0, Math.min(100, now - this.lastDraw));
-    this.lastDraw = now;
+    this.lastDraw = now; this.frameDt = dt;
     this.motion.begin(now, 1000 / (game.config.ticksPerSecond * (this.options.gameSpeed || 1)));
     this.updateCamera(dt);
     this.ensureScale();
@@ -183,10 +204,20 @@ export class Renderer {
     p.drawFurniture(ctx, game);
     const viewFrom = cam - 48, viewTo = cam + viewW + 48;
     const cycles = !!p.hasCycle;                // only the illustrated painter has walk cycles
+    const dt = this.frameDt || 0;
+
+    // People first, back lane to front lane, then whatever stands in front of
+    // them (desks), then objects (pellets, water, the frog...) on top.
+    const people = [], objects = [];
     for (const d of game.cast.drawables) {
       if (!d.visible || d.x * C + SPRITE_W < viewFrom || d.x * C > viewTo) continue;
       const m = this.motion.sample(d, this.options.smoothMotion);
-      const x = m.x * C, y = m.y * C;
+      if (d.group === 'OBJ') objects.push({ d, m, lane: 0 });
+      else people.push({ d, m, lane: p.smooth ? this.laneOf(d, m, dt) : 0 });
+    }
+    people.sort((a, b) => a.lane - b.lane);     // stable: equal lanes keep the engine's order (Eric last)
+    const drawOne = ({ d, m, lane }) => {
+      const x = m.x * C, y = m.y * C + lane * LANE_STEP;
       if (d.group !== 'OBJ' && d.isStanding?.()) p.drawShadow(ctx, x, y);
       // Which picture: the walk cycle while gliding, the standing pose at
       // rest, otherwise whatever pose the engine says.
@@ -202,8 +233,11 @@ export class Renderer {
         ctx.drawImage(getSprite(d.group, d.animatoryState, d.direction, d.look), Math.round(x * S), Math.round(y * S), SPRITE_W * S, SPRITE_H * S);
       }
       ctx.globalAlpha = 1;
-    }
-    for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c);
+    };
+    people.forEach(drawOne);
+    if (p.drawForeground) p.drawForeground(ctx, game);
+    objects.forEach(drawOne);
+    for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c, this.spritePos(c));
     ctx.restore();
     if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW);
     if (this.options.retroStatus) { ctx.save(); ctx.scale(S, S); this.drawStatus(); ctx.restore(); }
