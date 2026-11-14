@@ -63,7 +63,7 @@ export function boot() {
   const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, camera: settings.camera, onResize: () => fitCanvas() });
   const hud = new HUD(document.getElementById('hud'), game, DEFAULT_BINDINGS);
   const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, (loaded) => {
-    tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready);
+    applySettings(settings);          // the font the engine measures with follows the graphics
     // The loader's own panel closes as soon as it succeeds, so the news goes in the event log.
     hud.log(loaded ? 'The 1985 graphics are loaded.' : 'The 1985 graphics have been put away.', true);
   });
@@ -115,8 +115,11 @@ export function boot() {
     renderer.options.camera = s.camera || 'whole';
     renderer.options.guides = s.view !== 'original' && s.guides !== false;   // aiming help belongs to the modern view only
     // Blackboard wrapping and bubble timing follow whichever font is on screen.
-    game.measureText = s.originalGraphics ? originalMeasure : measureText;
-    game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
+    // (The original font only once the tape has supplied it; until then the
+    // stand-in font is what is drawn, even in the original view.)
+    const spectrumFont = s.originalGraphics && renderer.original.ready;
+    game.measureText = spectrumFont ? originalMeasure : measureText;
+    game.fontHas = spectrumFont ? originalFontHas : fontHas;
     sound.enabled = s.sound; sound.musicEnabled = s.music !== false;
     document.documentElement.classList.toggle('view-original', s.view === 'original');
     document.documentElement.classList.toggle('view-modern', s.view !== 'original');

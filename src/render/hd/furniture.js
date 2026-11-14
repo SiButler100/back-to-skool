@@ -105,8 +105,10 @@ const CHAIN = layer(0, 0, new Grid(14, 28).rect(0, 0, 14, 28, '.').rect(6, 0, 2,
 // ---- Drawing ---------------------------------------------------------------------
 
 const cache = new Map();
-function image(key, lay) {
-  if (!cache.has(key)) cache.set(key, compose([[lay, -lay.x, -lay.y]], {}, lay.w, lay.h));   // the picture alone, at its own size
+// `make` builds the layer, and is only called the first time a picture is
+// wanted (building one is slow, and this runs for every piece every frame).
+function image(key, make) {
+  if (!cache.has(key)) { const lay = typeof make === 'function' ? make() : make; cache.set(key, compose([[lay, -lay.x, -lay.y]], {}, lay.w, lay.h)); }   // the picture alone, at its own size
   return cache.get(key);
 }
 const DOOR_KIND = { SkoolGate: 'gate', DrinksCabinet: 'cabinet' };
@@ -124,19 +126,18 @@ export function furniturePieces(game, S) {
     const kind = DOOR_KIND[d.id] || 'door';
     const [cx, cy] = d.coords, [w, h] = d.size;
     const state = d.shut ? 'shut' : 'open';
-    if (kind === 'cabinet') { add(`cabinet:${state}`, image(`cabinet ${d.shut}`, cabinet(d.shut)), cx * C - 4 * u, cy * C - 4 * u); continue; }
-    const lay = kind === 'gate' ? gate(d.shut) : door(w, h, d.shut);
-    add(`${kind}:${state}`, image(`${kind} ${w}x${h} ${d.shut}`, lay), cx * C, cy * C);
+    if (kind === 'cabinet') { add(`cabinet:${state}`, image(`cabinet ${d.shut}`, () => cabinet(d.shut)), cx * C - 4 * u, cy * C - 4 * u); continue; }
+    add(`${kind}:${state}`, image(`${kind} ${w}x${h} ${d.shut}`, () => (kind === 'gate' ? gate(d.shut) : door(w, h, d.shut))), cx * C, cy * C);
   }
   for (const win of world.windows.values()) {
     const [cx, cy] = win.coords, [w, h] = win.size;
-    add(`window${w}x${h}:${win.shut ? 'shut' : 'open'}`, image(`window ${w}x${h} ${win.shut}`, windowArt(w, h, win.shut)), cx * C, cy * C);
+    add(`window${w}x${h}:${win.shut ? 'shut' : 'open'}`, image(`window ${w}x${h} ${win.shut}`, () => windowArt(w, h, win.shut)), cx * C, cy * C);
   }
   const s = world.safe;
   add('safe', image('safe', SAFE), s.x * C - 4 * u, s.y * C - 8 * u);
   for (const c of world.cups.values()) {
     const contents = c.frogs.length ? 'FROG' : c.contents;          // null when empty
-    add(`cup:${contents || 'EMPTY'}`, image(`cup ${contents}`, cup(contents)), c.x * C - 2 * u, c.y * C);
+    add(`cup:${contents || 'EMPTY'}`, image(`cup ${contents}`, () => cup(contents)), c.x * C - 2 * u, c.y * C);
   }
   if (!game.cast.conker.visible) add('conker', image('conker tree', CONKER_IN_TREE), 100 * C + 12 * u, 3 * C + 4 * u);
   if (game.cast.bike.chained) {

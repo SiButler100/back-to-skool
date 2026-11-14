@@ -115,16 +115,24 @@ export class Renderer {
   // ---- Camera ----------------------------------------------------------------
   // `dt` is the time since the last frame in milliseconds, so the camera
   // moves at the same speed whatever the screen's refresh rate.
-  updateCamera(dt) {
+  // Where the camera should look: at Eric, or, for the moment he is hidden
+  // inside a kiss (the engine parks him off the map), at where he was standing.
+  ericAnchor(smooth = true) {
     const eric = this.game.cast.eric;
+    if (!eric.visible && eric.hideCoords) return [eric.hideCoords[0] * C, eric.hideCoords[1] * C];
+    return smooth ? this.spritePos(eric) : [eric.x * C, eric.y * C];
+  }
+
+  updateCamera(dt) {
     const viewW = this.viewW;
     const maxX = SKOOL.width * C - viewW;
     const clamp = (v) => Math.max(0, Math.min(maxX, v));
     if (this.options.retroScroll) {
       // Original behaviour: jump the view by 8 columns when Eric nears an edge.
-      const target = clamp(eric.x * C + 12 - viewW / 2);
+      const ericX = Math.round(this.ericAnchor(false)[0] / C);
+      const target = clamp(ericX * C + 12 - viewW / 2);
       const col = Math.floor(this.cameraX / C);
-      const offset = eric.x - col;
+      const offset = ericX - col;
       if (offset >= this.columns - 10) this.cameraX = Math.min(maxX, (col + 8) * C);
       else if (offset <= 9 && col > 0) this.cameraX = Math.max(0, (col - 8) * C);
       if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;
@@ -133,7 +141,7 @@ export class Renderer {
       this.cameraX = maxX * (0.5 - 0.5 * Math.cos(performance.now() / 90000 * Math.PI * 2 + 2.2));
     } else {
       // Follow where Eric is DRAWN (which glides), not his cell (which jumps).
-      const [ex] = this.spritePos(eric);
+      const [ex] = this.ericAnchor();
       const target = clamp(ex + 12 - viewW / 2);
       if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;        // a new game or a big jump: cut
       else this.cameraX += (target - this.cameraX) * (1 - Math.exp(-dt / 150));
@@ -152,7 +160,7 @@ export class Renderer {
     const maxY = this.worldH - this.viewH;
     if (maxY <= 0) { this.cameraY = this.cameraTargetY = 0; return; }
     if (this.options.attract) { this.cameraY = this.cameraTargetY = maxY; return; }   // the title screen shows the ground floor
-    const [, ey] = this.spritePos(this.game.cast.eric);
+    const [, ey] = this.ericAnchor();
     const lowest = ey + SPRITE_H + (this.margin || 0) - this.viewH;    // any higher than this cuts off Eric's feet
     const highest = ey - 3 * C;                                         // any lower than this cuts off the space above his head
     this.cameraTargetY = Math.max(0, Math.min(maxY, Math.max(lowest, Math.min(highest, this.cameraTargetY))));
@@ -196,9 +204,16 @@ export class Renderer {
     const { ctx, game, theme } = this;
     const dt = Math.max(0, Math.min(100, now - this.lastDraw));
     this.lastDraw = now; this.frameDt = dt;
-    this.motion.begin(now, 1000 / (game.config.ticksPerSecond * (this.options.gameSpeed || 1)));
+    // How long a tick lasts on screen: the speed setting stretches or squeezes
+    // it, except behind the title screen, where the school always runs at 1x.
+    this.motion.begin(now, 1000 / (game.config.ticksPerSecond * (this.options.attract ? 1 : (this.options.gameSpeed || 1))));
     this.updateCamera(dt);
     this.ensureScale();
+    // Effects belong to the HD views. In the others nothing draws or ages
+    // them, so they are switched off there: otherwise they pile up unseen and
+    // all burst out at once when the view is changed.
+    const wantFx = !this.useOriginal() && this.useHd();
+    if (this.fx.enabled !== wantFx) { this.fx.enabled = wantFx; this.fx.reset(); }
     const cam = Math.round(this.cameraX);
     if (this.useOriginal()) return this.drawOriginal(cam);
     if (this.useHd()) return this.drawHd();
@@ -246,6 +261,14 @@ export class Renderer {
     ctx.imageSmoothingEnabled = !!p.smooth;     // smooth for illustrations, crisp for pixel art
     this.fx.update(dt0);
     const [shakeX, shakeY] = this.options.smoothMotion ? this.fx.shakeOffset() : [0, 0];
+    if (shakeX || shakeY) {
+      // A shaken frame is drawn a pixel or two off, which would leave a sliver
+      // of the previous frame along one edge: lay the unshaken scene underneath first.
+      ctx.save(); ctx.translate(Math.round(-cam * S), Math.round(-camY * S));
+      if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);
+      p.drawBackdrop(ctx, cam, viewW, camY, viewH);
+      ctx.restore();
+    }
     ctx.save();
     ctx.translate(Math.round((-cam + shakeX) * S), Math.round((-camY + shakeY) * S));
     if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);   // far scenery, behind the backdrop
@@ -261,6 +284,7 @@ export class Renderer {
     const people = [], objects = [];
     for (const d of game.cast.drawables) {
       if (!d.visible || d.x * C + SPRITE_W < viewFrom || d.x * C > viewTo) continue;
+      if (d.trapped) continue;                  // a frog in a cup is part of the cup's own picture
       const m = this.motion.sample(d, this.options.smoothMotion);
       if (d.group === 'OBJ') objects.push({ d, m, lane: 0 });
       else people.push({ d, m, lane: p.smooth ? this.laneOf(d, m, dt) : 0 });
@@ -302,14 +326,22 @@ export class Renderer {
     objects.forEach(drawOne);
     if (this.options.guides) this.drawGuideTargets(ctx, S);   // the ring round the cup, over everything
     this.fx.draw(ctx, S);
-    for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c, this.spritePos(c));
+    // Speech bubbles, for speakers who are in the picture. (A bubble is kept
+    // inside the view, so one for somebody out of sight would be pinned to the
+    // edge with nobody under it.)
+    for (const c of game.cast.characterList) {
+      if (!c.bubble) continue;
+      const [bx, by] = this.spritePos(c);
+      if (bx + SPRITE_W < cam || bx > cam + viewW || by + SPRITE_H < camY || by > camY + viewH) continue;
+      p.drawBubble(ctx, c, [bx, by]);
+    }
     // A footstep sounds when Eric's walk cycle reaches a frame where a foot lands.
     const em = this.motion.sample(game.cast.eric, this.options.smoothMotion);
     const stepFrame = em.walking && (em.cycle === 3 || em.cycle === 7) ? em.cycle : -1;
     if (stepFrame !== this.lastStepFrame) { this.lastStepFrame = stepFrame; if (stepFrame >= 0 && this.onFootstep) this.onFootstep(); }
     ctx.restore();
     this.fx.drawFlash(ctx, this.canvas.width, this.canvas.height);
-    if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY);
+    if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY, viewH);
     if (this.options.retroStatus) { ctx.save(); ctx.scale(S, S); this.drawStatus(); ctx.restore(); }
   }
 
@@ -395,7 +427,7 @@ export class Renderer {
   // The original's bottom three rows: score box, mice, inventory, lesson box, logo.
   drawStatus() {
     const { ctx, game, theme } = this;
-    const top = SKOOL.height * C;
+    const top = this.viewH;          // directly under the picture, however tall the camera makes it
     const w = this.viewW;
     const rect = (x, y, ww, hh, col) => { ctx.fillStyle = col; ctx.fillRect(x, y, ww, hh); };
     rect(0, top, w, 3 * C, theme.statusPaper);
@@ -487,7 +519,10 @@ export class Renderer {
       const b = room.blackboard;
       if (!b || !b.lines.length) continue;
       const x = b.x * C, y = b.y * C;
+      // Clipped to the board: the stand-in font is wider than the Spectrum's, and a long word would run onto the wall.
+      ctx.save(); ctx.beginPath(); ctx.rect(x, y, b.width * C, b.height * C); ctx.clip();
       b.lines.forEach((line, i) => drawText(ctx, line, x + 2, y + 2 + i * LINE_HEIGHT, theme.chalk));
+      ctx.restore();
       ctx.fillStyle = theme.blackboard;
       for (const col of b.wipedColumns) ctx.fillRect(x + col * C, y, C, b.height * C);
     }

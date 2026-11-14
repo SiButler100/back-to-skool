@@ -233,6 +233,10 @@ export class BackToSkoolMemory {
     const m = this.m;
     const coords = [];
     for (;;) {
+      // A real table is a few dozen entries and ends with 255. In a file that
+      // is not Back to Skool there may be no end marker at all, and this loop
+      // used to run until the browser ran out of memory.
+      if (address + 3 >= m.length || coords.length > 2048) throw new Error('this does not look like Back to Skool');
       const y = m[address];
       if (y === 255) break;
       const x = m[address + 1];

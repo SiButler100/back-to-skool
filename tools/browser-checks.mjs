@@ -257,6 +257,20 @@ if (wanted('controls')) {
   await page.keyboard.up('ArrowRight');
   check('If the window loses focus, a held key is let go', x1 === x2, `${x1} -> ${x2}`);
 
+  // A kiss: the engine hides Eric off the map for a moment; the camera must stay put.
+  await page.evaluate(() => { const g = window.bts.game; const h = g.cast.characters.find((c) => c.canKissEric()); h.x = 60 + g.config.kissDistance; h.y = 17; h.direction = -1; h.animatoryState = 'WALK0'; });
+  await put(page, 60, 17, 1); await page.waitForTimeout(600);
+  await page.evaluate(() => { window.__camMin = 1e9; window.bts.game.events.on('tick', () => { window.__camMin = Math.min(window.__camMin, window.bts.renderer.cameraX); }); });
+  await tap(page, 'KeyC', 80, 1500);
+  { const camMin = await page.evaluate(() => window.__camMin); check('The camera stays on the kiss (it used to cut to the far end of the school)', camMin > 100, `lowest camera x ${Math.round(camMin)}`); }
+
+  // Effects must not pile up unseen in a view that does not draw them.
+  await apply(page, { view: 'original' });
+  await page.evaluate(() => { const g = window.bts.game; g.events.emit('decked', { character: g.cast.eric }); g.events.emit('cupEmpty', { cup: g.world.cups.get('MiddleCup') }); });
+  await page.waitForTimeout(300);
+  { const n = await page.evaluate(() => window.bts.renderer.fx.parts.length); check('No effects are banked up while the original view is showing', n === 0, `${n} waiting`); }
+  await apply(page, { view: 'modern' });
+
   check('No errors on the page during the controls checks', errors.length === 0, errors.slice(0, 3).join(' | '));
   await page.close();
 }

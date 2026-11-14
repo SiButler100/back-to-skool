@@ -58,7 +58,11 @@ export class IllustratedPainter extends ModernPainter {
 
   // ---- Sprites --------------------------------------------------------------------
   drawSprite(ctx, group, state, direction, look, x, y) {
-    const S = this.scale, bx = Math.round(x * S), by = Math.round(y * S);
+    const S = this.scale, by = Math.round(y * S);
+    let bx = Math.round(x * S);
+    // The engine puts a raised desk lid one cell in front of the desk; the
+    // picture is of the whole open desk, so it goes back over the desk itself.
+    if (group === 'OBJ' && state.startsWith('DESK_')) bx -= direction * SKOOL.cell * S;
     const f = group === 'OBJ' ? this.assets.object(state) : this.assets.frame(group, state, look?.variant);
     if (f) {
       if (direction < 0) {
@@ -195,11 +199,13 @@ export class IllustratedPainter extends ModernPainter {
     drawSpeech(ctx, text, mouth, this.view, progress, u);
   }
 
-  drawMessageBox(ctx, box, cam, viewW, camY = 0) {
+  drawMessageBox(ctx, box, cam, viewW, camY = 0, viewH = null) {
     const S = this.scale, C = SKOOL.cell * S, u = S / 6, t = this.theme;
     const paper = box.paper === 'eric' ? t.boxEric : box.paper === 'other' ? t.boxOther : box.paper === 'alarm' ? t.boxAlarm : t.boxSecret;
     const ink = box.paper === 'alarm' ? t.boxInkAlarm : t.boxInk;
-    const view = { x0: 0, x1: viewW * S, y0: 0 };
+    // Kept inside the picture top and bottom: with the close camera the speaker
+    // may be on a storey that is out of view, and the card must still be read.
+    const view = { x0: 0, x1: viewW * S, y0: 0, y1: viewH === null ? Infinity : viewH * S };
     drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C - camY * S - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
   }
 }

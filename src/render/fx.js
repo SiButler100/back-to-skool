@@ -48,6 +48,9 @@ export class Effects {
     });
   }
 
+  // Drop everything in the air (the view has changed, or effects were switched).
+  reset() { this.parts.length = 0; this.shake = 0; this.flash = null; this.lastScore = this.game.score || 0; }
+
   // Where to aim an effect on a character, in game pixels.
   head(c) { const [x, y] = this.whereIs(c); return [x + 12, y + (c.isAdult?.() ? 3 : 10)]; }
   chest(c) { const [x, y] = this.whereIs(c); return [x + 12, y + 18]; }

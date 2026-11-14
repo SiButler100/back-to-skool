@@ -57,7 +57,10 @@ export class ModernPainter {
       const board = room.blackboard;
       if (!board || !board.lines.length) continue;
       const x = board.x * C, y = board.y * C;
+      // Clipped to the board: this font is wider than the Spectrum's, which the engine wrapped the words for.
+      ctx.save(); ctx.beginPath(); ctx.rect(x, y, board.width * C, board.height * C); ctx.clip();
       board.lines.forEach((line, i) => drawHdText(ctx, line, x + 4, y + 4 + i * HD_LINE_HEIGHT, this.theme.chalk));
+      ctx.restore();
       for (const col of board.wipedColumns) ctx.drawImage(b, x + col * C, y, C, board.height * C, x + col * C, y, C, board.height * C);
     }
   }
@@ -86,14 +89,15 @@ export class ModernPainter {
 
   // A reprimand or a secret: a rounded box in the colour of its kind, in
   // screen space (cam/viewW in game pixels).
-  drawMessageBox(ctx, box, cam, viewW, camY = 0) {
+  drawMessageBox(ctx, box, cam, viewW, camY = 0, viewH = null) {
     const S = this.scale, C = SKOOL.cell * S, hd = this.hd, theme = this.theme;
     const lines = box.lines;
     const w = Math.max(8 * C, ...lines.map((l) => measureHd(l) + 12 * S));
     const h = lines.length * HD_LINE_HEIGHT + 10 * S;
     let x = (box.x * SKOOL.cell - cam + 4) * S - w / 2;
     let y = box.y * C - camY * S - h - 2 * S;
-    x = Math.max(2, Math.min(viewW * S - w - 2, x)); y = Math.max(2, y);
+    x = Math.max(2, Math.min(viewW * S - w - 2, x));
+    y = Math.max(2, viewH === null ? y : Math.min(viewH * S - h - 6, y));   // inside the picture, top and bottom
     x = Math.round(x); y = Math.round(y);
     const paper = box.paper === 'eric' ? theme.boxEric : box.paper === 'other' ? theme.boxOther : box.paper === 'alarm' ? theme.boxAlarm : theme.boxSecret;
     const ink = box.paper === 'alarm' ? theme.boxInkAlarm : theme.boxInk;

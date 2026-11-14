@@ -108,22 +108,34 @@ export class Motion {
     }
     if (tr.frame === now && tr.out) return tr.out;      // already worked out this frame
 
+    // Not drawn for half a second (it was out of view, or the tab was hidden):
+    // what is remembered about it is out of date. Start again from what the
+    // engine says now, so that nothing old is played back: no stride from
+    // where it used to be, no sitting-down that happened long ago.
+    const stale = now - tr.seen > 500;
+    if (stale) {
+      tr.strideX = thing.x; tr.strideY = thing.y;
+      tr.state = state; tr.seq = null; tr.stateT = -1e9; tr.prevState = null; tr.lastY = thing.y; tr.dir = thing.direction;
+    }
+
     // ---- Where the engine says it is, or is about to be -----------------------
-    let tx = thing.x, ty = thing.y;
     const midstride = walkState && (state === 'WALK1' || state === 'WALK3');
-    if (midstride && smooth) {
+    const target = () => {
+      if (!(midstride && smooth)) return [thing.x, thing.y];
       // The stride will end one cell on (and a step up or down on stairs).
       const endX = thing.x + thing.direction, endY = thing.y + (thing.verticalDirection || 0);
-      tx = (tr.strideX + endX) / 2; ty = (tr.strideY + endY) / 2;
-    } else {
-      tr.strideX = thing.x; tr.strideY = thing.y;
-    }
+      return [(tr.strideX + endX) / 2, (tr.strideY + endY) / 2];
+    };
+    if (!(midstride && smooth)) { tr.strideX = thing.x; tr.strideY = thing.y; }
+    let [tx, ty] = target();
 
     // ---- Glide towards it ------------------------------------------------------
     const far = Math.abs(tr.x - tx) > SNAP_CELLS || Math.abs(tr.y - ty) > SNAP_CELLS;
-    if (!smooth || !thing.visible || far || now - tr.seen > 500) {
+    if (!smooth || !thing.visible || far || stale) {
+      // A jump (a new game, a teleport): the stride it was in the middle of is
+      // meaningless, so the target is worked out again without it.
+      if (far) { tr.strideX = thing.x; tr.strideY = thing.y; [tx, ty] = target(); }
       tr.x = tr.fromX = tr.toX = tx; tr.y = tr.fromY = tr.toY = ty; tr.t0 = now; tr.dur = 1;
-      if (far || now - tr.seen > 500) { tr.strideX = thing.x; tr.strideY = thing.y; }
     } else {
       if (tx !== tr.toX || ty !== tr.toY) {
         // The engine moved some time between the last frame and this one, so

@@ -88,7 +88,7 @@ export function drawCard(ctx, lines, centre, view, colours, u) {
   const w = Math.max(...lines.map((l) => ctx.measureText(l).width), 120 * u) + padX * 2;
   const h = lines.length * lh + padY * 2 - Math.round(5 * u);
   const x = Math.round(Math.max(view.x0 + 8 * u, Math.min(view.x1 - w - 8 * u, centre.x - w / 2)));
-  const y = Math.round(Math.max(view.y0 + 8 * u, centre.y - h));
+  const y = Math.round(Math.max(view.y0 + 8 * u, Math.min((view.y1 ?? Infinity) - h - 12 * u, centre.y - h)));
   ctx.fillStyle = 'rgba(20,24,34,0.35)'; roundedRect(ctx, x + 3 * u, y + 5 * u, w, h, 12 * u); ctx.fill();
   ctx.fillStyle = colours.paper; roundedRect(ctx, x, y, w, h, 12 * u); ctx.fill();
   ctx.lineWidth = Math.max(1, 2 * u); ctx.strokeStyle = colours.edge; roundedRect(ctx, x, y, w, h, 12 * u); ctx.stroke();

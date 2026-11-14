@@ -81,7 +81,7 @@ export function paintStructure(ctx, theme, S, skip = {}) {
     rect(w.x * C + 4, w.topY * C, 2, (w.bottomY - w.topY + 1) * C, hd.wallLight);
   }
   for (const d of SKOOL.doors) {
-    if (d.id === 'DrinksCabinet') continue;
+    if (d.id === 'DrinksCabinet' || d.id === 'SkoolGate') continue;   // a cabinet and an iron gate have no door frame
     const [cx, cy] = d.coords, [w, h] = d.size;
     const x = cx * C - 4, y = cy * C - 4, ww = w * C + 8, hh = h * C + 12;
     rect(x, y, ww, hh, hd.doorFrame); rect(x + 2, y + 2, ww - 4, hh - 2, hd.doorway);

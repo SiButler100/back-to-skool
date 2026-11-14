@@ -11,6 +11,8 @@ import { Game } from '../src/engine/game.js';
 import { FakeInput } from '../src/ui/input.js';
 import { measureText, fontHas } from './node-font.mjs';
 import { findSpots } from '../src/features/aim-guide.js';
+import { Motion } from '../src/render/motion.js';
+import { loadSnapshot, extractGraphics } from '../src/render/extract.js';
 
 let failures = 0;
 function check(label, ok, detail = '') {
@@ -335,6 +337,37 @@ function press(game, input, action, ticks, settle = 12) {
   place(eric, 120, 17, 1); place(hayley, 120 + game.config.kissDistance, 17, -1);
   input.tap('act'); run(game, 40);
   check('The kiss is announced with Eric in view', seen.length === 1 && seen[0][0] > 0 && seen[0][1] === true, JSON.stringify(seen));
+}
+
+// ---- Faults found by the independent renderer review --------------------------
+{
+  // Someone who has been out of sight must not replay an old change of pose
+  // (a boy drawn sitting on thin air in the playground, then standing up).
+  const motion = new Motion();
+  const boy = { id: 'T', x: 10, y: 3, direction: -1, animatoryState: 'SITTING_ON_CHAIR', visible: true, walkDelay: 3 };
+  motion.begin(1000, 50); motion.sample(boy, true);
+  Object.assign(boy, { x: 120, y: 17, animatoryState: 'WALK0' });
+  motion.begin(11000, 50); const m = motion.sample(boy, true);
+  check('A character coming back into view is drawn as he is now, with no old pose played back', !m.seq && !m.fade && m.x === 120 && m.y === 17, JSON.stringify({ seq: !!m.seq, fade: !!m.fade, x: m.x, y: m.y }));
+
+  // ...nor be drawn half-way back to where he was last seen, if he returns mid-stride.
+  const walker = { id: 'W', x: 118, y: 17, direction: 1, animatoryState: 'WALK0', visible: true, walkDelay: 3 };
+  motion.begin(20000, 50); motion.sample(walker, true);
+  Object.assign(walker, { x: 125, animatoryState: 'WALK1' });
+  motion.begin(30000, 50); const w = motion.sample(walker, true);
+  check('A walker coming back into view mid-stride is drawn where he is', Math.abs(w.x - 125.5) < 0.01, `x=${w.x}`);
+}
+{
+  // A file that is not Back to Skool is refused promptly, not chewed on for ever.
+  const results = [];
+  for (const fill of [0, 7, 'pattern']) {
+    const bytes = new Uint8Array(49179);
+    for (let i = 0; i < bytes.length; i++) bytes[i] = fill === 'pattern' ? (i * 31 + 7) & 255 : fill;
+    const t0 = Date.now(); let outcome = 'accepted';
+    try { extractGraphics(loadSnapshot(bytes, 'not-the-game.sna')); } catch (e) { outcome = 'refused'; }
+    results.push(`${fill}: ${outcome} in ${Date.now() - t0} ms`);
+  }
+  check('A snapshot that is not Back to Skool is refused at once', results.every((r) => /refused in \d{1,3} ms/.test(r)), results.join('; '));
 }
 
 console.log(failures ? `\n${failures} check(s) failed` : '\nAll checks passed');
