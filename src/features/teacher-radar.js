@@ -30,8 +30,8 @@ export default {
         const sameFloor = dy === 0;
         const facingEric = t.direction * (eric.x - t.x) >= 0;
         const watching = sameFloor && dist <= 10 && facingEric && t.canGiveLines();
-        const where = sameFloor ? `${dist} cells ${dx < 0 ? 'left' : 'right'}` : `${dy < 0 ? 'upstairs' : 'downstairs'}`;
-        return `<li class="${watching ? 'watching' : ''} ${t.id === teacherId ? 'mine' : ''}">
+        const where = !sameFloor ? (dy < 0 ? 'upstairs' : 'downstairs') : dist === 0 ? 'right beside you' : `${dist} ${dist === 1 ? 'cell' : 'cells'} ${dx < 0 ? 'left' : 'right'}`;
+        return `<li class="${watching ? 'watching' : ''}">
           <span class="name">${t.name.split(' ').map((w) => w[0] + w.slice(1).toLowerCase()).join(' ')}</span>
           <span class="where">${where}, facing ${t.direction < 0 ? 'left' : 'right'}</span>
           ${t.id === teacherId ? '<span class="tag">your teacher</span>' : ''}

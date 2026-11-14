@@ -72,10 +72,25 @@ export class Input {
   }
 
   onKeyDown(e) {
-    if (e.repeat) return;
-    if (e.target && ['INPUT', 'SELECT', 'TEXTAREA', 'BUTTON'].includes(e.target.tagName) && e.code !== 'Escape') return;
+    // Ctrl, Cmd and Alt combinations belong to the browser (copy, reload, back...).
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const tag = e.target && e.target.tagName;
+    // Typing in a form control (the options screen) is never a game key.
+    if (['INPUT', 'SELECT', 'TEXTAREA'].includes(tag) && e.code !== 'Escape') return;
     const action = this.actionFor(e.code);
-    if (action === 'pause' && !this.writing || (action === 'view' && !this.writing)) {
+    // A button keeps the keyboard focus after it is clicked. While a menu is
+    // open that is right (Space and Enter press the button). During play it
+    // would swallow every game key, so the button is asked to let go.
+    if (tag === 'BUTTON') {
+      if (!this.enabled && e.code !== 'Escape') return;
+      if (action) e.target.blur();
+    }
+    // A key held down repeats. The repeats are not new presses, but the page
+    // must still be stopped from scrolling on them.
+    if (e.repeat) { if (action && this.enabled) e.preventDefault(); return; }
+    // Esc and Tab are for the menus: always while a menu is open, and during
+    // play unless Eric is writing (then Esc ends the writing instead).
+    if ((action === 'pause' || action === 'view') && (!this.writing || !this.enabled)) {
       this.uiHandlers[action].forEach((h) => h());
       e.preventDefault();
       return;
@@ -107,6 +122,8 @@ export class Input {
   flush() { this.edges.clear(); }
   startWriting() { this.writing = true; this.typed = []; }
   finishWriting() { this.writing = false; this.typed = []; }
+  // A new game: nothing held, nothing pending, nobody writing.
+  reset() { this.held.clear(); this.edges.clear(); this.finishWriting(); }
   takeTyped() { const t = this.typed; this.typed = []; return t; }
   nextTyped() { return this.typed.shift(); }   // one character at a time, so fast typists lose nothing
 

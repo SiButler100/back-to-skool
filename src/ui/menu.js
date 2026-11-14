@@ -66,7 +66,12 @@ export class Menu {
     this.root.hidden = false;
     this.root.dataset.screen = screen;                     // lets the stylesheet treat the title screen differently
     this.root.innerHTML = `<div class="menu-card">${this[`render_${screen}`](data)}</div>`;
-    this.root.querySelector('button')?.focus();
+    // Focus goes to the first button so the keyboard works, without scrolling to
+    // it (on the options screen the first button is at the very bottom).
+    this.root.querySelector('button')?.focus({ preventScroll: true });
+    const card = this.root.querySelector('.menu-card');
+    if (card) card.scrollTop = 0;
+    this.root.scrollTop = 0;
   }
 
   hide() { this.screen = null; this.root.hidden = true; this.root.innerHTML = ''; }
@@ -133,7 +138,7 @@ export class Menu {
       <div class="options">
         <label class="opt"><span>View</span>
           <select data-setting="view"><option value="modern" ${s.view === 'modern' ? 'selected' : ''}>Modern</option><option value="original" ${s.view === 'original' ? 'selected' : ''}>Original (1985)</option></select>
-          <small>Press V in the game to switch. Choosing a view resets the advanced options below to that view's defaults.</small></label>
+          <small>Press Tab in the game to switch. Choosing a view resets the advanced options below to that view's defaults.</small></label>
         <label class="opt"><span>Camera</span>
           <select data-setting="camera"><option value="close" ${s.camera === 'close' ? 'selected' : ''}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== 'close' ? 'selected' : ''}>Whole school</option></select>
           <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
@@ -166,7 +171,7 @@ export class Menu {
     return `
       <h1>Controls</h1>
       <p class="lede">The cursor keys to move and four action keys in a row under your left hand. The game works out which tool fits what is in front of Eric.</p>
-      <table class="keys"><tbody>${rows}</tbody></table>
+      <table class="keys"><tbody>${rows}<tr><td>H</td><td>Show or hide the key strip (modern view)</td></tr></tbody></table>
       <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter or simply walk off with a cursor key. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
       <div class="menu-actions"><button type="button" data-action="back" class="primary">Back</button></div>`;
   }

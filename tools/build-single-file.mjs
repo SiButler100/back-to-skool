@@ -20,7 +20,8 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 mkdirSync(join(root, 'dist'), { recursive: true });
 
 const bundlePath = join(root, 'dist', 'bundle.js');
-execSync(`npx -y esbuild@0.24.2 src/main.js --bundle --format=iife --outfile=${bundlePath} --log-level=warning`, { cwd: root, stdio: 'inherit' });
+// The output path is quoted so the build works from a folder with a space in its name.
+execSync(`npx -y esbuild@0.24.2 src/main.js --bundle --format=iife "--outfile=${bundlePath}" --log-level=warning`, { cwd: root, stdio: 'inherit' });
 
 const html = readFileSync(join(root, 'index.html'), 'utf8');
 const css = readFileSync(join(root, 'styles.css'), 'utf8');

@@ -138,11 +138,14 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .event-log li.highlight { color: var(--accent); }
 .minimap { width: 100%; height: auto; image-rendering: pixelated; border-radius: 4px; }
 /* ---- The plan (quest steps, above the key strip, both views) ---------------- */
-.quest-steps { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; max-width: 100%; font-size: 13px; }
+/* Hints hang from the strip as a whole, not from each pip, and take no room
+   until shown: otherwise the hidden ones poke out past the window and make the
+   page scroll sideways. */
+.quest-steps { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; max-width: 100%; font-size: 13px; }
 .quest-steps .title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
 .quest-steps ol { display: contents; list-style: none; margin: 0; padding: 0; }
 .quest-steps .step {
-  position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: help; white-space: nowrap;
 }
 .quest-steps .step .tick {
@@ -157,13 +160,11 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 /* The hint: a bubble above the step, shown on hover or keyboard focus. */
 .quest-steps .step::after {
   content: attr(data-hint); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
-  width: min(360px, 80vw); white-space: normal; padding: 10px 12px; border-radius: 8px; line-height: 1.45; font-size: 13px;
+  width: min(420px, 100%); box-sizing: border-box; white-space: normal; padding: 10px 12px; border-radius: 8px; line-height: 1.45; font-size: 13px;
   background: var(--ink); color: var(--bg); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  opacity: 0; pointer-events: none; transition: opacity 0.12s; z-index: 5;
+  display: none; pointer-events: none; z-index: 5;
 }
-.quest-steps .step:hover::after, .quest-steps .step:focus-visible::after { opacity: 1; }
-.quest-steps .step:first-child::after { left: 0; transform: none; }
-.quest-steps .step:last-child::after { left: auto; right: 0; transform: none; }
+.quest-steps .step:hover::after, .quest-steps .step:focus-visible::after { display: block; }
 .radar { list-style: none; margin: 0; padding: 0; font-size: 13px; }
 .radar li { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); }
 .radar li:first-child { border-top: 0; }
@@ -359,3 +360,29 @@ html.view-modern .screen > #sidebar .radar li { border-top-color: rgba(255, 255,
 html.view-modern .screen > #sidebar .radar .where { color: rgba(243, 238, 224, 0.7); }
 html.view-modern .screen > #sidebar .radar .tag { background: rgba(255, 255, 255, 0.14); color: #f3eee0; }
 html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
+
+/* ---- Narrow windows (a phone held upright, a slim browser window) ------------ */
+/* The game needs a keyboard, but the page must still fit: nothing may stick out
+   past the edge of the window, and the picture must not be buried under its own
+   legends. Below 640px the score row wraps, the legends move out of the picture
+   to sit beneath it, and the corner map and log are dropped. */
+@media (max-width: 640px) {
+  .hud-top, html.view-modern .hud-top { grid-template-columns: 1fr; gap: 8px; padding: 8px 10px; }
+  .stats { justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .stat { min-width: 0; }
+  .inventory { justify-content: flex-start; min-width: 0; flex-wrap: wrap; }
+  .menu-button { justify-self: start; }
+  html.view-modern .screen > .keys-strip,
+  html.view-modern .screen > .keys-strip.tucked {
+    position: static; transform: none; opacity: 1; pointer-events: auto; width: auto; max-width: 100%;
+    margin-top: 8px; box-sizing: border-box; background: #1f2530; backdrop-filter: none;
+  }
+  /* A hint is as wide as the plan strip and hangs from it, so it cannot poke
+     out past the window (it used to hang from its own pip). */
+  .quest-steps .step::after, html.view-modern .screen > .quest-steps .step::after { left: 0; right: 0; width: auto; transform: none; }
+  html.view-modern .screen > .quest-steps {
+    position: relative; left: auto; top: auto; max-width: 100%; box-sizing: border-box; margin-top: 8px; flex-wrap: wrap; background: #1f2530; backdrop-filter: none;
+  }
+  html.view-modern .screen > #sidebar, .keys-chip { display: none; }
+  html.view-modern .screen { display: flex; flex-direction: column; }
+}

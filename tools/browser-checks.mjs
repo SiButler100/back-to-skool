@@ -59,7 +59,11 @@ async function openGame({ settings = null, width = 1500, height = 900, keepStora
   await page.goto(`${BASE}/index.html`);
   if (!keepStorage) { await page.evaluate(() => localStorage.clear()); await page.reload(); }
   await page.waitForFunction(() => window.bts && document.querySelector('.overlay'), null, { timeout: 15000 });
-  await page.waitForTimeout(1200);
+  // Wait for the illustrated artwork: until it arrives the game draws pixel-art
+  // stand-ins, which is by design but would confuse the "no missing picture" check.
+  await page.waitForFunction(() => window.bts.renderer.assets.ready || window.bts.renderer.assets.failed, null, { timeout: 30000 });
+  await page.waitForTimeout(600);
+  await page.evaluate(() => { const st = window.bts.renderer.painters?.illustrated?.stats; if (st) { st.fallback = 0; st.missing = new Set(); } });
   if (settings) await apply(page, settings);
   await page.click('text=New game');
   await page.waitForTimeout(400);
@@ -255,6 +259,169 @@ if (wanted('controls')) {
 
   check('No errors on the page during the controls checks', errors.length === 0, errors.slice(0, 3).join(' | '));
   await page.close();
+}
+
+// =============================================================================
+// SCREENS: the menus, the switches and the keyboard around them
+// =============================================================================
+if (wanted('screens')) {
+  console.log('\n-- Screens and switches --');
+  const ticks = (page) => page.evaluate(() => window.bts.game.tickCount);
+  const menuScreen = (page) => page.evaluate(() => window.bts.menu.screen);
+
+  {
+    const { page, errors } = await openGame();
+    await quietSchool(page);
+    // Pause and resume with Esc.
+    await tap(page, 'Escape', 60, 300);
+    const t1 = await ticks(page); await page.waitForTimeout(500); const t2 = await ticks(page);
+    check('Esc opens the pause menu and the school stops', (await menuScreen(page)) === 'pause' && t1 === t2, `${await menuScreen(page)} ${t1}->${t2}`);
+    await tap(page, 'Escape', 60, 300);
+    const t3 = await ticks(page); await page.waitForTimeout(500); const t4 = await ticks(page);
+    check('Esc again closes it and the school carries on', (await menuScreen(page)) === null && t4 > t3, `${await menuScreen(page)} ${t3}->${t4}`);
+
+    // Tab switches view and back.
+    await tap(page, 'Tab', 60, 500);
+    const v1 = await page.evaluate(() => window.bts.settings.view);
+    await tap(page, 'Tab', 60, 500);
+    const v2 = await page.evaluate(() => window.bts.settings.view);
+    check('Tab switches to the original view and back', v1 === 'original' && v2 === 'modern', `${v1}, ${v2}`);
+
+    // Clicking a button in the picture must not take the keyboard away.
+    await put(page, 40, 17, 1);
+    await page.click('#keys-chip'); await page.waitForTimeout(200);
+    await tap(page, 'ArrowRight', 80, 500);
+    { const s = await eric(page); check('After clicking the "keys" chip, the arrow keys still move Eric', s.x === 41, `x=${s.x}`); }
+    await put(page, 40, 17, 1); await page.click('#keys-chip'); await page.waitForTimeout(200);
+    await watch(page, 'jumpAfterChip', (g, e) => e.y < 17);
+    await tap(page, 'Space', 80, 900);
+    check('...and Space still jumps', await seen(page, 'jumpAfterChip'));
+
+    // Holding a key must not scroll the page, even when the page is taller than the window.
+    await page.setViewportSize({ width: 1000, height: 520 });
+    await apply(page, { view: 'original' });
+    await put(page, 22, 17, -1); await page.evaluate(() => window.scrollTo(0, 0));
+    await page.keyboard.down('ArrowUp'); await page.waitForTimeout(900); await page.keyboard.up('ArrowUp');
+    await page.keyboard.down('ArrowDown'); await page.waitForTimeout(900); await page.keyboard.up('ArrowDown');
+    await page.keyboard.down('Space'); await page.waitForTimeout(600); await page.keyboard.up('Space');
+    const sy = await page.evaluate(() => window.scrollY);
+    const tall = await page.evaluate(() => document.documentElement.scrollHeight > window.innerHeight);
+    check('Holding ↑, ↓ or Space does not scroll a page taller than the window', sy === 0 && tall, `scrollY ${sy}, page taller: ${tall}`);
+    await apply(page, { view: 'modern' });
+    await page.setViewportSize({ width: 1500, height: 900 });
+
+    // Browser shortcuts are left to the browser.
+    await put(page, 40, 17, 1);
+    await watch(page, 'ctrlFist', (g, e) => e.animatoryState.startsWith('HITTING'));
+    await page.keyboard.press('Control+KeyC'); await page.waitForTimeout(500);
+    check('Ctrl+C is left to the browser and does not throw a punch', !(await seen(page, 'ctrlFist')));
+
+    // Writing, then the menu: Esc must still work, and a restart must give the keys back.
+    await put(page, 5, 3, 1); await tap(page, 'KeyC', 80, 400);
+    await page.click('text=Menu'); await page.waitForTimeout(300);
+    const opened = await menuScreen(page);
+    await tap(page, 'Escape', 60, 300);
+    check('With the menu opened while Eric is writing, Esc closes it', opened === 'pause' && (await menuScreen(page)) === null, `${opened} -> ${await menuScreen(page)}`);
+    await page.click('text=Menu'); await page.waitForTimeout(300);
+    await page.click('text=Restart'); await page.waitForTimeout(500);
+    await quietSchool(page);
+    await put(page, 40, 17, 1);
+    await watch(page, 'jumpAfterRestart', (g, e) => e.y < 17);
+    await tap(page, 'Space', 80, 900);
+    const typing = await page.evaluate(() => window.bts.input.writing);
+    check('Restarting while Eric was writing gives the action keys back', (await seen(page, 'jumpAfterRestart')) && !typing, `typing mode ${typing}`);
+
+    // Options opens at the top, and every switch can be thrown mid-game without an error.
+    await tap(page, 'Escape', 60, 300);
+    await page.click('text=Options'); await page.waitForTimeout(300);
+    const top = await page.evaluate(() => { const c = document.querySelector('.menu-card'); const o = document.querySelector('.overlay'); return Math.max(c ? c.scrollTop : 0, o ? o.scrollTop : 0); });
+    check('The options screen opens at the top', top === 0, `scrolled ${top}`);
+    check('The options screen names Tab, not V, as the view key', await page.evaluate(() => /Press Tab in the game/.test(document.querySelector('.menu-card').textContent)));
+    await page.click('text=Back'); await page.waitForTimeout(200);
+    await tap(page, 'Escape', 60, 300);
+    const switches = [
+      { artwork: 'pixel' }, { artwork: 'painted' }, { artwork: 'illustrated' }, { camera: 'whole' }, { columns: 96 }, { columns: 32 }, { camera: 'close' },
+      { speed: 2 }, { speed: 0.5 }, { speed: 1 }, { sound: false }, { music: false }, { sound: true }, { music: true }, { minimap: false }, { minimap: true },
+      { radar: true }, { radar: false }, { guides: false }, { guides: true }, { theme: 'spectrum' }, { theme: 'modern' }, { smoothMotion: false }, { smoothMotion: true },
+      { retroScroll: true }, { retroScroll: false }, { retroStatus: true }, { retroStatus: false }, { freezeOnMessages: false }, { freezeOnMessages: true },
+      { view: 'original' }, { originalGraphics: false }, { view: 'modern' },
+    ];
+    const before = await ticks(page);
+    for (const patch of switches) { await apply(page, patch); await page.waitForTimeout(200); }
+    const after = await ticks(page);
+    const size = await page.evaluate(() => [window.bts.renderer.canvas.width, window.bts.renderer.canvas.height]);
+    check('Every option can be switched in mid-game: no error, the game keeps running', errors.length === 0 && after > before && size[0] > 0, `${errors.slice(0, 2).join(' | ')} ticks ${before}->${after}`);
+    const fallbacks = await page.evaluate(() => window.bts.renderer.painters?.illustrated?.stats?.fallback ?? 0);
+    const missing = await page.evaluate(() => [...(window.bts.renderer.painters?.illustrated?.stats?.missing ?? [])].join(', '));
+    check('No picture is missing in the illustrated view (nothing fell back to a stand-in)', fallbacks === 0, `${fallbacks} fallbacks: ${missing}`);
+
+    // Settings survive a reload.
+    await apply(page, { speed: 1.5, radar: true });
+    await page.reload(); await page.waitForFunction(() => window.bts); await page.waitForTimeout(800);
+    const kept = await page.evaluate(() => [window.bts.settings.speed, window.bts.settings.radar]);
+    check('Settings are remembered after a reload', kept[0] === 1.5 && kept[1] === true, kept.join(','));
+    check('No errors on the page during the screens checks', errors.length === 0, errors.slice(0, 3).join(' | '));
+    await page.close();
+  }
+
+  // Settings saved by old versions of the game.
+  {
+    const page = await browser.newPage({ viewport: { width: 1500, height: 900 } });
+    const errors = []; page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto(`${BASE}/index.html`);
+    await page.evaluate(() => localStorage.setItem('bts.settings', JSON.stringify({ view: 'modern', columns: 48, speed: 1, sound: true })));
+    await page.reload(); await page.waitForFunction(() => window.bts); await page.waitForTimeout(600);
+    const s = await page.evaluate(() => window.bts.settings);
+    check('Settings from before versions existed are brought up to date', s.settingsVersion >= 6 && s.camera === 'close' && s.columns === 32 && s.artwork === 'illustrated' && s.guides === true, JSON.stringify({ v: s.settingsVersion, camera: s.camera, columns: s.columns, artwork: s.artwork, guides: s.guides }));
+    await page.evaluate(() => localStorage.setItem('bts.settings', '{not json'));
+    await page.reload(); await page.waitForFunction(() => window.bts); await page.waitForTimeout(600);
+    check('Unreadable saved settings fall back to the defaults', (await page.evaluate(() => window.bts.settings.view)) === 'modern' && errors.length === 0, errors.join(' | '));
+    await page.close();
+  }
+
+  // Game over, going up a year, and the menus around them.
+  {
+    const { page, errors } = await openGame();
+    await quietSchool(page);
+    await page.evaluate(() => window.bts.game.endGame(false));
+    await page.waitForTimeout(1000);
+    check('Being expelled shows the game-over card', (await menuScreen(page)) === 'gameover', String(await menuScreen(page)));
+    await page.click('.menu-card button'); await page.waitForTimeout(500);
+    const t1 = await ticks(page); await page.waitForTimeout(400); const t2 = await ticks(page);
+    check('"Play again" starts a fresh game that runs', (await menuScreen(page)) === null && t2 > t1 && t2 < 60, `${await menuScreen(page)} ${t1}->${t2}`);
+
+    // Menu within the half-second before the card: the title screen must stay.
+    await quietSchool(page);
+    await page.evaluate(() => window.bts.game.endGame(false));
+    await page.click('text=Menu'); await page.waitForTimeout(1200);
+    check('Opening the menu just as the game ends leaves the title screen up', (await menuScreen(page)) === 'title', String(await menuScreen(page)));
+    await page.click('text=New game'); await page.waitForTimeout(400);
+
+    // Restart during the "up a year" fanfare: the new game must not be ended by the old one.
+    await quietSchool(page);
+    await page.evaluate(() => window.bts.game.upAYear());
+    await page.waitForTimeout(300);
+    await page.evaluate(() => window.bts.menu.handle('new'));      // what the Restart button does
+    await page.waitForTimeout(3200);
+    const g = await page.evaluate(() => ({ over: window.bts.game.gameOver, pending: window.bts.game.upAYearPending, ticks: window.bts.game.tickCount }));
+    check('A game restarted during the "up a year" fanfare keeps running', !g.over && !g.pending && g.ticks > 20, JSON.stringify(g));
+
+    // Going up a year for real.
+    await page.evaluate(() => window.bts.game.upAYear());
+    await page.waitForTimeout(3400);
+    check('Going up a year ends with its own card', (await menuScreen(page)) === 'gameover', String(await menuScreen(page)));
+    check('No errors on the page during the game-over checks', errors.length === 0, errors.slice(0, 3).join(' | '));
+    await page.close();
+  }
+
+  // A narrow window and a phone-sized one: the picture still fits and nothing throws.
+  for (const [width, height] of [[900, 600], [420, 800]]) {
+    const { page, errors } = await openGame({ width, height });
+    await page.waitForTimeout(800);
+    const fit = await page.evaluate(() => { const r = document.getElementById('game').getBoundingClientRect(); return { w: Math.round(r.width), over: document.documentElement.scrollWidth - window.innerWidth }; });
+    check(`At ${width} by ${height} the picture fits the window's width`, fit.w > 0 && fit.w <= width && fit.over <= 0 && errors.length === 0, `picture ${fit.w}px, page overflows by ${fit.over}px ${errors.slice(0, 1).join('')}`);
+    await page.close();
+  }
 }
 
 await browser.close();

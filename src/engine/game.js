@@ -48,6 +48,9 @@ export class Game {
 
   // ---- Starting and restarting -----------------------------------------------
   start() {
+    // A new game started during the "up a year" fanfare must not be ended by
+    // the old game's timer.
+    clearTimeout(this.upAYearTimer); this.upAYearTimer = null; this.upAYearPending = false;
     this.score = 0; this.lines = 0; this.gameOver = false; this.tickCount = 0;
     this.messageQueue = []; this.messageBox = null; this.messageTicks = 0;
     this.world.clearSignals(); this.world.unsetHomeRoom();
@@ -141,7 +144,7 @@ export class Game {
     this.events.emit('upAYear', { score: this.score });
     this.events.emit('quest', { step: 'safeOpened' });
     // After the fanfare, the game is won and restarts on request.
-    setTimeout(() => { this.upAYearPending = false; this.endGame(true); }, 2500);
+    this.upAYearTimer = setTimeout(() => { this.upAYearTimer = null; this.upAYearPending = false; this.endGame(true); }, 2500);
   }
 
   // ---- Message boxes ---------------------------------------------------------

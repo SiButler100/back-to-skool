@@ -27,6 +27,9 @@ export class Eric extends Character {
   }
 
   reset() {
+    // If the last game ended with Eric at a blackboard, the keyboard is still
+    // in "typing" mode; without this, the action keys stay dead in the new game.
+    if (this.input && this.input.writing) this.input.finishWriting();
     this.inventory = new Set();
     this.mice = 0;
     this.controller = null;

@@ -163,7 +163,7 @@ export class HUD {
       this.el.lines.textContent = lines.toLocaleString('en-GB');
       this.el.lines.parentElement.classList.toggle('danger', lines >= g.config.maxLines * 0.8);
     });
-    g.events.on('lesson', ({ teacher, room }) => { this.el.teacher.textContent = teacher || ' '; this.el.room.textContent = room; this.log(`Bell: ${teacher ? teacher + ' in the ' : ''}${room.toLowerCase()}`); });
+    g.events.on('lesson', ({ teacher, room }) => { this.el.teacher.textContent = teacher || ' '; this.el.room.textContent = room; this.log(`Bell: ${teacher ? title(teacher) + ' in the ' : ''}${room.toLowerCase()}`); });
     g.events.on('inventory', ({ items, mice }) => this.renderInventory(items, mice));
     g.events.on('lines', ({ giver, recipient, amount, text }) => this.log(`${title(giver.name)} gave ${title(recipient.name)} ${amount} lines: "${sentence(text)}"`));
     g.events.on('decked', ({ character }) => this.log(`${title(character.name)} was knocked ${character.isAdult() ? 'over' : 'out'}`));

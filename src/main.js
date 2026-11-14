@@ -44,7 +44,13 @@ function migrateSettings(s) {
   return s;
 }
 function loadSettings() {
-  try { return migrateSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem('bts.settings') || '{}') }); } catch (e) { return { ...DEFAULT_SETTINGS }; }
+  try {
+    const saved = JSON.parse(localStorage.getItem('bts.settings') || 'null');
+    if (!saved || typeof saved !== 'object') return { ...DEFAULT_SETTINGS };
+    // The saved version is read before the defaults are merged in: a save from
+    // before versions existed has none, and must count as version 1, not the latest.
+    return migrateSettings({ ...DEFAULT_SETTINGS, ...saved, settingsVersion: saved.settingsVersion || 1 });
+  } catch (e) { return { ...DEFAULT_SETTINGS }; }
 }
 function saveSettings(s) { try { localStorage.setItem('bts.settings', JSON.stringify(s)); } catch (e) { /* ignore */ } }
 
@@ -56,7 +62,11 @@ export function boot() {
   const canvas = document.getElementById('game');
   const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, camera: settings.camera, onResize: () => fitCanvas() });
   const hud = new HUD(document.getElementById('hud'), game, DEFAULT_BINDINGS);
-  const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); });
+  const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, (loaded) => {
+    tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready);
+    // The loader's own panel closes as soon as it succeeds, so the news goes in the event log.
+    hud.log(loaded ? 'The 1985 graphics are loaded.' : 'The 1985 graphics have been put away.', true);
+  });
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
   game.events.on('cupEmpty', () => sound.play('CUP_EMPTY'));   // a pellet rattling through a cup with nothing in it
@@ -75,6 +85,7 @@ export function boot() {
   });
 
   let paused = true;
+  let gameOverShown = 0;           // counts new games and quits, so a late "game over" card is not shown over them
   // "Attract" mode: behind the title screen the school runs by itself (no
   // input, no sound) while the view pans across it.
   let attract = false;
@@ -87,9 +98,9 @@ export function boot() {
       if (changedKey === 'camera') s.columns = s.camera === 'close' ? CLOSE_COLUMNS : WHOLE_COLUMNS;   // each camera has its natural width
       applySettings(s); saveSettings(s);
     },
-    onNewGame: () => { setAttract(false); game.start(); paused = false; input.enabled = true; sound.ensure(); },
+    onNewGame: () => { gameOverShown += 1; setAttract(false); input.reset(); game.start(); paused = false; input.enabled = true; sound.ensure(); },
     onResume: () => { paused = false; input.enabled = true; },
-    onQuit: () => { paused = true; menu.show('title'); setAttract(true); },
+    onQuit: () => { gameOverShown += 1; paused = true; menu.show('title'); setAttract(true); },
   });
 
   function applySettings(s) {
@@ -118,7 +129,7 @@ export function boot() {
     fitCanvas();
   }
 
-  // V (or the button in the key strip) flips between the two presets.
+  // Tab (or the button in the key strip) flips between the two presets.
   function toggleView() {
     settings.view = settings.view === 'original' ? 'modern' : 'original';
     Object.assign(settings, VIEW_PRESETS[settings.view]);
@@ -157,10 +168,13 @@ export function boot() {
     else { paused = true; input.enabled = false; menu.show('pause'); }
   };
   input.onMenu(togglePause);
-  hud.onMenu(() => { if (attract) return; if (game.started && !game.gameOver) togglePause(); else { menu.show('title'); setAttract(true); } });
+  hud.onMenu(() => { if (attract) return; if (game.started && !game.gameOver) togglePause(); else { gameOverShown += 1; menu.show('title'); setAttract(true); } });
   game.events.on('gameOver', (data) => {
     if (attract) { game.start(); return; }             // nobody is playing: just start the term again
-    paused = true; input.enabled = false; setTimeout(() => menu.show('gameover', data), 600);
+    // The card follows the last moment of play by a beat, unless the player
+    // has already gone to the title screen or started again in that time.
+    const mine = gameOverShown;
+    paused = true; input.enabled = false; setTimeout(() => { if (mine === gameOverShown && game.gameOver) menu.show('gameover', data); }, 600);
   });
 
   // Features
@@ -171,6 +185,10 @@ export function boot() {
   setAttract(true);
   let polls = 0;
   const poll = setInterval(() => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); if (++polls > 10) clearInterval(poll); }, 500);
+
+  // A hidden tab stops drawing (and so stops the game), but timers carry on:
+  // hush the sound at once and let go of any held key.
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { sound.setActive(false); input.held.clear(); } });
 
   // The loop
   let last = performance.now(), acc = 0;

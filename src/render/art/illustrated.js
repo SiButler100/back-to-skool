@@ -77,6 +77,7 @@ export class IllustratedPainter extends ModernPainter {
     ctx.drawImage(s, bx, by, 24 * S, 32 * S);
     ctx.restore();
     this.stats.fallback++;
+    (this.stats.missing = this.stats.missing || new Set()).add(`${group}:${state}`);   // which pictures were missing, for the tests
     return true;
   }
 
