@@ -35,9 +35,12 @@ function section(title) { const h = document.createElement('h2'); h.textContent 
 
 const missing = [];
 for (const [group, baseStates] of Object.entries(SPRITE_GROUPS)) {
-  // The illustrated painter also has an eight-frame walk cycle per character.
-  const states = painter.hasCycle && painter.hasCycle(group, lookFor(group)) ? [...baseStates, ...Array.from({ length: 8 }, (_, i) => `CYCLE${i}`)] : baseStates;
-  section(group);
+  // The illustrated sheets hold more than the engine's states: an eight-frame
+  // walk cycle and the in-between poses. Show every extra frame the manifest has.
+  const entry = painter.assets?.manifest?.characters?.[group];
+  const set = entry?.variants ? (entry.variants[lookFor(group).variant] || entry.variants.A) : entry;
+  const extras = set ? Object.keys(set.frames).filter((k) => !baseStates.includes(k) && !set.frames[k].alias).sort() : [];
+  const states = [...baseStates, ...extras];
   const cols = states.length;
   const canvas = document.createElement('canvas');
   const cellW = FW * zoom + 8, cellH = FH * zoom + 22;

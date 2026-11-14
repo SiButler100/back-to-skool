@@ -283,6 +283,52 @@ html.view-modern .quest-steps .step .tick { border-radius: 4px; }
 html.view-modern .panel h2::after { content: ''; display: block; height: 2px; margin-top: 6px; background: repeating-linear-gradient(90deg, var(--line) 0 4px, transparent 4px 6px); }
 @media (max-width: 800px) { html.view-modern .hud-top { grid-template-columns: 1fr 1fr; } }
 
+/* ---- The plan and the key legend inside the game picture (modern view) ------ */
+/* Both are moved into .screen by ui/hud.js and float over the canvas. */
+html.view-modern .screen > .quest-steps {
+  position: absolute; top: 10px; left: 12px; z-index: 3; max-width: calc(100% - 24px);
+  justify-content: flex-start; gap: 4px; padding: 5px 8px; border-radius: 10px;
+  background: rgba(14, 18, 26, 0.60); backdrop-filter: blur(6px); color: #f3eee0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+html.view-modern .screen > .quest-steps .title { color: rgba(243, 238, 224, 0.72); margin: 0 6px 0 2px; }
+html.view-modern .screen > .quest-steps .step { border: 0; background: transparent; color: inherit; padding: 2px; gap: 0; }
+html.view-modern .screen > .quest-steps .step .label { display: none; }
+html.view-modern .screen > .quest-steps .step .tick { width: 22px; height: 22px; background: rgba(255, 255, 255, 0.14); color: #f3eee0; }
+html.view-modern .screen > .quest-steps .step.done .tick { background: var(--ok); color: #fff; }
+/* Only the next step is written out. */
+html.view-modern .screen > .quest-steps .step.next { background: rgba(255, 255, 255, 0.12); padding: 2px 10px 2px 2px; gap: 6px; }
+html.view-modern .screen > .quest-steps .step.next .label { display: inline; }
+html.view-modern .screen > .quest-steps .step.next .tick { background: var(--accent); color: var(--accent-ink); }
+/* The hint drops down from a pip, headed by the step's name. */
+html.view-modern .screen > .quest-steps .step::after {
+  content: attr(data-label) "\A" attr(data-hint); white-space: pre-line; bottom: auto; top: calc(100% + 10px);
+  background: rgba(14, 18, 26, 0.94); color: #f3eee0;
+}
+html.view-modern .screen > .quest-steps .step::after { left: 0; transform: none; }
+
+html.view-modern .screen > .keys-strip {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 3; width: max-content; max-width: calc(100% - 24px);
+  padding: 6px 12px; border-radius: 10px; background: rgba(14, 18, 26, 0.60); backdrop-filter: blur(6px); color: #f3eee0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); transition: opacity 0.4s, transform 0.4s; margin: 0;
+}
+html.view-modern .screen > .keys-strip kbd { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.28); color: #fff; }
+html.view-modern .screen > .keys-strip button.view-toggle { color: rgba(243, 238, 224, 0.8); }
+html.view-modern .screen > .keys-strip.tucked { opacity: 0; transform: translate(-50%, 12px); pointer-events: none; }
+/* While Eric writes on a board only the writing hint shows, tucked or not. */
+html.view-modern .screen > .keys-strip.writing { opacity: 1; transform: translateX(-50%); }
+html.view-modern .screen > .keys-strip.writing .k:not(.writing-hint), html.view-modern .screen > .keys-strip.writing .gfx-status { display: none; }
+html.view-modern .screen > .keys-strip .writing-hint { color: #ffd34d; }
+.keys-chip {
+  position: absolute; right: 12px; bottom: 12px; z-index: 3; font: inherit; font-size: 12px; cursor: pointer;
+  padding: 4px 9px; border-radius: 8px; border: 0; background: rgba(14, 18, 26, 0.55); color: rgba(243, 238, 224, 0.85);
+}
+.keys-chip kbd { font: inherit; padding: 0 5px; margin-right: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.16); }
+.keys-chip:hover { background: rgba(14, 18, 26, 0.8); }
+/* Illustrated pocket icons are bigger pictures than the pixel ones. */
+html.art-illustrated .inventory .item.pix img { width: 30px; height: 30px; image-rendering: auto; object-fit: contain; }
+html.art-illustrated .inventory .item.pix { width: 38px; height: 38px; }
+html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
+
 </style>
 
   <div id="app">
@@ -9403,6 +9449,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   var TILE = { floorboards: 110, darkwood: 170, brickRed: 150, brickBuff: 150, tarmac: 190, stone: 96 };
   var TINT = { darkwood: "rgba(46,30,16,0.50)" };
   var FALLBACK = { floorboards: "#b9813f", darkwood: "#4a241a", brickRed: "#a9523d", brickBuff: "#b08a4c", tarmac: "#6f7072", stone: "#b9b4a6" };
+  function playgroundSpan(C5) {
+    const p = DECOR.playground;
+    return { x0: (p.x0 - 1) * C5, w: (p.x1 - p.x0 + 2) * C5 };
+  }
   var StructurePainter = class {
     constructor(ctx, theme, S, assets) {
       this.ctx = ctx;
@@ -9460,13 +9510,14 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       sky.addColorStop(0, this.theme.hd.sky[0]);
       sky.addColorStop(1, this.theme.hd.sky[1]);
       this.fill(sky, 0, 0, W2, H);
-      const p = DECOR.playground, scene = this.assets.scene("playground");
-      if (scene) {
-        const x0 = (p.x0 - 1) * C5, w = (p.x1 - p.x0 + 2) * C5, k = w / scene.img.width, h = scene.img.height * k;
+      const span = playgroundSpan(C5), wall = this.assets.scene("wall");
+      if (wall && this.assets.scene("sky") && this.assets.scene("skyline")) {
+        ctx.clearRect(span.x0, 0, span.w, H);
+        const h = wall.img.height * (span.w / wall.img.width);
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(scene.img, x0, H - h, w, h);
-        this.sceneWallTop = H - h * 0.178;
+        ctx.drawImage(wall.img, span.x0, H - h, span.w, h);
+        this.sceneWallTop = H - h;
       }
       for (const b of DECOR.buildings) {
         const x0 = b.x0 * C5, x1 = Math.min(W2, b.x1 * C5);
@@ -9637,7 +9688,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const pier = this.assets.furniture("pier"), lamp = this.assets.furniture("lamp");
       const ground = this.feet(17);
       if (this.sceneWallTop) {
-        const gx0 = p.gate[0] * C5 + C5 / 2, gx1 = p.gate[1] * C5 + C5 / 2, top = this.sceneWallTop - 6 * u;
+        const gx0 = p.gate[0] * C5 + C5 / 2, gx1 = p.gate[1] * C5 + C5 / 2, top = this.sceneWallTop;
         this.fill(this.material("tarmac"), gx0, top, gx1 - gx0, ground - 20 * u - top);
         this.shade(gx0, top, gx1 - gx0, ground - 20 * u - top, "rgba(10,14,20,0.32)", "rgba(255,255,255,0.08)");
       }
@@ -9882,6 +9933,11 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const img = this.image(r?.image);
       return r && img ? { img, ...r } : null;
     }
+    // The address of an inventory icon picture, for the HUD's <img> elements.
+    iconUrl(id) {
+      const rel = this.ready ? this.manifest?.icons?.[id] : null;
+      return rel ? new URL(rel, this.base).href : null;
+    }
     // A big backdrop painting (the playground).
     scene(name) {
       const r = this.manifest?.scenes?.[name];
@@ -9929,6 +9985,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.stats = { drawn: 0, fallback: 0 };
       assets.onReady(() => {
         this.backdrop = null;
+        this.layers = null;
       });
       this.view = { x0: 0, x1: 0, y0: 0, y1: 0 };
       loadFonts();
@@ -9955,6 +10012,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     // True when this character has walk-cycle pictures (CYCLE0..7).
     hasCycle(group, look) {
       return group !== "OBJ" && !!this.assets.frame(group, "CYCLE0", look?.variant);
+    }
+    // True when this character has a picture for `state` (used for the in-between poses).
+    hasFrame(group, state, look) {
+      return group !== "OBJ" && !!this.assets.frame(group, state, look?.variant);
     }
     // ---- Sprites --------------------------------------------------------------------
     drawSprite(ctx, group, state, direction, look, x, y) {
@@ -10004,6 +10065,43 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const h = Math.min(viewH * S, b.height - camY * S);
       this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: camY * S, y1: camY * S + h };
       ctx.drawImage(b, cam * S, camY * S, viewW * S, h, cam * S, camY * S, viewW * S, h);
+    }
+    // ---- Parallax ---------------------------------------------------------------------
+    // Out in the playground the far things move more slowly than the near
+    // ones as the view scrolls: the sky hardly at all, the rooftops a little,
+    // the boundary wall with the ground. The backdrop has a hole where the
+    // playground is; the sky and the skyline are drawn through it here, each
+    // shifted by a fraction of how far the view is from the playground's
+    // middle. Clouds also drift slowly by themselves.
+    drawParallax(ctx, cam, viewW, camY, viewH, now) {
+      const sky = this.assets.scene("sky"), line = this.assets.scene("skyline"), wall = this.assets.scene("wall");
+      if (!sky || !line || !wall) return;
+      const S = this.scale, C5 = SKOOL.cell * S, u = S / 6, span = playgroundSpan(C5);
+      const vx0 = Math.max(span.x0, cam * S), vx1 = Math.min(span.x0 + span.w, (cam + viewW) * S);
+      if (vx1 <= vx0) return;
+      const H = (SKOOL.height * SKOOL.cell + GROUND_MARGIN) * S;
+      const wallTop = H - wall.img.height * (span.w / wall.img.width);
+      const away = (cam + viewW / 2) * S - (span.x0 + span.w / 2);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(vx0, camY * S, vx1 - vx0, viewH * S);
+      ctx.clip();
+      ctx.imageSmoothingEnabled = true;
+      if (!this.layers) {
+        const scaled = (img, k) => {
+          const c = makeCanvas(Math.round(img.width * k), Math.round(img.height * k));
+          const x = c.getContext("2d");
+          x.imageSmoothingQuality = "high";
+          x.drawImage(img, 0, 0, c.width, c.height);
+          return c;
+        };
+        this.layers = { sky: scaled(sky.img, 1.3 * u), line: scaled(line.img, 0.9 * u) };
+      }
+      const L = this.layers;
+      mirrorTile(ctx, L.sky, Math.round(span.x0 + away * 0.5 + now / 1e3 * 5 * u), Math.round(wallTop + 60 * u - L.sky.height), L.sky.width, L.sky.height, vx0, vx1);
+      const lineShift = 0.16, reach = lineShift * (span.w / 2 + viewW * S / 2);
+      mirrorTile(ctx, L.line, Math.round(span.x0 + span.w - L.line.width + reach + away * lineShift), Math.round(wallTop + 22 * u - L.line.height), L.line.width, L.line.height, vx0, vx1);
+      ctx.restore();
     }
     // Desks are drawn AFTER the people, so a seated pupil's knees go under the
     // desk and anyone walking along the row passes behind it. (The chairs are
@@ -10061,6 +10159,19 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C5 - camY * S - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
     }
   };
+  function mirrorTile(ctx, img, x, y, w, h, x0, x1) {
+    let k = Math.floor((x0 - x) / w);
+    for (let tx = x + k * w; tx < x1; tx += w, k++) {
+      if ((k % 2 + 2) % 2 === 0) ctx.drawImage(img, tx, y, w, h);
+      else {
+        ctx.save();
+        ctx.translate(tx + w, y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(img, 0, 0, w, h);
+        ctx.restore();
+      }
+    }
+  }
 
   // src/render/motion.js
   var WALK_STATES2 = /* @__PURE__ */ new Set(["WALK0", "WALK1", "WALK2", "WALK3"]);
@@ -10069,6 +10180,33 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   var FADE_MS = 110;
   var SNAP_CELLS = 2.5;
   var SLACK_MS = 28;
+  var SEQUENCES = {
+    "STAND>SITTING_ON_CHAIR": ["SIT_A", "SIT_B"],
+    "SITTING_ON_CHAIR>STAND": ["SIT_B", "SIT_A"],
+    "STAND>SITTING_ON_FLOOR": ["SIT_A", "SIT_B"],
+    "SITTING_ON_FLOOR>STAND": ["RISE", "SIT_A"],
+    "STAND>KNOCKED_OUT": ["FALL_A", "FALL_B"],
+    "SITTING_ON_CHAIR>KNOCKED_OUT": ["FALL_B"],
+    "SITTING_ON_FLOOR>KNOCKED_OUT": ["FALL_B"],
+    "KNOCKED_OUT>STAND": ["SITTING_ON_FLOOR", "RISE"],
+    "STAND>KNOCKED_OVER": ["FALL_A", "FALL_B"],
+    "KNOCKED_OVER>STAND": ["FALL_B", "FALL_A"],
+    "STAND>HITTING0": ["HITTING_A"],
+    "HITTING0>HITTING1": ["HITTING_B"],
+    "HITTING1>STAND": ["HITTING_B"],
+    "STAND>ARM_UP": ["ARM_UP_A"],
+    "ARM_UP>STAND": ["ARM_UP_A"],
+    "STAND>CATAPULT0": ["CATAPULT_A"],
+    "CATAPULT1>STAND": ["CATAPULT_A"],
+    "STAND>BENDING_OVER": ["BENDING_A"],
+    "BENDING_OVER>STAND": ["BENDING_A"],
+    "STAND>WATERPISTOL": ["WATERPISTOL_A"],
+    "WATERPISTOL>STAND": ["WATERPISTOL_A"]
+  };
+  var STEP_MS = 72;
+  var QUICK_STEP_MS = 44;
+  var QUICK = /HITTING|ARM_UP|CATAPULT|WATERPISTOL|BENDING/;
+  var poseKind = (state) => WALK_STATES2.has(state) ? "STAND" : state;
   var easeOut = (k) => 1 - (1 - k) * (1 - k);
   var easeIn = (k) => k * k;
   var Motion = class {
@@ -10167,8 +10305,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           tr.prevState = tr.state;
           tr.prevDir = tr.dir ?? thing.direction;
           tr.stateT = now;
+          const mids = smooth ? SEQUENCES[`${poseKind(tr.state)}>${poseKind(state)}`] : null;
+          tr.seq = mids ? { frames: [WALK_STATES2.has(tr.state) ? "WALK0" : tr.state, ...mids, null], t0: now, step: QUICK.test(mids[0]) ? QUICK_STEP_MS : STEP_MS, needs: mids[0] } : null;
         }
         tr.state = state;
+      }
+      let seq = null;
+      if (tr.seq) {
+        const at = (now - tr.seq.t0) / tr.seq.step, i = Math.floor(at);
+        if (i >= tr.seq.frames.length - 1) tr.seq = null;
+        else seq = { a: tr.seq.frames[i], b: tr.seq.frames[i + 1], k: at - i, needs: tr.seq.needs };
       }
       tr.dir = thing.direction;
       const fadeK = (now - tr.stateT) / FADE_MS;
@@ -10177,7 +10323,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const phase = (tr.x * thing.direction % CYCLE_CELLS + CYCLE_CELLS) % CYCLE_CELLS / CYCLE_CELLS;
       const cycle = Math.round(phase * CYCLE_FRAMES) % CYCLE_FRAMES;
       tr.frame = now;
-      tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade };
+      tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade, seq };
       return tr.out;
     }
   };
@@ -10623,6 +10769,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const [shakeX, shakeY] = this.options.smoothMotion ? this.fx.shakeOffset() : [0, 0];
       ctx.save();
       ctx.translate(Math.round((-cam + shakeX) * S), Math.round((-camY + shakeY) * S));
+      if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);
       p.drawBackdrop(ctx, cam, viewW, camY, viewH);
       p.drawFurniture(ctx, game);
       const viewFrom = cam - 48, viewTo = cam + viewW + 48;
@@ -10641,6 +10788,15 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         if (d.group !== "OBJ" && d.isStanding?.()) p.drawShadow(ctx, x, y);
         let state = d.animatoryState;
         if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : "WALK0";
+        if (m.seq && p.hasFrame && p.hasFrame(d.group, m.seq.needs, d.look)) {
+          p.drawSprite(ctx, d.group, m.seq.a || state, d.direction, d.look, x, y);
+          if (m.seq.k > 0.5) {
+            ctx.globalAlpha = (m.seq.k - 0.5) * 2;
+            p.drawSprite(ctx, d.group, m.seq.b || state, d.direction, d.look, x, y);
+            ctx.globalAlpha = 1;
+          }
+          return;
+        }
         if (m.fade && p.smooth) {
           ctx.globalAlpha = 1 - m.fade.k;
           p.drawSprite(ctx, d.group, m.fade.state, m.fade.direction, d.look, x, y);
@@ -11261,9 +11417,57 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     }
     setView(view) {
       this.view = view;
+      this.placeStrips(view);
       if (this.lastInventory) this.renderInventory(...this.lastInventory);
       const k = this.bindings.view.map(pretty).join("/");
       this.viewToggle.innerHTML = view === "original" ? `<kbd>${k}</kbd> modern view` : `<kbd>${k}</kbd> original view`;
+    }
+    // In the modern view the plan and the key legend sit INSIDE the game
+    // picture, as overlays on the canvas; in the original view they go back
+    // underneath it, leaving the 1985 screen clean.
+    placeStrips(view) {
+      const screen = document.querySelector("#stage .screen"), stage = document.getElementById("stage"), tape = document.getElementById("tape");
+      const quest = document.getElementById("quest"), keys = document.getElementById("keys");
+      if (!screen || !quest || !keys) return;
+      if (!this.keysChip) {
+        this.keysChip = document.createElement("button");
+        this.keysChip.type = "button";
+        this.keysChip.id = "keys-chip";
+        this.keysChip.className = "keys-chip";
+        this.keysChip.innerHTML = "<kbd>H</kbd> keys";
+        this.keysChip.addEventListener("click", () => this.toggleKeys());
+        window.addEventListener("keydown", (e) => {
+          if (e.code === "KeyH" && !this.game.cast.eric.writing && !e.repeat && this.view === "modern") this.toggleKeys();
+        });
+        this.game.events.on("start", () => this.showKeysBriefly());
+      }
+      if (view === "modern") {
+        screen.append(quest, keys, this.keysChip);
+        this.showKeysBriefly();
+      } else {
+        stage.insertBefore(quest, tape);
+        stage.insertBefore(keys, tape);
+        this.keysChip.remove();
+        keys.classList.remove("tucked");
+        clearTimeout(this.keysTimer);
+      }
+    }
+    // The legend shows for the first seconds of a game, then tucks away so the
+    // picture is clear; H (or the tab) brings it back or sends it away.
+    showKeysBriefly() {
+      const keys = document.getElementById("keys");
+      keys.classList.remove("tucked");
+      clearTimeout(this.keysTimer);
+      this.keysTimer = setTimeout(() => keys.classList.add("tucked"), 14e3);
+    }
+    toggleKeys() {
+      clearTimeout(this.keysTimer);
+      document.getElementById("keys").classList.toggle("tucked");
+    }
+    // Where pocket icons come from: (id) -> picture URL, or null to fall back.
+    setIconSource(fn) {
+      this.iconSource = fn;
+      if (this.lastInventory) this.renderInventory(...this.lastInventory);
     }
     // The chip in the key strip: are the 1985 graphics loaded?
     setGraphicsStatus(view, loaded) {
@@ -11310,6 +11514,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         this.log("A new term begins. Eric starts in the playground.");
       });
     }
+    // An illustrated icon if the artwork has one, otherwise the pixel-art one.
+    pocketIcon(id) {
+      return this.iconSource && this.iconSource(id) || iconUrl(id);
+    }
     renderInventory(items, mice) {
       this.lastInventory = [items, mice];
       const pixel = this.view === "modern";
@@ -11317,10 +11525,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         const [icon, label] = ITEM_ICONS[id] || ["\u2754", id];
         if (!pixel) return `<span class="item" title="${label}">${icon}</span>`;
         const m = id.match(/^STINKBOMBS(\d)$/);
-        const url = iconUrl(m ? "STINKBOMB" : id);
+        const url = this.pocketIcon(m ? "STINKBOMB" : id);
         return url ? `<span class="item pix" title="${label}"><img src="${url}" alt="${label}">${m ? `<b>${m[1]}</b>` : ""}</span>` : `<span class="item" title="${label}">${icon}</span>`;
       });
-      if (mice > 0) parts.push(pixel ? `<span class="item pix" title="${mice} mice"><img src="${iconUrl("MOUSE")}" alt="mice"><b>${mice}</b></span>` : `<span class="item" title="${mice} mice">\u{1F42D}\xD7${mice}</span>`);
+      if (mice > 0) parts.push(pixel ? `<span class="item pix" title="${mice} mice"><img src="${this.pocketIcon("MOUSE")}" alt="mice"><b>${mice}</b></span>` : `<span class="item" title="${mice} mice">\u{1F42D}\xD7${mice}</span>`);
       this.el.inventory.innerHTML = parts.join("") || '<span class="item empty">pockets empty</span>';
     }
     log(text, highlight = false) {
@@ -11335,7 +11543,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.el.clock.style.width = `${(this.game.timetable.progress() * 100).toFixed(1)}%`;
       const hint = document.getElementById("writing-hint");
       const writing = !!this.game.cast.eric.writing;
-      if (hint && hint.hidden === writing) hint.hidden = !writing;
+      if (hint && hint.hidden === writing) {
+        hint.hidden = !writing;
+        document.getElementById("keys").classList.toggle("writing", writing);
+      }
     }
   };
   var QUEST_TEXT = {
@@ -11508,7 +11719,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           <select data-setting="camera"><option value="close" ${s.camera === "close" ? "selected" : ""}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== "close" ? "selected" : ""}>Whole school</option></select>
           <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting("speed", s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
-        ${check("sound", "Sound effects", "Footsteps, splashes, the bell and birdsong, all synthesised.")}
+        ${check("sound", "Sound effects", "Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.")}
         ${check("music", "Music", "A quiet tune while you play.")}
       </div>
       <h2>Advanced</h2>
@@ -11634,6 +11845,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.musicEnabled = true;
       this.active = false;
       this.outdoors = false;
+      this.crowd = 0;
       this.ctx = null;
       this.musicAt = 0;
       this.musicIndex = 0;
@@ -11657,10 +11869,45 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         this.noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate, this.ctx.sampleRate);
         const data = this.noiseBuffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        this.buildAmbience();
         setInterval(() => this.pump(), 120);
       }
       if (this.ctx.state === "suspended") this.ctx.resume();
       return this.ctx;
+    }
+    // Sounds that never stop, only get louder and quieter: the hush of a room,
+    // and a few "voices" for the murmur of a crowd. A voice is a buzzy tone
+    // pushed through two filters tuned like a mouth, so it sounds like someone
+    // talking in the next room rather than like a note.
+    buildAmbience() {
+      const ctx = this.ctx;
+      const hush = ctx.createBufferSource();
+      hush.buffer = this.noiseBuffer;
+      hush.loop = true;
+      const low = ctx.createBiquadFilter();
+      low.type = "lowpass";
+      low.frequency.value = 170;
+      this.roomGain = ctx.createGain();
+      this.roomGain.gain.value = 0;
+      hush.connect(low).connect(this.roomGain).connect(this.master);
+      hush.start();
+      this.voices = [0, 1, 2, 3, 4].map((i) => {
+        const osc = ctx.createOscillator();
+        osc.type = "sawtooth";
+        osc.frequency.value = 240 + i * 35;
+        const mouth = ctx.createBiquadFilter();
+        mouth.type = "bandpass";
+        mouth.frequency.value = 800;
+        mouth.Q.value = 3;
+        const muffle = ctx.createBiquadFilter();
+        muffle.type = "lowpass";
+        muffle.frequency.value = 1500;
+        const gain = ctx.createGain();
+        gain.gain.value = 0;
+        osc.connect(mouth).connect(muffle).connect(gain).connect(this.master);
+        osc.start();
+        return { osc, mouth, gain };
+      });
     }
     // ---- The two ingredients ------------------------------------------------------
     // A pitched note with a soft start, fading out; `slide` glides to another pitch.
@@ -11721,6 +11968,9 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     setOutdoors(on) {
       this.outdoors = on;
     }
+    setCrowd(level) {
+      this.crowd = Math.max(0, Math.min(1, level));
+    }
     // Called a few times a second: schedules the next notes a little ahead of time.
     pump() {
       const ctx = this.ctx;
@@ -11743,6 +11993,15 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           this.musicAt += BEAT;
           this.musicIndex++;
         }
+      }
+      const ambient = this.active && this.enabled;
+      this.roomGain.gain.setTargetAtTime(ambient && !this.outdoors ? 0.05 : 0, now, 0.5);
+      const loud = ambient ? this.crowd * (this.outdoors ? 0.02 : 0.014) : 0;
+      for (const v of this.voices) {
+        const speaking = Math.random() < 0.6;
+        v.gain.gain.setTargetAtTime(speaking ? loud * (0.4 + Math.random() * 0.8) : 0, now, 0.045);
+        v.osc.frequency.setTargetAtTime(230 + Math.random() * 210, now, 0.05);
+        v.mouth.frequency.setTargetAtTime(500 + Math.random() * 1300, now, 0.04);
       }
       if (this.active && this.enabled && this.outdoors && now >= this.nextBird) {
         const base = 2300 + Math.random() * 1700, chirps = 2 + Math.floor(Math.random() * 4);
@@ -12472,7 +12731,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           const text = hint.replace("{digits}", known(digits)).replace("{letters}", known(letters));
           const isDone = done.has(id);
           const next = !isDone && STEPS.slice(0, i).every(([pid]) => done.has(pid));
-          return `<li class="step ${isDone ? "done" : ""} ${next ? "next" : ""}" tabindex="0" data-hint="${text.replace(/"/g, "&quot;")}">
+          return `<li class="step ${isDone ? "done" : ""} ${next ? "next" : ""}" tabindex="0" data-label="${label}" data-hint="${text.replace(/"/g, "&quot;")}">
           <span class="tick">${isDone ? "\u2713" : i + 1}</span><span class="label">${label}</span></li>`;
         });
         el.innerHTML = `<span class="title">The plan</span><ol>${items.join("")}</ol>`;
@@ -12660,9 +12919,14 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     const sound = new Sound();
     game.events.on("sound", (id) => sound.play(id));
     renderer.onFootstep = () => sound.step();
+    hud.setIconSource((id) => settings.view !== "original" && settings.artwork === "illustrated" ? renderer.assets.iconUrl(id) : null);
+    renderer.assets.onReady(() => hud.setIconSource(hud.iconSource));
     game.events.on("tick", () => {
       const e = game.cast.eric;
       sound.setOutdoors(e.y === 17 && e.x >= SKOOL.playground[0] && e.x <= SKOOL.playground[1]);
+      let near = 0;
+      for (const c of game.cast.characters) if (!c.isAdult() && c.isStanding() && Math.abs(c.x - e.x) < 14 && Math.abs(c.y - e.y) < 3) near++;
+      sound.setCrowd(near / 6);
     });
     let paused = true;
     let attract = false;
@@ -12806,7 +13070,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
-    window.bts = { game, renderer, hud, menu, settings, input, tapeLoader };
+    window.bts = { game, renderer, hud, menu, settings, input, tapeLoader, sound };
     return window.bts;
   }
   boot();

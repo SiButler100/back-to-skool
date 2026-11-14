@@ -92,10 +92,45 @@ export class HUD {
   onToggleView(h) { this.viewHandlers.push(h); }
   setView(view) {
     this.view = view;
+    this.placeStrips(view);
     if (this.lastInventory) this.renderInventory(...this.lastInventory);
     const k = this.bindings.view.map(pretty).join('/');
     this.viewToggle.innerHTML = view === 'original' ? `<kbd>${k}</kbd> modern view` : `<kbd>${k}</kbd> original view`;
   }
+  // In the modern view the plan and the key legend sit INSIDE the game
+  // picture, as overlays on the canvas; in the original view they go back
+  // underneath it, leaving the 1985 screen clean.
+  placeStrips(view) {
+    const screen = document.querySelector('#stage .screen'), stage = document.getElementById('stage'), tape = document.getElementById('tape');
+    const quest = document.getElementById('quest'), keys = document.getElementById('keys');
+    if (!screen || !quest || !keys) return;
+    if (!this.keysChip) {
+      // A small tab that brings the key legend back once it has tucked itself away.
+      this.keysChip = document.createElement('button');
+      this.keysChip.type = 'button'; this.keysChip.id = 'keys-chip'; this.keysChip.className = 'keys-chip';
+      this.keysChip.innerHTML = '<kbd>H</kbd> keys';
+      this.keysChip.addEventListener('click', () => this.toggleKeys());
+      window.addEventListener('keydown', (e) => { if (e.code === 'KeyH' && !this.game.cast.eric.writing && !e.repeat && this.view === 'modern') this.toggleKeys(); });
+      this.game.events.on('start', () => this.showKeysBriefly());
+    }
+    if (view === 'modern') { screen.append(quest, keys, this.keysChip); this.showKeysBriefly(); }
+    else { stage.insertBefore(quest, tape); stage.insertBefore(keys, tape); this.keysChip.remove(); keys.classList.remove('tucked'); clearTimeout(this.keysTimer); }
+  }
+  // The legend shows for the first seconds of a game, then tucks away so the
+  // picture is clear; H (or the tab) brings it back or sends it away.
+  showKeysBriefly() {
+    const keys = document.getElementById('keys');
+    keys.classList.remove('tucked');
+    clearTimeout(this.keysTimer);
+    this.keysTimer = setTimeout(() => keys.classList.add('tucked'), 14000);
+  }
+  toggleKeys() {
+    clearTimeout(this.keysTimer);
+    document.getElementById('keys').classList.toggle('tucked');
+  }
+  // Where pocket icons come from: (id) -> picture URL, or null to fall back.
+  setIconSource(fn) { this.iconSource = fn; if (this.lastInventory) this.renderInventory(...this.lastInventory); }
+
   // The chip in the key strip: are the 1985 graphics loaded?
   setGraphicsStatus(view, loaded) {
     const el = document.getElementById('gfx-status');
@@ -134,6 +169,9 @@ export class HUD {
     g.events.on('start', () => { this.logEl.innerHTML = ''; this.log('A new term begins. Eric starts in the playground.'); });
   }
 
+  // An illustrated icon if the artwork has one, otherwise the pixel-art one.
+  pocketIcon(id) { return (this.iconSource && this.iconSource(id)) || iconUrl(id); }
+
   renderInventory(items, mice) {
     this.lastInventory = [items, mice];
     const pixel = this.view === 'modern';
@@ -141,10 +179,10 @@ export class HUD {
       const [icon, label] = ITEM_ICONS[id] || ['❔', id];
       if (!pixel) return `<span class="item" title="${label}">${icon}</span>`;
       const m = id.match(/^STINKBOMBS(\d)$/);
-      const url = iconUrl(m ? 'STINKBOMB' : id);
+      const url = this.pocketIcon(m ? 'STINKBOMB' : id);
       return url ? `<span class="item pix" title="${label}"><img src="${url}" alt="${label}">${m ? `<b>${m[1]}</b>` : ''}</span>` : `<span class="item" title="${label}">${icon}</span>`;
     });
-    if (mice > 0) parts.push(pixel ? `<span class="item pix" title="${mice} mice"><img src="${iconUrl('MOUSE')}" alt="mice"><b>${mice}</b></span>` : `<span class="item" title="${mice} mice">🐭×${mice}</span>`);
+    if (mice > 0) parts.push(pixel ? `<span class="item pix" title="${mice} mice"><img src="${this.pocketIcon('MOUSE')}" alt="mice"><b>${mice}</b></span>` : `<span class="item" title="${mice} mice">🐭×${mice}</span>`);
     this.el.inventory.innerHTML = parts.join('') || '<span class="item empty">pockets empty</span>';
   }
 
@@ -161,7 +199,7 @@ export class HUD {
     this.el.clock.style.width = `${(this.game.timetable.progress() * 100).toFixed(1)}%`;
     const hint = document.getElementById('writing-hint');
     const writing = !!this.game.cast.eric.writing;
-    if (hint && hint.hidden === writing) hint.hidden = !writing;
+    if (hint && hint.hidden === writing) { hint.hidden = !writing; document.getElementById('keys').classList.toggle('writing', writing); }
   }
 }
 

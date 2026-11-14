@@ -106,6 +106,12 @@ export class ArtAssets {
     return r && img ? { img, ...r } : null;
   }
 
+  // The address of an inventory icon picture, for the HUD's <img> elements.
+  iconUrl(id) {
+    const rel = this.ready ? this.manifest?.icons?.[id] : null;
+    return rel ? new URL(rel, this.base).href : null;
+  }
+
   // A big backdrop painting (the playground).
   scene(name) {
     const r = this.manifest?.scenes?.[name];

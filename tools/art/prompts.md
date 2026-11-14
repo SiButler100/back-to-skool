@@ -69,3 +69,15 @@ the rail is what is lost.
 ## Playground, textures, fixtures
 
 See the `playground-1`, `textures-1` and `furniture-3` entries in `jobs.json`.
+
+## In-between poses
+
+Same recipe as the walk cycles: the first sheet as a reference, and a grid
+whose first cell is the character standing (used only to set the scale, then
+dropped: its pose name starts with an underscore in `jobs.json`). "Comedy
+slip" and "comedy tumble" are the wording for falling over.
+
+## Playground layers and pocket icons
+
+`sky-1` (sky only), `skyline-1` (a cut-out row of rooftops, with the first
+playground painting as a reference) and `icons-1` in `jobs.json`.

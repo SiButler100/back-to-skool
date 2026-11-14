@@ -277,3 +277,49 @@ html.view-modern .quest-steps .step { border-radius: 6px; }
 html.view-modern .quest-steps .step .tick { border-radius: 4px; }
 html.view-modern .panel h2::after { content: ''; display: block; height: 2px; margin-top: 6px; background: repeating-linear-gradient(90deg, var(--line) 0 4px, transparent 4px 6px); }
 @media (max-width: 800px) { html.view-modern .hud-top { grid-template-columns: 1fr 1fr; } }
+
+/* ---- The plan and the key legend inside the game picture (modern view) ------ */
+/* Both are moved into .screen by ui/hud.js and float over the canvas. */
+html.view-modern .screen > .quest-steps {
+  position: absolute; top: 10px; left: 12px; z-index: 3; max-width: calc(100% - 24px);
+  justify-content: flex-start; gap: 4px; padding: 5px 8px; border-radius: 10px;
+  background: rgba(14, 18, 26, 0.60); backdrop-filter: blur(6px); color: #f3eee0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+html.view-modern .screen > .quest-steps .title { color: rgba(243, 238, 224, 0.72); margin: 0 6px 0 2px; }
+html.view-modern .screen > .quest-steps .step { border: 0; background: transparent; color: inherit; padding: 2px; gap: 0; }
+html.view-modern .screen > .quest-steps .step .label { display: none; }
+html.view-modern .screen > .quest-steps .step .tick { width: 22px; height: 22px; background: rgba(255, 255, 255, 0.14); color: #f3eee0; }
+html.view-modern .screen > .quest-steps .step.done .tick { background: var(--ok); color: #fff; }
+/* Only the next step is written out. */
+html.view-modern .screen > .quest-steps .step.next { background: rgba(255, 255, 255, 0.12); padding: 2px 10px 2px 2px; gap: 6px; }
+html.view-modern .screen > .quest-steps .step.next .label { display: inline; }
+html.view-modern .screen > .quest-steps .step.next .tick { background: var(--accent); color: var(--accent-ink); }
+/* The hint drops down from a pip, headed by the step's name. */
+html.view-modern .screen > .quest-steps .step::after {
+  content: attr(data-label) "\A" attr(data-hint); white-space: pre-line; bottom: auto; top: calc(100% + 10px);
+  background: rgba(14, 18, 26, 0.94); color: #f3eee0;
+}
+html.view-modern .screen > .quest-steps .step::after { left: 0; transform: none; }
+
+html.view-modern .screen > .keys-strip {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 3; width: max-content; max-width: calc(100% - 24px);
+  padding: 6px 12px; border-radius: 10px; background: rgba(14, 18, 26, 0.60); backdrop-filter: blur(6px); color: #f3eee0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); transition: opacity 0.4s, transform 0.4s; margin: 0;
+}
+html.view-modern .screen > .keys-strip kbd { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.28); color: #fff; }
+html.view-modern .screen > .keys-strip button.view-toggle { color: rgba(243, 238, 224, 0.8); }
+html.view-modern .screen > .keys-strip.tucked { opacity: 0; transform: translate(-50%, 12px); pointer-events: none; }
+/* While Eric writes on a board only the writing hint shows, tucked or not. */
+html.view-modern .screen > .keys-strip.writing { opacity: 1; transform: translateX(-50%); }
+html.view-modern .screen > .keys-strip.writing .k:not(.writing-hint), html.view-modern .screen > .keys-strip.writing .gfx-status { display: none; }
+html.view-modern .screen > .keys-strip .writing-hint { color: #ffd34d; }
+.keys-chip {
+  position: absolute; right: 12px; bottom: 12px; z-index: 3; font: inherit; font-size: 12px; cursor: pointer;
+  padding: 4px 9px; border-radius: 8px; border: 0; background: rgba(14, 18, 26, 0.55); color: rgba(243, 238, 224, 0.85);
+}
+.keys-chip kbd { font: inherit; padding: 0 5px; margin-right: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.16); }
+.keys-chip:hover { background: rgba(14, 18, 26, 0.8); }
+/* Illustrated pocket icons are bigger pictures than the pixel ones. */
+html.art-illustrated .inventory .item.pix img { width: 30px; height: 30px; image-rendering: auto; object-fit: contain; }
+html.art-illustrated .inventory .item.pix { width: 38px; height: 38px; }
+html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }

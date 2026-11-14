@@ -7,7 +7,9 @@
 // hint when you hover over a step. It also remembers the combination digits
 // and letters the masters have let slip.
 //
-// It is shown in both views (it sits above the key strip, not in the sidebar).
+// It is shown in both views: under the picture in the original view, and as a
+// compact row of numbered pips inside the picture in the modern view, where
+// only the next step is spelled out (ui/hud.js placeStrips, styles.css).
 // ============================================================================
 
 // Each step: id, short label, hint. The hint may use {digits} / {letters},
@@ -54,7 +56,7 @@ export default {
         const text = hint.replace('{digits}', known(digits)).replace('{letters}', known(letters));
         const isDone = done.has(id);
         const next = !isDone && STEPS.slice(0, i).every(([pid]) => done.has(pid));
-        return `<li class="step ${isDone ? 'done' : ''} ${next ? 'next' : ''}" tabindex="0" data-hint="${text.replace(/"/g, '&quot;')}">
+        return `<li class="step ${isDone ? 'done' : ''} ${next ? 'next' : ''}" tabindex="0" data-label="${label}" data-hint="${text.replace(/"/g, '&quot;')}">
           <span class="tick">${isDone ? '✓' : i + 1}</span><span class="label">${label}</span></li>`;
       });
       el.innerHTML = `<span class="title">The plan</span><ol>${items.join('')}</ol>`;

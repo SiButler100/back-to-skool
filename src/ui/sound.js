@@ -5,7 +5,8 @@
 // uses the Web Audio API properly: each sound is a small recipe built from
 // two ingredients, a pitched TONE (which can slide) and a burst of filtered
 // NOISE (for splashes, thuds and footsteps). On top of the effects there are
-// footsteps under Eric, birdsong while he is outdoors, and a quiet tune.
+// footsteps under Eric, birdsong while he is outdoors, a faint room tone and the
+// murmur of nearby pupils indoors, and a quiet tune.
 //
 // Add a sound by adding a recipe to RECIPES and calling
 // game.playSound('MY_SOUND') in the engine.
@@ -54,6 +55,7 @@ export class Sound {
     this.musicEnabled = true;
     this.active = false;          // false while the game is paused or on the title screen
     this.outdoors = false;
+    this.crowd = 0;               // 0..1: how many pupils are milling about near Eric
     this.ctx = null;
     this.musicAt = 0; this.musicIndex = 0;
     this.nextBird = 0;
@@ -75,10 +77,31 @@ export class Sound {
       this.noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate, this.ctx.sampleRate);
       const data = this.noiseBuffer.getChannelData(0);
       for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      this.buildAmbience();
       setInterval(() => this.pump(), 120);
     }
     if (this.ctx.state === 'suspended') this.ctx.resume();
     return this.ctx;
+  }
+
+  // Sounds that never stop, only get louder and quieter: the hush of a room,
+  // and a few "voices" for the murmur of a crowd. A voice is a buzzy tone
+  // pushed through two filters tuned like a mouth, so it sounds like someone
+  // talking in the next room rather than like a note.
+  buildAmbience() {
+    const ctx = this.ctx;
+    const hush = ctx.createBufferSource(); hush.buffer = this.noiseBuffer; hush.loop = true;
+    const low = ctx.createBiquadFilter(); low.type = 'lowpass'; low.frequency.value = 170;
+    this.roomGain = ctx.createGain(); this.roomGain.gain.value = 0;
+    hush.connect(low).connect(this.roomGain).connect(this.master); hush.start();
+    this.voices = [0, 1, 2, 3, 4].map((i) => {
+      const osc = ctx.createOscillator(); osc.type = 'sawtooth'; osc.frequency.value = 240 + i * 35;
+      const mouth = ctx.createBiquadFilter(); mouth.type = 'bandpass'; mouth.frequency.value = 800; mouth.Q.value = 3;
+      const muffle = ctx.createBiquadFilter(); muffle.type = 'lowpass'; muffle.frequency.value = 1500;
+      const gain = ctx.createGain(); gain.gain.value = 0;
+      osc.connect(mouth).connect(muffle).connect(gain).connect(this.master); osc.start();
+      return { osc, mouth, gain };
+    });
   }
 
   // ---- The two ingredients ------------------------------------------------------
@@ -128,6 +151,7 @@ export class Sound {
   // ---- Things that run on their own: the tune and the birds --------------------------
   setActive(on) { this.active = on; }
   setOutdoors(on) { this.outdoors = on; }
+  setCrowd(level) { this.crowd = Math.max(0, Math.min(1, level)); }
 
   // Called a few times a second: schedules the next notes a little ahead of time.
   pump() {
@@ -150,6 +174,18 @@ export class Sound {
         if (beat % 2 === 0) this.tone(this.musicAt, N(BASS[bar]) * (beat ? 1.5 : 1), BEAT * 1.7, { type: 'sine', vol: 0.55, out: this.musicBus });
         this.musicAt += BEAT; this.musicIndex++;
       }
+    }
+    // The hush of a room indoors, and the murmur of whoever is milling about
+    // nearby. Each voice changes pitch and vowel and comes and goes several
+    // times a second, which is what makes it a babble rather than a drone.
+    const ambient = this.active && this.enabled;
+    this.roomGain.gain.setTargetAtTime(ambient && !this.outdoors ? 0.05 : 0, now, 0.5);
+    const loud = ambient ? this.crowd * (this.outdoors ? 0.020 : 0.014) : 0;
+    for (const v of this.voices) {
+      const speaking = Math.random() < 0.6;
+      v.gain.gain.setTargetAtTime(speaking ? loud * (0.4 + Math.random() * 0.8) : 0, now, 0.045);
+      v.osc.frequency.setTargetAtTime(230 + Math.random() * 210, now, 0.05);
+      v.mouth.frequency.setTargetAtTime(500 + Math.random() * 1300, now, 0.04);
     }
     // Birdsong outdoors: a few quick chirps every now and then.
     if (this.active && this.enabled && this.outdoors && now >= this.nextBird) {

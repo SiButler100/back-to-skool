@@ -19,11 +19,17 @@ Pictures for the modern view's illustrated artwork. Nothing here is from the
   desk lids and fallen bike, each placed where the pixel art puts it.
 - `furniture/items.png` doors, windows, gate, cabinet, safe, cups, blackboard,
   desk and chair, railings, bike, conker in the tree, and the tree.
-- `scenes/playground.jpg` the playground painting; `textures/` six material
+- `scenes/` the playground in three layers so they can scroll at different
+  speeds: `sky.jpg`, `skyline.png` (a cut-out) and `wall.jpg` (the boundary
+  wall and tarmac, cropped from the first playground painting). `icons/` one
+  small picture per pocket item for the HUD. `textures/` six material
   swatches (floorboards, dark wood, two bricks, tarmac, stone), each mirrored
   into a 2×2 block so it repeats, used for floors, stairs and walls.
-- Each character sheet also holds an eight-frame walk cycle (`CYCLE0`..`CYCLE7`),
-  generated with the character's first sheet as a reference.
+- Each character sheet also holds an eight-frame walk cycle (`CYCLE0`..`CYCLE7`)
+  and in-between poses (`SIT_A`, `SIT_B`, `FALL_A`, `FALL_B`, `RISE`, and for
+  some `HITTING_A/B`, `ARM_UP_A`, `CATAPULT_A`, `BENDING_A`, `WATERPISTOL_A`),
+  generated with the character's first sheet as a reference. Which pose
+  change uses which pictures is the SEQUENCES table in `src/render/motion.js`.
 - `rooms/` one JPEG per room zone (see `src/data/decor.js`), fitted to the
   wall by `src/render/art/backdrop.js`; the floor line is the bottom edge.
 

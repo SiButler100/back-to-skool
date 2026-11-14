@@ -288,6 +288,52 @@ html.view-modern .quest-steps .step .tick { border-radius: 4px; }
 html.view-modern .panel h2::after { content: ''; display: block; height: 2px; margin-top: 6px; background: repeating-linear-gradient(90deg, var(--line) 0 4px, transparent 4px 6px); }
 @media (max-width: 800px) { html.view-modern .hud-top { grid-template-columns: 1fr 1fr; } }
 
+/* ---- The plan and the key legend inside the game picture (modern view) ------ */
+/* Both are moved into .screen by ui/hud.js and float over the canvas. */
+html.view-modern .screen > .quest-steps {
+  position: absolute; top: 10px; left: 12px; z-index: 3; max-width: calc(100% - 24px);
+  justify-content: flex-start; gap: 4px; padding: 5px 8px; border-radius: 10px;
+  background: rgba(14, 18, 26, 0.60); backdrop-filter: blur(6px); color: #f3eee0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+html.view-modern .screen > .quest-steps .title { color: rgba(243, 238, 224, 0.72); margin: 0 6px 0 2px; }
+html.view-modern .screen > .quest-steps .step { border: 0; background: transparent; color: inherit; padding: 2px; gap: 0; }
+html.view-modern .screen > .quest-steps .step .label { display: none; }
+html.view-modern .screen > .quest-steps .step .tick { width: 22px; height: 22px; background: rgba(255, 255, 255, 0.14); color: #f3eee0; }
+html.view-modern .screen > .quest-steps .step.done .tick { background: var(--ok); color: #fff; }
+/* Only the next step is written out. */
+html.view-modern .screen > .quest-steps .step.next { background: rgba(255, 255, 255, 0.12); padding: 2px 10px 2px 2px; gap: 6px; }
+html.view-modern .screen > .quest-steps .step.next .label { display: inline; }
+html.view-modern .screen > .quest-steps .step.next .tick { background: var(--accent); color: var(--accent-ink); }
+/* The hint drops down from a pip, headed by the step's name. */
+html.view-modern .screen > .quest-steps .step::after {
+  content: attr(data-label) "\A" attr(data-hint); white-space: pre-line; bottom: auto; top: calc(100% + 10px);
+  background: rgba(14, 18, 26, 0.94); color: #f3eee0;
+}
+html.view-modern .screen > .quest-steps .step::after { left: 0; transform: none; }
+
+html.view-modern .screen > .keys-strip {
+  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 3; width: max-content; max-width: calc(100% - 24px);
+  padding: 6px 12px; border-radius: 10px; background: rgba(14, 18, 26, 0.60); backdrop-filter: blur(6px); color: #f3eee0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); transition: opacity 0.4s, transform 0.4s; margin: 0;
+}
+html.view-modern .screen > .keys-strip kbd { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.28); color: #fff; }
+html.view-modern .screen > .keys-strip button.view-toggle { color: rgba(243, 238, 224, 0.8); }
+html.view-modern .screen > .keys-strip.tucked { opacity: 0; transform: translate(-50%, 12px); pointer-events: none; }
+/* While Eric writes on a board only the writing hint shows, tucked or not. */
+html.view-modern .screen > .keys-strip.writing { opacity: 1; transform: translateX(-50%); }
+html.view-modern .screen > .keys-strip.writing .k:not(.writing-hint), html.view-modern .screen > .keys-strip.writing .gfx-status { display: none; }
+html.view-modern .screen > .keys-strip .writing-hint { color: #ffd34d; }
+.keys-chip {
+  position: absolute; right: 12px; bottom: 12px; z-index: 3; font: inherit; font-size: 12px; cursor: pointer;
+  padding: 4px 9px; border-radius: 8px; border: 0; background: rgba(14, 18, 26, 0.55); color: rgba(243, 238, 224, 0.85);
+}
+.keys-chip kbd { font: inherit; padding: 0 5px; margin-right: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.16); }
+.keys-chip:hover { background: rgba(14, 18, 26, 0.8); }
+/* Illustrated pocket icons are bigger pictures than the pixel ones. */
+html.art-illustrated .inventory .item.pix img { width: 30px; height: 30px; image-rendering: auto; object-fit: contain; }
+html.art-illustrated .inventory .item.pix { width: 38px; height: 38px; }
+html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
+
 </style>
 </head>
 <body>
@@ -316,8 +362,32 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     "ERIC": {
       "image": "characters/eric.png",
       "frames": {
-        "ARM_UP": {
+        "ARM_UP_A": {
           "x": 2,
+          "y": 2,
+          "w": 54,
+          "h": 143,
+          "ox": -57,
+          "oy": -49
+        },
+        "WATERPISTOL_A": {
+          "x": 58,
+          "y": 2,
+          "w": 73,
+          "h": 143,
+          "ox": -52,
+          "oy": -49
+        },
+        "CATAPULT_A": {
+          "x": 133,
+          "y": 2,
+          "w": 73,
+          "h": 142,
+          "ox": -43,
+          "oy": -50
+        },
+        "ARM_UP": {
+          "x": 208,
           "y": 2,
           "w": 30,
           "h": 141,
@@ -325,7 +395,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -52
         },
         "CATAPULT0": {
-          "x": 34,
+          "x": 240,
           "y": 2,
           "w": 44,
           "h": 140,
@@ -333,7 +403,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -52
         },
         "WALK0": {
-          "x": 80,
+          "x": 286,
           "y": 2,
           "w": 29,
           "h": 138,
@@ -341,7 +411,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -54
         },
         "CYCLE4": {
-          "x": 111,
+          "x": 317,
           "y": 2,
           "w": 36,
           "h": 138,
@@ -349,7 +419,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -54
         },
         "CYCLE5": {
-          "x": 149,
+          "x": 355,
           "y": 2,
           "w": 70,
           "h": 138,
@@ -357,7 +427,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -54
         },
         "WATERPISTOL": {
-          "x": 221,
+          "x": 427,
           "y": 2,
           "w": 81,
           "h": 137,
@@ -365,7 +435,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "CYCLE0": {
-          "x": 304,
+          "x": 510,
           "y": 2,
           "w": 33,
           "h": 137,
@@ -373,7 +443,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -55
         },
         "CYCLE1": {
-          "x": 339,
+          "x": 545,
           "y": 2,
           "w": 68,
           "h": 137,
@@ -381,7 +451,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -55
         },
         "CYCLE2": {
-          "x": 409,
+          "x": 615,
           "y": 2,
           "w": 92,
           "h": 137,
@@ -389,15 +459,23 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -55
         },
         "CYCLE6": {
-          "x": 503,
+          "x": 709,
           "y": 2,
           "w": 92,
           "h": 137,
           "ox": -28,
           "oy": -56
         },
+        "SIT_A": {
+          "x": 803,
+          "y": 2,
+          "w": 59,
+          "h": 137,
+          "ox": -42,
+          "oy": -55
+        },
         "CATAPULT1": {
-          "x": 597,
+          "x": 864,
           "y": 2,
           "w": 98,
           "h": 136,
@@ -405,7 +483,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "RIDING_BIKE0": {
-          "x": 697,
+          "x": 964,
           "y": 2,
           "w": 130,
           "h": 136,
@@ -413,7 +491,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "RIDING_BIKE1": {
-          "x": 829,
+          "x": 1096,
           "y": 2,
           "w": 129,
           "h": 136,
@@ -421,7 +499,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "CYCLE3": {
-          "x": 960,
+          "x": 1227,
           "y": 2,
           "w": 53,
           "h": 136,
@@ -429,7 +507,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "CYCLE7": {
-          "x": 1015,
+          "x": 1282,
           "y": 2,
           "w": 58,
           "h": 136,
@@ -437,7 +515,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "WALK1": {
-          "x": 1075,
+          "x": 1342,
           "y": 2,
           "w": 82,
           "h": 135,
@@ -445,7 +523,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -57
         },
         "WALK3": {
-          "x": 1159,
+          "x": 1426,
           "y": 2,
           "w": 83,
           "h": 135,
@@ -453,31 +531,87 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -57
         },
         "HITTING1": {
-          "x": 1244,
+          "x": 1511,
           "y": 2,
           "w": 99,
           "h": 132,
           "ox": -38,
           "oy": -61
         },
+        "FALL_A": {
+          "x": 1612,
+          "y": 2,
+          "w": 91,
+          "h": 132,
+          "ox": -26,
+          "oy": -61
+        },
+        "HITTING_B": {
+          "x": 1705,
+          "y": 2,
+          "w": 99,
+          "h": 128,
+          "ox": -29,
+          "oy": -64
+        },
         "HITTING0": {
-          "x": 1345,
+          "x": 1806,
           "y": 2,
           "w": 69,
           "h": 126,
           "ox": -42,
           "oy": -66
         },
+        "HITTING_A": {
+          "x": 1877,
+          "y": 2,
+          "w": 75,
+          "h": 126,
+          "ox": -32,
+          "oy": -67
+        },
         "SITTING_ON_CHAIR": {
-          "x": 1416,
+          "x": 1954,
           "y": 2,
           "w": 61,
           "h": 114,
           "ox": -42,
           "oy": -78
         },
+        "SIT_B": {
+          "x": 2017,
+          "y": 2,
+          "w": 65,
+          "h": 113,
+          "ox": -40,
+          "oy": -80
+        },
+        "BENDING_A": {
+          "x": 2084,
+          "y": 2,
+          "w": 77,
+          "h": 110,
+          "ox": -34,
+          "oy": -82
+        },
+        "RISE": {
+          "x": 2163,
+          "y": 2,
+          "w": 83,
+          "h": 98,
+          "ox": -30,
+          "oy": -95
+        },
+        "FALL_B": {
+          "x": 2248,
+          "y": 2,
+          "w": 113,
+          "h": 91,
+          "ox": -16,
+          "oy": -102
+        },
         "BENDING_OVER": {
-          "x": 1479,
+          "x": 2363,
           "y": 2,
           "w": 78,
           "h": 90,
@@ -485,7 +619,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -102
         },
         "SITTING_ON_FLOOR": {
-          "x": 1559,
+          "x": 2443,
           "y": 2,
           "w": 112,
           "h": 84,
@@ -493,7 +627,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -109
         },
         "KNOCKED_OUT": {
-          "x": 1673,
+          "x": 2557,
           "y": 2,
           "w": 135,
           "h": 57,
@@ -598,24 +732,64 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
               "ox": -31,
               "oy": -57
             },
-            "SITTING_ON_CHAIR": {
+            "SIT_A": {
               "x": 775,
+              "y": 2,
+              "w": 58,
+              "h": 134,
+              "ox": -43,
+              "oy": -58
+            },
+            "SIT_B": {
+              "x": 835,
+              "y": 2,
+              "w": 69,
+              "h": 118,
+              "ox": -38,
+              "oy": -74
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 906,
               "y": 2,
               "w": 60,
               "h": 110,
               "ox": -42,
               "oy": -82
             },
+            "FALL_A": {
+              "x": 968,
+              "y": 2,
+              "w": 84,
+              "h": 107,
+              "ox": -30,
+              "oy": -85
+            },
+            "RISE": {
+              "x": 1054,
+              "y": 2,
+              "w": 85,
+              "h": 93,
+              "ox": -30,
+              "oy": -100
+            },
             "SITTING_ON_FLOOR": {
-              "x": 837,
+              "x": 1141,
               "y": 2,
               "w": 110,
               "h": 89,
               "ox": -17,
               "oy": -104
             },
+            "FALL_B": {
+              "x": 1253,
+              "y": 2,
+              "w": 120,
+              "h": 82,
+              "ox": -12,
+              "oy": -111
+            },
             "KNOCKED_OUT": {
-              "x": 949,
+              "x": 1375,
               "y": 2,
               "w": 149,
               "h": 62,
@@ -718,24 +892,64 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
               "ox": -39,
               "oy": -56
             },
-            "SITTING_ON_CHAIR": {
+            "SIT_A": {
               "x": 715,
+              "y": 2,
+              "w": 64,
+              "h": 131,
+              "ox": -40,
+              "oy": -61
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 781,
               "y": 2,
               "w": 63,
               "h": 119,
               "ox": -40,
               "oy": -73
             },
+            "SIT_B": {
+              "x": 846,
+              "y": 2,
+              "w": 67,
+              "h": 115,
+              "ox": -38,
+              "oy": -77
+            },
+            "FALL_A": {
+              "x": 915,
+              "y": 2,
+              "w": 76,
+              "h": 111,
+              "ox": -34,
+              "oy": -81
+            },
+            "RISE": {
+              "x": 993,
+              "y": 2,
+              "w": 81,
+              "h": 97,
+              "ox": -32,
+              "oy": -96
+            },
             "SITTING_ON_FLOOR": {
-              "x": 780,
+              "x": 1076,
               "y": 2,
               "w": 156,
               "h": 93,
               "ox": 6,
               "oy": -99
             },
+            "FALL_B": {
+              "x": 1234,
+              "y": 2,
+              "w": 110,
+              "h": 85,
+              "ox": -17,
+              "oy": -107
+            },
             "KNOCKED_OUT": {
-              "x": 938,
+              "x": 1346,
               "y": 2,
               "w": 148,
               "h": 60,
@@ -838,24 +1052,64 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
               "ox": -29,
               "oy": -57
             },
-            "SITTING_ON_CHAIR": {
+            "SIT_A": {
               "x": 774,
+              "y": 2,
+              "w": 63,
+              "h": 132,
+              "ox": -40,
+              "oy": -60
+            },
+            "FALL_A": {
+              "x": 839,
+              "y": 2,
+              "w": 82,
+              "h": 119,
+              "ox": -31,
+              "oy": -73
+            },
+            "SIT_B": {
+              "x": 923,
+              "y": 2,
+              "w": 63,
+              "h": 118,
+              "ox": -40,
+              "oy": -74
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 988,
               "y": 2,
               "w": 63,
               "h": 116,
               "ox": -40,
               "oy": -76
             },
+            "RISE": {
+              "x": 1053,
+              "y": 2,
+              "w": 79,
+              "h": 97,
+              "ox": -32,
+              "oy": -96
+            },
             "SITTING_ON_FLOOR": {
-              "x": 839,
+              "x": 1134,
               "y": 2,
               "w": 141,
               "h": 90,
               "ox": -2,
               "oy": -103
             },
+            "FALL_B": {
+              "x": 1277,
+              "y": 2,
+              "w": 120,
+              "h": 77,
+              "ox": -12,
+              "oy": -116
+            },
             "KNOCKED_OUT": {
-              "x": 982,
+              "x": 1399,
               "y": 2,
               "w": 155,
               "h": 65,
@@ -962,24 +1216,64 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
               "ox": -27,
               "oy": -59
             },
-            "SITTING_ON_CHAIR": {
+            "SIT_A": {
               "x": 781,
+              "y": 2,
+              "w": 57,
+              "h": 130,
+              "ox": -44,
+              "oy": -62
+            },
+            "SIT_B": {
+              "x": 840,
+              "y": 2,
+              "w": 71,
+              "h": 116,
+              "ox": -36,
+              "oy": -76
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 913,
               "y": 2,
               "w": 61,
               "h": 113,
               "ox": -42,
               "oy": -79
             },
+            "FALL_A": {
+              "x": 976,
+              "y": 2,
+              "w": 89,
+              "h": 108,
+              "ox": -28,
+              "oy": -84
+            },
+            "RISE": {
+              "x": 1067,
+              "y": 2,
+              "w": 81,
+              "h": 90,
+              "ox": -32,
+              "oy": -103
+            },
             "SITTING_ON_FLOOR": {
-              "x": 844,
+              "x": 1150,
               "y": 2,
               "w": 149,
               "h": 83,
               "ox": 2,
               "oy": -109
             },
+            "FALL_B": {
+              "x": 1301,
+              "y": 2,
+              "w": 117,
+              "h": 83,
+              "ox": -14,
+              "oy": -109
+            },
             "KNOCKED_OUT": {
-              "x": 995,
+              "x": 1420,
               "y": 2,
               "w": 161,
               "h": 32,
@@ -1082,24 +1376,64 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
               "ox": -40,
               "oy": -56
             },
-            "SITTING_ON_CHAIR": {
+            "SIT_A": {
               "x": 794,
+              "y": 2,
+              "w": 57,
+              "h": 131,
+              "ox": -44,
+              "oy": -61
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 853,
               "y": 2,
               "w": 70,
               "h": 122,
               "ox": -37,
               "oy": -70
             },
+            "SIT_B": {
+              "x": 925,
+              "y": 2,
+              "w": 68,
+              "h": 117,
+              "ox": -38,
+              "oy": -75
+            },
+            "FALL_A": {
+              "x": 995,
+              "y": 2,
+              "w": 96,
+              "h": 111,
+              "ox": -24,
+              "oy": -81
+            },
+            "RISE": {
+              "x": 1093,
+              "y": 2,
+              "w": 82,
+              "h": 97,
+              "ox": -31,
+              "oy": -96
+            },
             "SITTING_ON_FLOOR": {
-              "x": 866,
+              "x": 1177,
               "y": 2,
               "w": 165,
               "h": 95,
               "ox": 10,
               "oy": -98
             },
+            "FALL_B": {
+              "x": 1344,
+              "y": 2,
+              "w": 117,
+              "h": 86,
+              "ox": -14,
+              "oy": -107
+            },
             "KNOCKED_OUT": {
-              "x": 1033,
+              "x": 1463,
               "y": 2,
               "w": 154,
               "h": 61,
@@ -1202,24 +1536,64 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
               "ox": -29,
               "oy": -56
             },
-            "SITTING_ON_CHAIR": {
+            "SIT_A": {
               "x": 773,
+              "y": 2,
+              "w": 54,
+              "h": 133,
+              "ox": -45,
+              "oy": -59
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 829,
               "y": 2,
               "w": 60,
               "h": 118,
               "ox": -42,
               "oy": -74
             },
+            "SIT_B": {
+              "x": 891,
+              "y": 2,
+              "w": 65,
+              "h": 118,
+              "ox": -40,
+              "oy": -74
+            },
+            "FALL_A": {
+              "x": 958,
+              "y": 2,
+              "w": 97,
+              "h": 110,
+              "ox": -24,
+              "oy": -82
+            },
+            "RISE": {
+              "x": 1057,
+              "y": 2,
+              "w": 84,
+              "h": 91,
+              "ox": -30,
+              "oy": -102
+            },
             "SITTING_ON_FLOOR": {
-              "x": 835,
+              "x": 1143,
               "y": 2,
               "w": 156,
               "h": 88,
               "ox": 4,
               "oy": -105
             },
+            "FALL_B": {
+              "x": 1301,
+              "y": 2,
+              "w": 119,
+              "h": 81,
+              "ox": -12,
+              "oy": -111
+            },
             "KNOCKED_OUT": {
-              "x": 993,
+              "x": 1422,
               "y": 2,
               "w": 143,
               "h": 41,
@@ -1316,8 +1690,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -43,
           "oy": -57
         },
-        "CYCLE7": {
+        "SIT_A": {
           "x": 701,
+          "y": 2,
+          "w": 52,
+          "h": 135,
+          "ox": -46,
+          "oy": -58
+        },
+        "CYCLE7": {
+          "x": 755,
           "y": 2,
           "w": 59,
           "h": 134,
@@ -1325,23 +1707,55 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -58
         },
         "SITTING_ON_CHAIR": {
-          "x": 762,
+          "x": 816,
           "y": 2,
           "w": 62,
           "h": 118,
           "ox": -41,
           "oy": -74
         },
+        "SIT_B": {
+          "x": 880,
+          "y": 2,
+          "w": 65,
+          "h": 116,
+          "ox": -40,
+          "oy": -76
+        },
+        "FALL_A": {
+          "x": 947,
+          "y": 2,
+          "w": 77,
+          "h": 111,
+          "ox": -34,
+          "oy": -81
+        },
+        "RISE": {
+          "x": 1026,
+          "y": 2,
+          "w": 92,
+          "h": 97,
+          "ox": -26,
+          "oy": -96
+        },
         "SITTING_ON_FLOOR": {
-          "x": 826,
+          "x": 1120,
           "y": 2,
           "w": 169,
           "h": 89,
           "ox": 12,
           "oy": -103
         },
+        "FALL_B": {
+          "x": 1291,
+          "y": 2,
+          "w": 126,
+          "h": 82,
+          "ox": -9,
+          "oy": -110
+        },
         "KNOCKED_OUT": {
-          "x": 997,
+          "x": 1419,
           "y": 2,
           "w": 163,
           "h": 34,
@@ -1460,24 +1874,80 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -23,
           "oy": -59
         },
-        "SITTING_ON_CHAIR": {
+        "HITTING_A": {
           "x": 1097,
+          "y": 2,
+          "w": 93,
+          "h": 128,
+          "ox": -28,
+          "oy": -64
+        },
+        "SIT_A": {
+          "x": 1192,
+          "y": 2,
+          "w": 76,
+          "h": 127,
+          "ox": -34,
+          "oy": -65
+        },
+        "HITTING_B": {
+          "x": 1270,
+          "y": 2,
+          "w": 119,
+          "h": 127,
+          "ox": -18,
+          "oy": -65
+        },
+        "SITTING_ON_CHAIR": {
+          "x": 1391,
           "y": 2,
           "w": 84,
           "h": 122,
           "ox": -30,
           "oy": -70
         },
+        "FALL_A": {
+          "x": 1477,
+          "y": 2,
+          "w": 97,
+          "h": 122,
+          "ox": -24,
+          "oy": -70
+        },
+        "SIT_B": {
+          "x": 1576,
+          "y": 2,
+          "w": 84,
+          "h": 112,
+          "ox": -30,
+          "oy": -80
+        },
+        "RISE": {
+          "x": 1662,
+          "y": 2,
+          "w": 94,
+          "h": 105,
+          "ox": -25,
+          "oy": -88
+        },
         "SITTING_ON_FLOOR": {
-          "x": 1183,
+          "x": 1758,
           "y": 2,
           "w": 118,
           "h": 94,
           "ox": -13,
           "oy": -98
         },
+        "FALL_B": {
+          "x": 1878,
+          "y": 2,
+          "w": 121,
+          "h": 90,
+          "ox": -12,
+          "oy": -103
+        },
         "KNOCKED_OUT": {
-          "x": 1303,
+          "x": 2001,
           "y": 2,
           "w": 144,
           "h": 47,
@@ -1540,8 +2010,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -47,
           "oy": -55
         },
-        "CYCLE0": {
+        "ARM_UP_A": {
           "x": 350,
+          "y": 2,
+          "w": 67,
+          "h": 137,
+          "ox": -54,
+          "oy": -55
+        },
+        "CYCLE0": {
+          "x": 419,
           "y": 2,
           "w": 38,
           "h": 136,
@@ -1549,7 +2027,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "CYCLE1": {
-          "x": 390,
+          "x": 459,
           "y": 2,
           "w": 54,
           "h": 136,
@@ -1557,7 +2035,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -56
         },
         "CYCLE2": {
-          "x": 446,
+          "x": 515,
           "y": 2,
           "w": 89,
           "h": 135,
@@ -1565,7 +2043,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -57
         },
         "CYCLE6": {
-          "x": 537,
+          "x": 606,
           "y": 2,
           "w": 93,
           "h": 135,
@@ -1573,7 +2051,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -57
         },
         "CATAPULT0": {
-          "x": 632,
+          "x": 701,
           "y": 2,
           "w": 53,
           "h": 134,
@@ -1581,7 +2059,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -58
         },
         "CYCLE3": {
-          "x": 687,
+          "x": 756,
           "y": 2,
           "w": 62,
           "h": 134,
@@ -1589,39 +2067,87 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -58
         },
         "CYCLE7": {
-          "x": 751,
+          "x": 820,
           "y": 2,
           "w": 65,
           "h": 134,
           "ox": -40,
           "oy": -58
         },
+        "CATAPULT_A": {
+          "x": 887,
+          "y": 2,
+          "w": 88,
+          "h": 133,
+          "ox": -37,
+          "oy": -59
+        },
         "CATAPULT1": {
-          "x": 818,
+          "x": 977,
           "y": 2,
           "w": 90,
           "h": 132,
           "ox": -40,
           "oy": -60
         },
+        "SIT_A": {
+          "x": 1069,
+          "y": 2,
+          "w": 52,
+          "h": 131,
+          "ox": -46,
+          "oy": -61
+        },
+        "FALL_A": {
+          "x": 1123,
+          "y": 2,
+          "w": 95,
+          "h": 127,
+          "ox": -24,
+          "oy": -65
+        },
         "SITTING_ON_CHAIR": {
-          "x": 910,
+          "x": 1220,
           "y": 2,
           "w": 77,
           "h": 118,
           "ox": -34,
           "oy": -74
         },
+        "SIT_B": {
+          "x": 1299,
+          "y": 2,
+          "w": 71,
+          "h": 111,
+          "ox": -36,
+          "oy": -81
+        },
+        "RISE": {
+          "x": 1372,
+          "y": 2,
+          "w": 82,
+          "h": 100,
+          "ox": -31,
+          "oy": -92
+        },
         "SITTING_ON_FLOOR": {
-          "x": 989,
+          "x": 1456,
           "y": 2,
           "w": 120,
           "h": 91,
           "ox": -12,
           "oy": -101
         },
+        "FALL_B": {
+          "x": 1578,
+          "y": 2,
+          "w": 107,
+          "h": 83,
+          "ox": -18,
+          "oy": -109
+        },
         "KNOCKED_OUT": {
-          "x": 1111,
+          "x": 1687,
           "y": 2,
           "w": 156,
           "h": 62,
@@ -1740,24 +2266,64 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -29,
           "oy": -58
         },
-        "SITTING_ON_CHAIR": {
+        "SIT_A": {
           "x": 931,
+          "y": 2,
+          "w": 55,
+          "h": 134,
+          "ox": -44,
+          "oy": -58
+        },
+        "FALL_A": {
+          "x": 988,
+          "y": 2,
+          "w": 112,
+          "h": 123,
+          "ox": -16,
+          "oy": -69
+        },
+        "SIT_B": {
+          "x": 1102,
+          "y": 2,
+          "w": 71,
+          "h": 116,
+          "ox": -36,
+          "oy": -76
+        },
+        "SITTING_ON_CHAIR": {
+          "x": 1175,
           "y": 2,
           "w": 70,
           "h": 114,
           "ox": -37,
           "oy": -79
         },
+        "RISE": {
+          "x": 1247,
+          "y": 2,
+          "w": 83,
+          "h": 93,
+          "ox": -30,
+          "oy": -100
+        },
         "SITTING_ON_FLOOR": {
-          "x": 1003,
+          "x": 1332,
           "y": 2,
           "w": 116,
           "h": 87,
           "ox": -14,
           "oy": -106
         },
+        "FALL_B": {
+          "x": 1450,
+          "y": 2,
+          "w": 124,
+          "h": 84,
+          "ox": -10,
+          "oy": -109
+        },
         "KNOCKED_OUT": {
-          "x": 1121,
+          "x": 1576,
           "y": 2,
           "w": 148,
           "h": 32,
@@ -1804,8 +2370,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -23,
           "oy": -10
         },
-        "WALK3": {
+        "ARM_UP_A": {
           "x": 329,
+          "y": 2,
+          "w": 80,
+          "h": 183,
+          "ox": -41,
+          "oy": -9
+        },
+        "WALK3": {
+          "x": 411,
           "y": 2,
           "w": 111,
           "h": 182,
@@ -1813,7 +2387,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE0": {
-          "x": 442,
+          "x": 524,
           "y": 2,
           "w": 64,
           "h": 182,
@@ -1821,7 +2395,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE4": {
-          "x": 508,
+          "x": 590,
           "y": 2,
           "w": 60,
           "h": 182,
@@ -1829,7 +2403,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -10
         },
         "CYCLE6": {
-          "x": 570,
+          "x": 652,
           "y": 2,
           "w": 129,
           "h": 182,
@@ -1837,7 +2411,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE2": {
-          "x": 701,
+          "x": 783,
           "y": 2,
           "w": 128,
           "h": 181,
@@ -1845,7 +2419,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE7": {
-          "x": 831,
+          "x": 913,
           "y": 2,
           "w": 83,
           "h": 180,
@@ -1853,7 +2427,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE5": {
-          "x": 916,
+          "x": 998,
           "y": 2,
           "w": 110,
           "h": 178,
@@ -1861,20 +2435,36 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "CYCLE1": {
-          "x": 1028,
+          "x": 1110,
           "y": 2,
           "w": 103,
           "h": 177,
           "ox": -26,
           "oy": -15
         },
+        "FALL_A": {
+          "x": 1215,
+          "y": 2,
+          "w": 133,
+          "h": 176,
+          "ox": -6,
+          "oy": -16
+        },
         "KNOCKED_OVER": {
-          "x": 1133,
+          "x": 1350,
           "y": 2,
           "w": 177,
           "h": 123,
           "ox": 16,
           "oy": -70
+        },
+        "FALL_B": {
+          "x": 1529,
+          "y": 2,
+          "w": 150,
+          "h": 120,
+          "ox": 3,
+          "oy": -72
         },
         "WALK2": {
           "alias": "WALK0"
@@ -1908,8 +2498,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -49,
           "oy": -10
         },
-        "WALK1": {
+        "ARM_UP_A": {
           "x": 181,
+          "y": 2,
+          "w": 73,
+          "h": 183,
+          "ox": -47,
+          "oy": -9
+        },
+        "WALK1": {
+          "x": 256,
           "y": 2,
           "w": 122,
           "h": 182,
@@ -1917,7 +2515,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "WALK3": {
-          "x": 305,
+          "x": 380,
           "y": 2,
           "w": 119,
           "h": 182,
@@ -1925,7 +2523,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE4": {
-          "x": 426,
+          "x": 501,
           "y": 2,
           "w": 54,
           "h": 182,
@@ -1933,7 +2531,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -10
         },
         "CYCLE1": {
-          "x": 482,
+          "x": 557,
           "y": 2,
           "w": 78,
           "h": 181,
@@ -1941,7 +2539,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE3": {
-          "x": 562,
+          "x": 637,
           "y": 2,
           "w": 77,
           "h": 181,
@@ -1949,7 +2547,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE5": {
-          "x": 641,
+          "x": 716,
           "y": 2,
           "w": 81,
           "h": 181,
@@ -1957,7 +2555,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE2": {
-          "x": 724,
+          "x": 799,
           "y": 2,
           "w": 123,
           "h": 180,
@@ -1965,7 +2563,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE6": {
-          "x": 849,
+          "x": 924,
           "y": 2,
           "w": 127,
           "h": 180,
@@ -1973,20 +2571,36 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -13
         },
         "CYCLE7": {
-          "x": 978,
+          "x": 1053,
           "y": 2,
           "w": 80,
           "h": 179,
           "ox": -32,
           "oy": -13
         },
+        "FALL_A": {
+          "x": 1135,
+          "y": 2,
+          "w": 142,
+          "h": 178,
+          "ox": -1,
+          "oy": -14
+        },
         "KNOCKED_OVER": {
-          "x": 1060,
+          "x": 1279,
           "y": 2,
           "w": 178,
           "h": 127,
           "ox": 17,
           "oy": -65
+        },
+        "FALL_B": {
+          "x": 1459,
+          "y": 2,
+          "w": 139,
+          "h": 116,
+          "ox": -2,
+          "oy": -76
         },
         "WALK2": {
           "alias": "WALK0"
@@ -2020,16 +2634,32 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -51,
           "oy": -9
         },
-        "CYCLE4": {
+        "FALL_A": {
           "x": 172,
+          "y": 2,
+          "w": 138,
+          "h": 183,
+          "ox": -3,
+          "oy": -10
+        },
+        "CYCLE4": {
+          "x": 312,
           "y": 2,
           "w": 55,
           "h": 182,
           "ox": -51,
           "oy": -10
         },
+        "ARM_UP_A": {
+          "x": 369,
+          "y": 2,
+          "w": 69,
+          "h": 182,
+          "ox": -50,
+          "oy": -10
+        },
         "CYCLE3": {
-          "x": 229,
+          "x": 440,
           "y": 2,
           "w": 86,
           "h": 181,
@@ -2037,7 +2667,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE7": {
-          "x": 317,
+          "x": 528,
           "y": 2,
           "w": 83,
           "h": 181,
@@ -2045,7 +2675,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE2": {
-          "x": 402,
+          "x": 613,
           "y": 2,
           "w": 125,
           "h": 180,
@@ -2053,7 +2683,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -13
         },
         "CYCLE6": {
-          "x": 529,
+          "x": 740,
           "y": 2,
           "w": 128,
           "h": 180,
@@ -2061,7 +2691,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "WALK1": {
-          "x": 659,
+          "x": 870,
           "y": 2,
           "w": 108,
           "h": 178,
@@ -2069,7 +2699,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "WALK3": {
-          "x": 769,
+          "x": 980,
           "y": 2,
           "w": 110,
           "h": 178,
@@ -2077,7 +2707,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "CYCLE5": {
-          "x": 881,
+          "x": 1092,
           "y": 2,
           "w": 101,
           "h": 177,
@@ -2085,7 +2715,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -16
         },
         "CYCLE1": {
-          "x": 984,
+          "x": 1195,
           "y": 2,
           "w": 100,
           "h": 174,
@@ -2093,11 +2723,19 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -19
         },
         "KNOCKED_OVER": {
-          "x": 1086,
+          "x": 1297,
           "y": 2,
           "w": 156,
           "h": 114,
           "ox": 6,
+          "oy": -79
+        },
+        "FALL_B": {
+          "x": 1455,
+          "y": 2,
+          "w": 142,
+          "h": 114,
+          "ox": -1,
           "oy": -79
         },
         "WALK2": {
@@ -2116,8 +2754,24 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -46,
           "oy": 15
         },
-        "WALK0": {
+        "FALL_A": {
           "x": 84,
+          "y": 2,
+          "w": 144,
+          "h": 190,
+          "ox": 0,
+          "oy": -3
+        },
+        "ARM_UP_A": {
+          "x": 230,
+          "y": 2,
+          "w": 94,
+          "h": 185,
+          "ox": -47,
+          "oy": -7
+        },
+        "WALK0": {
+          "x": 326,
           "y": 2,
           "w": 74,
           "h": 183,
@@ -2125,7 +2779,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -9
         },
         "CYCLE4": {
-          "x": 160,
+          "x": 402,
           "y": 2,
           "w": 67,
           "h": 183,
@@ -2133,7 +2787,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -9
         },
         "CYCLE0": {
-          "x": 229,
+          "x": 471,
           "y": 2,
           "w": 70,
           "h": 180,
@@ -2141,7 +2795,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE5": {
-          "x": 301,
+          "x": 543,
           "y": 2,
           "w": 105,
           "h": 179,
@@ -2149,7 +2803,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -13
         },
         "WALK1": {
-          "x": 408,
+          "x": 650,
           "y": 2,
           "w": 108,
           "h": 178,
@@ -2157,7 +2811,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "WALK3": {
-          "x": 518,
+          "x": 760,
           "y": 2,
           "w": 111,
           "h": 178,
@@ -2165,7 +2819,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -15
         },
         "CYCLE3": {
-          "x": 631,
+          "x": 873,
           "y": 2,
           "w": 88,
           "h": 178,
@@ -2173,7 +2827,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "CYCLE7": {
-          "x": 721,
+          "x": 963,
           "y": 2,
           "w": 85,
           "h": 178,
@@ -2181,7 +2835,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "CYCLE6": {
-          "x": 808,
+          "x": 1050,
           "y": 2,
           "w": 134,
           "h": 176,
@@ -2189,7 +2843,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -17
         },
         "CYCLE1": {
-          "x": 944,
+          "x": 1186,
           "y": 2,
           "w": 106,
           "h": 175,
@@ -2197,7 +2851,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -18
         },
         "CYCLE2": {
-          "x": 1052,
+          "x": 1294,
           "y": 2,
           "w": 125,
           "h": 175,
@@ -2205,12 +2859,20 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -17
         },
         "KNOCKED_OVER": {
-          "x": 1179,
+          "x": 1421,
           "y": 2,
           "w": 141,
           "h": 146,
           "ox": -2,
           "oy": -47
+        },
+        "FALL_B": {
+          "x": 1564,
+          "y": 2,
+          "w": 125,
+          "h": 123,
+          "ox": -10,
+          "oy": -70
         },
         "WALK2": {
           "alias": "WALK0"
@@ -2228,8 +2890,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -40,
           "oy": 8
         },
-        "WALK0": {
+        "FALL_A": {
           "x": 59,
+          "y": 2,
+          "w": 128,
+          "h": 185,
+          "ox": -8,
+          "oy": -7
+        },
+        "WALK0": {
+          "x": 189,
           "y": 2,
           "w": 47,
           "h": 183,
@@ -2237,15 +2907,23 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -9
         },
         "CYCLE4": {
-          "x": 108,
+          "x": 238,
           "y": 2,
           "w": 60,
           "h": 183,
           "ox": -48,
           "oy": -10
         },
+        "ARM_UP_A": {
+          "x": 300,
+          "y": 2,
+          "w": 65,
+          "h": 183,
+          "ox": -49,
+          "oy": -9
+        },
         "CYCLE0": {
-          "x": 170,
+          "x": 367,
           "y": 2,
           "w": 60,
           "h": 181,
@@ -2253,7 +2931,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "WALK1": {
-          "x": 232,
+          "x": 429,
           "y": 2,
           "w": 106,
           "h": 180,
@@ -2261,7 +2939,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "WALK3": {
-          "x": 340,
+          "x": 537,
           "y": 2,
           "w": 112,
           "h": 180,
@@ -2269,7 +2947,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE1": {
-          "x": 454,
+          "x": 651,
           "y": 2,
           "w": 93,
           "h": 179,
@@ -2277,7 +2955,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "CYCLE2": {
-          "x": 549,
+          "x": 746,
           "y": 2,
           "w": 125,
           "h": 179,
@@ -2285,7 +2963,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -14
         },
         "CYCLE3": {
-          "x": 676,
+          "x": 873,
           "y": 2,
           "w": 73,
           "h": 179,
@@ -2293,7 +2971,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -13
         },
         "CYCLE5": {
-          "x": 751,
+          "x": 948,
           "y": 2,
           "w": 93,
           "h": 179,
@@ -2301,7 +2979,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -13
         },
         "CYCLE6": {
-          "x": 846,
+          "x": 1043,
           "y": 2,
           "w": 126,
           "h": 179,
@@ -2309,7 +2987,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -13
         },
         "CYCLE7": {
-          "x": 974,
+          "x": 1171,
           "y": 2,
           "w": 80,
           "h": 178,
@@ -2317,12 +2995,20 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -15
         },
         "KNOCKED_OVER": {
-          "x": 1056,
+          "x": 1253,
           "y": 2,
           "w": 158,
           "h": 147,
           "ox": 7,
           "oy": -46
+        },
+        "FALL_B": {
+          "x": 1413,
+          "y": 2,
+          "w": 124,
+          "h": 115,
+          "ox": -10,
+          "oy": -77
         },
         "WALK2": {
           "alias": "WALK0"
@@ -2340,8 +3026,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "ox": -41,
           "oy": 5
         },
-        "WALK0": {
+        "FALL_A": {
           "x": 83,
+          "y": 2,
+          "w": 147,
+          "h": 187,
+          "ox": 2,
+          "oy": -5
+        },
+        "WALK0": {
+          "x": 232,
           "y": 2,
           "w": 65,
           "h": 183,
@@ -2349,7 +3043,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -9
         },
         "CYCLE4": {
-          "x": 150,
+          "x": 299,
           "y": 2,
           "w": 66,
           "h": 183,
@@ -2357,7 +3051,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -9
         },
         "WALK1": {
-          "x": 218,
+          "x": 367,
           "y": 2,
           "w": 117,
           "h": 182,
@@ -2365,7 +3059,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "WALK3": {
-          "x": 337,
+          "x": 486,
           "y": 2,
           "w": 116,
           "h": 182,
@@ -2373,15 +3067,23 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -10
         },
         "CYCLE0": {
-          "x": 455,
+          "x": 604,
           "y": 2,
           "w": 67,
           "h": 182,
           "ox": -41,
           "oy": -10
         },
+        "ARM_UP_A": {
+          "x": 673,
+          "y": 2,
+          "w": 84,
+          "h": 182,
+          "ox": -41,
+          "oy": -10
+        },
         "CYCLE2": {
-          "x": 524,
+          "x": 759,
           "y": 2,
           "w": 130,
           "h": 181,
@@ -2389,7 +3091,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE3": {
-          "x": 656,
+          "x": 891,
           "y": 2,
           "w": 91,
           "h": 181,
@@ -2397,7 +3099,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE5": {
-          "x": 749,
+          "x": 984,
           "y": 2,
           "w": 99,
           "h": 181,
@@ -2405,7 +3107,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "CYCLE6": {
-          "x": 850,
+          "x": 1085,
           "y": 2,
           "w": 133,
           "h": 181,
@@ -2413,7 +3115,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE7": {
-          "x": 985,
+          "x": 1220,
           "y": 2,
           "w": 84,
           "h": 181,
@@ -2421,7 +3123,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -11
         },
         "CYCLE1": {
-          "x": 1071,
+          "x": 1306,
           "y": 2,
           "w": 97,
           "h": 180,
@@ -2429,12 +3131,20 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           "oy": -12
         },
         "KNOCKED_OVER": {
-          "x": 1170,
+          "x": 1405,
           "y": 2,
           "w": 149,
           "h": 132,
           "ox": 2,
           "oy": -60
+        },
+        "FALL_B": {
+          "x": 1556,
+          "y": 2,
+          "w": 138,
+          "h": 119,
+          "ox": -3,
+          "oy": -73
         },
         "WALK2": {
           "alias": "WALK0"
@@ -2926,11 +3636,30 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     "stone": "textures/stone.jpg"
   },
   "scenes": {
-    "playground": {
-      "image": "scenes/playground.jpg",
+    "wall": {
+      "image": "scenes/wall.jpg",
       "w": 2688,
-      "h": 1152
+      "h": 196
+    },
+    "sky": {
+      "image": "scenes/sky.jpg",
+      "w": 2048,
+      "h": 878
+    },
+    "skyline": {
+      "image": "scenes/skyline.png",
+      "w": 2688,
+      "h": 428
     }
+  },
+  "icons": {
+    "WATER_PISTOL": "icons/WATER_PISTOL.png",
+    "SHERRY_PISTOL": "icons/SHERRY_PISTOL.png",
+    "STINKBOMB": "icons/STINKBOMB.png",
+    "FROG": "icons/FROG.png",
+    "MOUSE": "icons/MOUSE.png",
+    "SAFE_KEY": "icons/SAFE_KEY.png",
+    "STOREROOM_KEY": "icons/STOREROOM_KEY.png"
   }
 };</script>
 <script>
@@ -12036,6 +12765,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   var TILE = { floorboards: 110, darkwood: 170, brickRed: 150, brickBuff: 150, tarmac: 190, stone: 96 };
   var TINT = { darkwood: "rgba(46,30,16,0.50)" };
   var FALLBACK = { floorboards: "#b9813f", darkwood: "#4a241a", brickRed: "#a9523d", brickBuff: "#b08a4c", tarmac: "#6f7072", stone: "#b9b4a6" };
+  function playgroundSpan(C5) {
+    const p = DECOR.playground;
+    return { x0: (p.x0 - 1) * C5, w: (p.x1 - p.x0 + 2) * C5 };
+  }
   var StructurePainter = class {
     constructor(ctx, theme, S, assets) {
       this.ctx = ctx;
@@ -12093,13 +12826,14 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       sky.addColorStop(0, this.theme.hd.sky[0]);
       sky.addColorStop(1, this.theme.hd.sky[1]);
       this.fill(sky, 0, 0, W2, H);
-      const p = DECOR.playground, scene = this.assets.scene("playground");
-      if (scene) {
-        const x0 = (p.x0 - 1) * C5, w = (p.x1 - p.x0 + 2) * C5, k = w / scene.img.width, h = scene.img.height * k;
+      const span = playgroundSpan(C5), wall = this.assets.scene("wall");
+      if (wall && this.assets.scene("sky") && this.assets.scene("skyline")) {
+        ctx.clearRect(span.x0, 0, span.w, H);
+        const h = wall.img.height * (span.w / wall.img.width);
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
-        ctx.drawImage(scene.img, x0, H - h, w, h);
-        this.sceneWallTop = H - h * 0.178;
+        ctx.drawImage(wall.img, span.x0, H - h, span.w, h);
+        this.sceneWallTop = H - h;
       }
       for (const b of DECOR.buildings) {
         const x0 = b.x0 * C5, x1 = Math.min(W2, b.x1 * C5);
@@ -12270,7 +13004,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const pier = this.assets.furniture("pier"), lamp = this.assets.furniture("lamp");
       const ground = this.feet(17);
       if (this.sceneWallTop) {
-        const gx0 = p.gate[0] * C5 + C5 / 2, gx1 = p.gate[1] * C5 + C5 / 2, top = this.sceneWallTop - 6 * u;
+        const gx0 = p.gate[0] * C5 + C5 / 2, gx1 = p.gate[1] * C5 + C5 / 2, top = this.sceneWallTop;
         this.fill(this.material("tarmac"), gx0, top, gx1 - gx0, ground - 20 * u - top);
         this.shade(gx0, top, gx1 - gx0, ground - 20 * u - top, "rgba(10,14,20,0.32)", "rgba(255,255,255,0.08)");
       }
@@ -12515,6 +13249,11 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const img = this.image(r?.image);
       return r && img ? { img, ...r } : null;
     }
+    // The address of an inventory icon picture, for the HUD's <img> elements.
+    iconUrl(id) {
+      const rel = this.ready ? this.manifest?.icons?.[id] : null;
+      return rel ? new URL(rel, this.base).href : null;
+    }
     // A big backdrop painting (the playground).
     scene(name) {
       const r = this.manifest?.scenes?.[name];
@@ -12562,6 +13301,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.stats = { drawn: 0, fallback: 0 };
       assets.onReady(() => {
         this.backdrop = null;
+        this.layers = null;
       });
       this.view = { x0: 0, x1: 0, y0: 0, y1: 0 };
       loadFonts();
@@ -12588,6 +13328,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     // True when this character has walk-cycle pictures (CYCLE0..7).
     hasCycle(group, look) {
       return group !== "OBJ" && !!this.assets.frame(group, "CYCLE0", look?.variant);
+    }
+    // True when this character has a picture for `state` (used for the in-between poses).
+    hasFrame(group, state, look) {
+      return group !== "OBJ" && !!this.assets.frame(group, state, look?.variant);
     }
     // ---- Sprites --------------------------------------------------------------------
     drawSprite(ctx, group, state, direction, look, x, y) {
@@ -12637,6 +13381,43 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const h = Math.min(viewH * S, b.height - camY * S);
       this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: camY * S, y1: camY * S + h };
       ctx.drawImage(b, cam * S, camY * S, viewW * S, h, cam * S, camY * S, viewW * S, h);
+    }
+    // ---- Parallax ---------------------------------------------------------------------
+    // Out in the playground the far things move more slowly than the near
+    // ones as the view scrolls: the sky hardly at all, the rooftops a little,
+    // the boundary wall with the ground. The backdrop has a hole where the
+    // playground is; the sky and the skyline are drawn through it here, each
+    // shifted by a fraction of how far the view is from the playground's
+    // middle. Clouds also drift slowly by themselves.
+    drawParallax(ctx, cam, viewW, camY, viewH, now) {
+      const sky = this.assets.scene("sky"), line = this.assets.scene("skyline"), wall = this.assets.scene("wall");
+      if (!sky || !line || !wall) return;
+      const S = this.scale, C5 = SKOOL.cell * S, u = S / 6, span = playgroundSpan(C5);
+      const vx0 = Math.max(span.x0, cam * S), vx1 = Math.min(span.x0 + span.w, (cam + viewW) * S);
+      if (vx1 <= vx0) return;
+      const H = (SKOOL.height * SKOOL.cell + GROUND_MARGIN) * S;
+      const wallTop = H - wall.img.height * (span.w / wall.img.width);
+      const away = (cam + viewW / 2) * S - (span.x0 + span.w / 2);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(vx0, camY * S, vx1 - vx0, viewH * S);
+      ctx.clip();
+      ctx.imageSmoothingEnabled = true;
+      if (!this.layers) {
+        const scaled = (img, k) => {
+          const c = makeCanvas(Math.round(img.width * k), Math.round(img.height * k));
+          const x = c.getContext("2d");
+          x.imageSmoothingQuality = "high";
+          x.drawImage(img, 0, 0, c.width, c.height);
+          return c;
+        };
+        this.layers = { sky: scaled(sky.img, 1.3 * u), line: scaled(line.img, 0.9 * u) };
+      }
+      const L = this.layers;
+      mirrorTile(ctx, L.sky, Math.round(span.x0 + away * 0.5 + now / 1e3 * 5 * u), Math.round(wallTop + 60 * u - L.sky.height), L.sky.width, L.sky.height, vx0, vx1);
+      const lineShift = 0.16, reach = lineShift * (span.w / 2 + viewW * S / 2);
+      mirrorTile(ctx, L.line, Math.round(span.x0 + span.w - L.line.width + reach + away * lineShift), Math.round(wallTop + 22 * u - L.line.height), L.line.width, L.line.height, vx0, vx1);
+      ctx.restore();
     }
     // Desks are drawn AFTER the people, so a seated pupil's knees go under the
     // desk and anyone walking along the row passes behind it. (The chairs are
@@ -12694,6 +13475,19 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C5 - camY * S - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
     }
   };
+  function mirrorTile(ctx, img, x, y, w, h, x0, x1) {
+    let k = Math.floor((x0 - x) / w);
+    for (let tx = x + k * w; tx < x1; tx += w, k++) {
+      if ((k % 2 + 2) % 2 === 0) ctx.drawImage(img, tx, y, w, h);
+      else {
+        ctx.save();
+        ctx.translate(tx + w, y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(img, 0, 0, w, h);
+        ctx.restore();
+      }
+    }
+  }
 
   // src/render/motion.js
   var WALK_STATES2 = /* @__PURE__ */ new Set(["WALK0", "WALK1", "WALK2", "WALK3"]);
@@ -12702,6 +13496,33 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   var FADE_MS = 110;
   var SNAP_CELLS = 2.5;
   var SLACK_MS = 28;
+  var SEQUENCES = {
+    "STAND>SITTING_ON_CHAIR": ["SIT_A", "SIT_B"],
+    "SITTING_ON_CHAIR>STAND": ["SIT_B", "SIT_A"],
+    "STAND>SITTING_ON_FLOOR": ["SIT_A", "SIT_B"],
+    "SITTING_ON_FLOOR>STAND": ["RISE", "SIT_A"],
+    "STAND>KNOCKED_OUT": ["FALL_A", "FALL_B"],
+    "SITTING_ON_CHAIR>KNOCKED_OUT": ["FALL_B"],
+    "SITTING_ON_FLOOR>KNOCKED_OUT": ["FALL_B"],
+    "KNOCKED_OUT>STAND": ["SITTING_ON_FLOOR", "RISE"],
+    "STAND>KNOCKED_OVER": ["FALL_A", "FALL_B"],
+    "KNOCKED_OVER>STAND": ["FALL_B", "FALL_A"],
+    "STAND>HITTING0": ["HITTING_A"],
+    "HITTING0>HITTING1": ["HITTING_B"],
+    "HITTING1>STAND": ["HITTING_B"],
+    "STAND>ARM_UP": ["ARM_UP_A"],
+    "ARM_UP>STAND": ["ARM_UP_A"],
+    "STAND>CATAPULT0": ["CATAPULT_A"],
+    "CATAPULT1>STAND": ["CATAPULT_A"],
+    "STAND>BENDING_OVER": ["BENDING_A"],
+    "BENDING_OVER>STAND": ["BENDING_A"],
+    "STAND>WATERPISTOL": ["WATERPISTOL_A"],
+    "WATERPISTOL>STAND": ["WATERPISTOL_A"]
+  };
+  var STEP_MS = 72;
+  var QUICK_STEP_MS = 44;
+  var QUICK = /HITTING|ARM_UP|CATAPULT|WATERPISTOL|BENDING/;
+  var poseKind = (state) => WALK_STATES2.has(state) ? "STAND" : state;
   var easeOut = (k) => 1 - (1 - k) * (1 - k);
   var easeIn = (k) => k * k;
   var Motion = class {
@@ -12800,8 +13621,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           tr.prevState = tr.state;
           tr.prevDir = tr.dir ?? thing.direction;
           tr.stateT = now;
+          const mids = smooth ? SEQUENCES[`${poseKind(tr.state)}>${poseKind(state)}`] : null;
+          tr.seq = mids ? { frames: [WALK_STATES2.has(tr.state) ? "WALK0" : tr.state, ...mids, null], t0: now, step: QUICK.test(mids[0]) ? QUICK_STEP_MS : STEP_MS, needs: mids[0] } : null;
         }
         tr.state = state;
+      }
+      let seq = null;
+      if (tr.seq) {
+        const at = (now - tr.seq.t0) / tr.seq.step, i = Math.floor(at);
+        if (i >= tr.seq.frames.length - 1) tr.seq = null;
+        else seq = { a: tr.seq.frames[i], b: tr.seq.frames[i + 1], k: at - i, needs: tr.seq.needs };
       }
       tr.dir = thing.direction;
       const fadeK = (now - tr.stateT) / FADE_MS;
@@ -12810,7 +13639,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const phase = (tr.x * thing.direction % CYCLE_CELLS + CYCLE_CELLS) % CYCLE_CELLS / CYCLE_CELLS;
       const cycle = Math.round(phase * CYCLE_FRAMES) % CYCLE_FRAMES;
       tr.frame = now;
-      tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade };
+      tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade, seq };
       return tr.out;
     }
   };
@@ -13256,6 +14085,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const [shakeX, shakeY] = this.options.smoothMotion ? this.fx.shakeOffset() : [0, 0];
       ctx.save();
       ctx.translate(Math.round((-cam + shakeX) * S), Math.round((-camY + shakeY) * S));
+      if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);
       p.drawBackdrop(ctx, cam, viewW, camY, viewH);
       p.drawFurniture(ctx, game);
       const viewFrom = cam - 48, viewTo = cam + viewW + 48;
@@ -13274,6 +14104,15 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         if (d.group !== "OBJ" && d.isStanding?.()) p.drawShadow(ctx, x, y);
         let state = d.animatoryState;
         if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : "WALK0";
+        if (m.seq && p.hasFrame && p.hasFrame(d.group, m.seq.needs, d.look)) {
+          p.drawSprite(ctx, d.group, m.seq.a || state, d.direction, d.look, x, y);
+          if (m.seq.k > 0.5) {
+            ctx.globalAlpha = (m.seq.k - 0.5) * 2;
+            p.drawSprite(ctx, d.group, m.seq.b || state, d.direction, d.look, x, y);
+            ctx.globalAlpha = 1;
+          }
+          return;
+        }
         if (m.fade && p.smooth) {
           ctx.globalAlpha = 1 - m.fade.k;
           p.drawSprite(ctx, d.group, m.fade.state, m.fade.direction, d.look, x, y);
@@ -13894,9 +14733,57 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     }
     setView(view) {
       this.view = view;
+      this.placeStrips(view);
       if (this.lastInventory) this.renderInventory(...this.lastInventory);
       const k = this.bindings.view.map(pretty).join("/");
       this.viewToggle.innerHTML = view === "original" ? `<kbd>${k}</kbd> modern view` : `<kbd>${k}</kbd> original view`;
+    }
+    // In the modern view the plan and the key legend sit INSIDE the game
+    // picture, as overlays on the canvas; in the original view they go back
+    // underneath it, leaving the 1985 screen clean.
+    placeStrips(view) {
+      const screen = document.querySelector("#stage .screen"), stage = document.getElementById("stage"), tape = document.getElementById("tape");
+      const quest = document.getElementById("quest"), keys = document.getElementById("keys");
+      if (!screen || !quest || !keys) return;
+      if (!this.keysChip) {
+        this.keysChip = document.createElement("button");
+        this.keysChip.type = "button";
+        this.keysChip.id = "keys-chip";
+        this.keysChip.className = "keys-chip";
+        this.keysChip.innerHTML = "<kbd>H</kbd> keys";
+        this.keysChip.addEventListener("click", () => this.toggleKeys());
+        window.addEventListener("keydown", (e) => {
+          if (e.code === "KeyH" && !this.game.cast.eric.writing && !e.repeat && this.view === "modern") this.toggleKeys();
+        });
+        this.game.events.on("start", () => this.showKeysBriefly());
+      }
+      if (view === "modern") {
+        screen.append(quest, keys, this.keysChip);
+        this.showKeysBriefly();
+      } else {
+        stage.insertBefore(quest, tape);
+        stage.insertBefore(keys, tape);
+        this.keysChip.remove();
+        keys.classList.remove("tucked");
+        clearTimeout(this.keysTimer);
+      }
+    }
+    // The legend shows for the first seconds of a game, then tucks away so the
+    // picture is clear; H (or the tab) brings it back or sends it away.
+    showKeysBriefly() {
+      const keys = document.getElementById("keys");
+      keys.classList.remove("tucked");
+      clearTimeout(this.keysTimer);
+      this.keysTimer = setTimeout(() => keys.classList.add("tucked"), 14e3);
+    }
+    toggleKeys() {
+      clearTimeout(this.keysTimer);
+      document.getElementById("keys").classList.toggle("tucked");
+    }
+    // Where pocket icons come from: (id) -> picture URL, or null to fall back.
+    setIconSource(fn) {
+      this.iconSource = fn;
+      if (this.lastInventory) this.renderInventory(...this.lastInventory);
     }
     // The chip in the key strip: are the 1985 graphics loaded?
     setGraphicsStatus(view, loaded) {
@@ -13943,6 +14830,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         this.log("A new term begins. Eric starts in the playground.");
       });
     }
+    // An illustrated icon if the artwork has one, otherwise the pixel-art one.
+    pocketIcon(id) {
+      return this.iconSource && this.iconSource(id) || iconUrl(id);
+    }
     renderInventory(items, mice) {
       this.lastInventory = [items, mice];
       const pixel = this.view === "modern";
@@ -13950,10 +14841,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         const [icon, label] = ITEM_ICONS[id] || ["\u2754", id];
         if (!pixel) return `<span class="item" title="${label}">${icon}</span>`;
         const m = id.match(/^STINKBOMBS(\d)$/);
-        const url = iconUrl(m ? "STINKBOMB" : id);
+        const url = this.pocketIcon(m ? "STINKBOMB" : id);
         return url ? `<span class="item pix" title="${label}"><img src="${url}" alt="${label}">${m ? `<b>${m[1]}</b>` : ""}</span>` : `<span class="item" title="${label}">${icon}</span>`;
       });
-      if (mice > 0) parts.push(pixel ? `<span class="item pix" title="${mice} mice"><img src="${iconUrl("MOUSE")}" alt="mice"><b>${mice}</b></span>` : `<span class="item" title="${mice} mice">\u{1F42D}\xD7${mice}</span>`);
+      if (mice > 0) parts.push(pixel ? `<span class="item pix" title="${mice} mice"><img src="${this.pocketIcon("MOUSE")}" alt="mice"><b>${mice}</b></span>` : `<span class="item" title="${mice} mice">\u{1F42D}\xD7${mice}</span>`);
       this.el.inventory.innerHTML = parts.join("") || '<span class="item empty">pockets empty</span>';
     }
     log(text, highlight = false) {
@@ -13968,7 +14859,10 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.el.clock.style.width = `${(this.game.timetable.progress() * 100).toFixed(1)}%`;
       const hint = document.getElementById("writing-hint");
       const writing = !!this.game.cast.eric.writing;
-      if (hint && hint.hidden === writing) hint.hidden = !writing;
+      if (hint && hint.hidden === writing) {
+        hint.hidden = !writing;
+        document.getElementById("keys").classList.toggle("writing", writing);
+      }
     }
   };
   var QUEST_TEXT = {
@@ -14141,7 +15035,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           <select data-setting="camera"><option value="close" ${s.camera === "close" ? "selected" : ""}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== "close" ? "selected" : ""}>Whole school</option></select>
           <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting("speed", s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
-        ${check("sound", "Sound effects", "Footsteps, splashes, the bell and birdsong, all synthesised.")}
+        ${check("sound", "Sound effects", "Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.")}
         ${check("music", "Music", "A quiet tune while you play.")}
       </div>
       <h2>Advanced</h2>
@@ -14267,6 +15161,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.musicEnabled = true;
       this.active = false;
       this.outdoors = false;
+      this.crowd = 0;
       this.ctx = null;
       this.musicAt = 0;
       this.musicIndex = 0;
@@ -14290,10 +15185,45 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         this.noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate, this.ctx.sampleRate);
         const data = this.noiseBuffer.getChannelData(0);
         for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+        this.buildAmbience();
         setInterval(() => this.pump(), 120);
       }
       if (this.ctx.state === "suspended") this.ctx.resume();
       return this.ctx;
+    }
+    // Sounds that never stop, only get louder and quieter: the hush of a room,
+    // and a few "voices" for the murmur of a crowd. A voice is a buzzy tone
+    // pushed through two filters tuned like a mouth, so it sounds like someone
+    // talking in the next room rather than like a note.
+    buildAmbience() {
+      const ctx = this.ctx;
+      const hush = ctx.createBufferSource();
+      hush.buffer = this.noiseBuffer;
+      hush.loop = true;
+      const low = ctx.createBiquadFilter();
+      low.type = "lowpass";
+      low.frequency.value = 170;
+      this.roomGain = ctx.createGain();
+      this.roomGain.gain.value = 0;
+      hush.connect(low).connect(this.roomGain).connect(this.master);
+      hush.start();
+      this.voices = [0, 1, 2, 3, 4].map((i) => {
+        const osc = ctx.createOscillator();
+        osc.type = "sawtooth";
+        osc.frequency.value = 240 + i * 35;
+        const mouth = ctx.createBiquadFilter();
+        mouth.type = "bandpass";
+        mouth.frequency.value = 800;
+        mouth.Q.value = 3;
+        const muffle = ctx.createBiquadFilter();
+        muffle.type = "lowpass";
+        muffle.frequency.value = 1500;
+        const gain = ctx.createGain();
+        gain.gain.value = 0;
+        osc.connect(mouth).connect(muffle).connect(gain).connect(this.master);
+        osc.start();
+        return { osc, mouth, gain };
+      });
     }
     // ---- The two ingredients ------------------------------------------------------
     // A pitched note with a soft start, fading out; `slide` glides to another pitch.
@@ -14354,6 +15284,9 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     setOutdoors(on) {
       this.outdoors = on;
     }
+    setCrowd(level) {
+      this.crowd = Math.max(0, Math.min(1, level));
+    }
     // Called a few times a second: schedules the next notes a little ahead of time.
     pump() {
       const ctx = this.ctx;
@@ -14376,6 +15309,15 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           this.musicAt += BEAT;
           this.musicIndex++;
         }
+      }
+      const ambient = this.active && this.enabled;
+      this.roomGain.gain.setTargetAtTime(ambient && !this.outdoors ? 0.05 : 0, now, 0.5);
+      const loud = ambient ? this.crowd * (this.outdoors ? 0.02 : 0.014) : 0;
+      for (const v of this.voices) {
+        const speaking = Math.random() < 0.6;
+        v.gain.gain.setTargetAtTime(speaking ? loud * (0.4 + Math.random() * 0.8) : 0, now, 0.045);
+        v.osc.frequency.setTargetAtTime(230 + Math.random() * 210, now, 0.05);
+        v.mouth.frequency.setTargetAtTime(500 + Math.random() * 1300, now, 0.04);
       }
       if (this.active && this.enabled && this.outdoors && now >= this.nextBird) {
         const base = 2300 + Math.random() * 1700, chirps = 2 + Math.floor(Math.random() * 4);
@@ -15105,7 +16047,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
           const text = hint.replace("{digits}", known(digits)).replace("{letters}", known(letters));
           const isDone = done.has(id);
           const next = !isDone && STEPS.slice(0, i).every(([pid]) => done.has(pid));
-          return `<li class="step ${isDone ? "done" : ""} ${next ? "next" : ""}" tabindex="0" data-hint="${text.replace(/"/g, "&quot;")}">
+          return `<li class="step ${isDone ? "done" : ""} ${next ? "next" : ""}" tabindex="0" data-label="${label}" data-hint="${text.replace(/"/g, "&quot;")}">
           <span class="tick">${isDone ? "\u2713" : i + 1}</span><span class="label">${label}</span></li>`;
         });
         el.innerHTML = `<span class="title">The plan</span><ol>${items.join("")}</ol>`;
@@ -15293,9 +16235,14 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     const sound = new Sound();
     game.events.on("sound", (id) => sound.play(id));
     renderer.onFootstep = () => sound.step();
+    hud.setIconSource((id) => settings.view !== "original" && settings.artwork === "illustrated" ? renderer.assets.iconUrl(id) : null);
+    renderer.assets.onReady(() => hud.setIconSource(hud.iconSource));
     game.events.on("tick", () => {
       const e = game.cast.eric;
       sound.setOutdoors(e.y === 17 && e.x >= SKOOL.playground[0] && e.x <= SKOOL.playground[1]);
+      let near = 0;
+      for (const c of game.cast.characters) if (!c.isAdult() && c.isStanding() && Math.abs(c.x - e.x) < 14 && Math.abs(c.y - e.y) < 3) near++;
+      sound.setCrowd(near / 6);
     });
     let paused = true;
     let attract = false;
@@ -15439,7 +16386,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
-    window.bts = { game, renderer, hud, menu, settings, input, tapeLoader };
+    window.bts = { game, renderer, hud, menu, settings, input, tapeLoader, sound };
     return window.bts;
   }
   boot();

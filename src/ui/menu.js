@@ -138,7 +138,7 @@ export class Menu {
           <select data-setting="camera"><option value="close" ${s.camera === 'close' ? 'selected' : ''}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== 'close' ? 'selected' : ''}>Whole school</option></select>
           <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting('speed', s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
-        ${check('sound', 'Sound effects', 'Footsteps, splashes, the bell and birdsong, all synthesised.')}
+        ${check('sound', 'Sound effects', 'Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.')}
         ${check('music', 'Music', 'A quiet tune while you play.')}
       </div>
       <h2>Advanced</h2>

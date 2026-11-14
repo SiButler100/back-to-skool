@@ -60,8 +60,18 @@ export function boot() {
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
   renderer.onFootstep = () => sound.step();
+  // Pocket icons: the illustrated ones when that artwork is showing, pixel art otherwise.
+  hud.setIconSource((id) => (settings.view !== 'original' && settings.artwork === 'illustrated' ? renderer.assets.iconUrl(id) : null));
+  renderer.assets.onReady(() => hud.setIconSource(hud.iconSource));
   // Birdsong while Eric is out in the playground.
-  game.events.on('tick', () => { const e = game.cast.eric; sound.setOutdoors(e.y === 17 && e.x >= SKOOL.playground[0] && e.x <= SKOOL.playground[1]); });
+  game.events.on('tick', () => {
+    const e = game.cast.eric;
+    sound.setOutdoors(e.y === 17 && e.x >= SKOOL.playground[0] && e.x <= SKOOL.playground[1]);
+    // The murmur of a crowd: pupils on their feet near Eric on his floor (a class sitting down is quiet).
+    let near = 0;
+    for (const c of game.cast.characters) if (!c.isAdult() && c.isStanding() && Math.abs(c.x - e.x) < 14 && Math.abs(c.y - e.y) < 3) near++;
+    sound.setCrowd(near / 6);
+  });
 
   let paused = true;
   // "Attract" mode: behind the title screen the school runs by itself (no
@@ -177,7 +187,7 @@ export function boot() {
   requestAnimationFrame(frame);
 
   // Expose for the console and for tests.
-  window.bts = { game, renderer, hud, menu, settings, input, tapeLoader };
+  window.bts = { game, renderer, hud, menu, settings, input, tapeLoader, sound };
   return window.bts;
 }
 
