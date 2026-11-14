@@ -19,7 +19,11 @@
 //     or two in-between pictures (crouching on the way to a chair, tipping
 //     over on the way to the floor); where a character has no such pictures
 //     the old pose is reported for a moment so the painter can blend the two;
-//   * Eric's jump rises fast and slows at the top, like a real one.
+//   * Eric's jump rises fast and slows at the top, like a real one;
+//   * while the engine is running one of its scripted flights (out of a
+//     window, over the gate) it reports whether he is rising or falling, so
+//     the painter can show him leaping or flailing instead of standing to
+//     attention in mid-air.
 //
 // Nothing here changes the game: the engine never reads these numbers.
 // ============================================================================
@@ -57,12 +61,24 @@ const SEQUENCES = {
   'BENDING_OVER>STAND': ['BENDING_A'],
   'STAND>WATERPISTOL': ['WATERPISTOL_A'],
   'WATERPISTOL>STAND': ['WATERPISTOL_A'],
+  // The bike: 'RIDE' is either pedalling picture. Getting on and off passes
+  // through holding the bike and swinging a leg over; the 'UP' and 'DOWN'
+  // entries are standing up on the saddle and sitting back down (the same
+  // change of pose, but Eric moves a row), which pass through a crouch.
+  'STAND>RIDE': ['MOUNT_A', 'MOUNT_B'],
+  'RIDE>STAND': ['MOUNT_B', 'MOUNT_A'],
+  'RIDE>STAND:UP': ['SIT_B'],
+  'STAND>RIDE:DOWN': ['SIT_B'],
+  // The kiss (Hayley's sheet: both of them are in these pictures, because
+  // the engine hides Eric for the length of it).
+  'STAND>KISSING_ERIC': ['KISS_A', 'KISS_B'],
+  'KISSING_ERIC>STAND': ['KISS_B', 'KISS_A'],
 };
 // How long each picture of a sequence is held: falls and sitting are
 // unhurried, a punch or a raised arm is over in a blink.
 const STEP_MS = 72, QUICK_STEP_MS = 44;
 const QUICK = /HITTING|ARM_UP|CATAPULT|WATERPISTOL|BENDING/;
-const poseKind = (state) => (WALK_STATES.has(state) ? 'STAND' : state);
+const poseKind = (state) => (WALK_STATES.has(state) ? 'STAND' : (state === 'RIDING_BIKE0' || state === 'RIDING_BIKE1' ? 'RIDE' : state));
 
 const easeOut = (k) => 1 - (1 - k) * (1 - k);
 const easeIn = (k) => k * k;
@@ -133,14 +149,28 @@ export class Motion {
     }
     tr.seen = now;
 
+    // ---- Scripted flights ---------------------------------------------------------
+    // Eric's controller is a Flight (it carries its list of phases) while he
+    // drops from a window or sails over the gate.
+    const flying = !!(thing.controller && thing.controller.phases);
+    const rise = tr.toY - tr.fromY;
+    const air = smooth && flying && walkState && Math.abs(rise) > 0.01 && tr.y !== tr.toY ? (rise < 0 ? 'up' : 'down') : null;
+    if (tr.lastY === undefined) tr.lastY = thing.y;
+
     // ---- Pose changes ----------------------------------------------------------
     if (state !== tr.state) {
       const bothWalking = walkState && WALK_STATES.has(tr.state);
       if (!bothWalking && thing.visible) {
         tr.prevState = tr.state; tr.prevDir = tr.dir ?? thing.direction; tr.stateT = now;
-        // Is there a run of in-between pictures for this change?
-        const mids = smooth ? SEQUENCES[`${poseKind(tr.state)}>${poseKind(state)}`] : null;
-        tr.seq = mids ? { frames: [WALK_STATES.has(tr.state) ? 'WALK0' : tr.state, ...mids, null], t0: now, step: QUICK.test(mids[0]) ? QUICK_STEP_MS : STEP_MS, needs: mids[0] } : null;
+        // Is there a run of in-between pictures for this change? (Not during
+        // a scripted flight, where poses change every tick.)
+        const from = poseKind(tr.state), to = poseKind(state);
+        const row = thing.y < tr.lastY ? ':UP' : (thing.y > tr.lastY ? ':DOWN' : '');
+        const mids = smooth && !flying && from !== to ? (SEQUENCES[`${from}>${to}${row}`] || SEQUENCES[`${from}>${to}`]) : null;
+        // The in-between pictures face the way the pose they belong to faces:
+        // leaving a pose (X to standing) that is the old direction, otherwise the new one.
+        tr.seq = mids ? { frames: [WALK_STATES.has(tr.state) ? 'WALK0' : tr.state, ...mids, null], t0: now, step: QUICK.test(mids[0]) ? QUICK_STEP_MS : STEP_MS, needs: mids[0],
+          fromDir: tr.prevDir, midDir: to === 'STAND' ? tr.prevDir : thing.direction } : null;
       }
       tr.state = state;
     }
@@ -150,7 +180,10 @@ export class Motion {
     if (tr.seq) {
       const at = (now - tr.seq.t0) / tr.seq.step, i = Math.floor(at);
       if (i >= tr.seq.frames.length - 1) tr.seq = null;
-      else seq = { a: tr.seq.frames[i], b: tr.seq.frames[i + 1], k: at - i, needs: tr.seq.needs };
+      else {
+        const dirOf = (j) => (j === 0 ? tr.seq.fromDir : (j === tr.seq.frames.length - 1 ? thing.direction : tr.seq.midDir));
+        seq = { a: tr.seq.frames[i], b: tr.seq.frames[i + 1], k: at - i, needs: tr.seq.needs, dirA: dirOf(i), dirB: dirOf(i + 1) };
+      }
     }
     tr.dir = thing.direction;
     const fadeK = (now - tr.stateT) / FADE_MS;
@@ -161,8 +194,9 @@ export class Motion {
     const phase = ((((tr.x * thing.direction) % CYCLE_CELLS) + CYCLE_CELLS) % CYCLE_CELLS) / CYCLE_CELLS;
     const cycle = Math.round(phase * CYCLE_FRAMES) % CYCLE_FRAMES;
 
+    tr.lastY = thing.y;
     tr.frame = now;
-    tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade, seq };
+    tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade, seq, air };
     return tr.out;
   }
 }

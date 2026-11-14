@@ -2074,6 +2074,60 @@
       "source": "art-src/skyline-1.png",
       "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading, warm afternoon light from the upper left, muted 1980s British colour palette. A skyline cut-out isolated on a plain transparent background: one long continuous row of the slate rooftops and chimney pots of red-brick terraced houses, leafy green trees and a single church spire, in the same style and colours as the reference image. The row runs across the entire width of the image with no gaps. Its bottom edge is cut straight and level along the very bottom of the image. It fills only the lower half of the image; the upper half is completely empty and transparent. No sky, no clouds, no wall, no ground, no text.",
       "trim": true
+    },
+    {
+      "id": "eric-stunts",
+      "kind": "characters",
+      "group": "ERIC",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "aa1cebe0-6062-43fa-95d0-c2d48df75a91",
+      "reference": "eric-1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_175059_aa1cebe0-6062-43fa-95d0-c2d48df75a91.png",
+      "source": "art-src/eric-stunts.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "MOUNT_A",
+        "MOUNT_B",
+        "LEAP",
+        "DROP_A",
+        "DROP_B"
+      ],
+      "nudge": {},
+      "prompt": "Style anchor (see prompts.md) + a 2 by 3 grid with eric-1 as the reference: standing (scale only); holding a red bicycle upright by the handlebars; swinging a leg over the saddle; leaping up and forwards, knees tucked, arms thrown up; falling feet first, arms windmilling; falling feet first, legs kicking apart."
+    },
+    {
+      "id": "heroine-kiss",
+      "kind": "characters",
+      "group": "HEROINE",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "9406ca02-7e07-41b9-a388-2cc6e145cdd4",
+      "reference": "heroine-1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_175059_9406ca02-7e07-41b9-a388-2cc6e145cdd4.png",
+      "source": "art-src/heroine-kiss.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "KISS_A",
+        "KISS_B",
+        "ARM_UP_A"
+      ],
+      "nudge": {},
+      "prompt": "Style anchor (see prompts.md) + a 2 by 2 grid with heroine-1 as the reference: Hayley standing (scale only); Hayley stepping towards a schoolboy in a navy blazer, arms opening; her arms around his neck, leaning in; Hayley alone with her right arm half raised."
     }
   ]
 }

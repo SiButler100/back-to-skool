@@ -264,18 +264,20 @@ export class Renderer {
     people.sort((a, b) => a.lane - b.lane);     // stable: equal lanes keep the engine's order (Eric last)
     const drawOne = ({ d, m, lane }) => {
       const x = m.x * C, y = m.y * C + lane * LANE_STEP;
-      if (d.group !== 'OBJ' && d.isStanding?.()) p.drawShadow(ctx, x, y);
+      if (d.group !== 'OBJ' && d.isStanding?.() && !m.air) p.drawShadow(ctx, x, y);
       // Which picture: the walk cycle while gliding, the standing pose at
       // rest, otherwise whatever pose the engine says.
       let state = d.animatoryState;
       if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : 'WALK0';
+      // In mid-air on a scripted flight: leaping on the way up, flailing on the way down.
+      if (m.air && p.hasFrame && p.hasFrame(d.group, 'DROP_A', d.look)) state = m.air === 'up' ? 'LEAP' : (Math.floor(this.lastDraw / 120) % 2 ? 'DROP_B' : 'DROP_A');
       if (m.seq && p.hasFrame && p.hasFrame(d.group, m.seq.needs, d.look)) {
         // A change of pose with in-between pictures: show the current one and,
         // in the second half of its time, bring the next one in over it.
-        p.drawSprite(ctx, d.group, m.seq.a || state, d.direction, d.look, x, y);
+        p.drawSprite(ctx, d.group, m.seq.a || state, m.seq.dirA, d.look, x, y);
         if (m.seq.k > 0.5) {
           ctx.globalAlpha = (m.seq.k - 0.5) * 2;
-          p.drawSprite(ctx, d.group, m.seq.b || state, d.direction, d.look, x, y);
+          p.drawSprite(ctx, d.group, m.seq.b || state, m.seq.dirB, d.look, x, y);
           ctx.globalAlpha = 1;
         }
         return;
