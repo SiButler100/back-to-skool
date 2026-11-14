@@ -35,6 +35,8 @@ export class ArtAssets {
     try {
       const inline = typeof window !== 'undefined' ? window.BTS_ART_MANIFEST : null;
       this.manifest = inline || await (await fetch(`${this.base}manifest.json`, { cache: 'no-cache' })).json();
+      // Pictures built for another scale would be drawn at the wrong size: better none.
+      if (this.manifest.scale && this.manifest.scale !== ART_SCALE) throw new Error(`artwork is scale ${this.manifest.scale}, the game expects ${ART_SCALE}`);
       await Promise.all([...this.imagePaths()].map((p) => this.loadImage(p)));
       this.ready = true;
     } catch (err) {

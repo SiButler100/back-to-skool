@@ -26,10 +26,11 @@ const html = readFileSync(join(root, 'index.html'), 'utf8');
 const css = readFileSync(join(root, 'styles.css'), 'utf8');
 const js = readFileSync(bundlePath, 'utf8');
 
-// The illustrated artwork is not inlined (it is a few megabytes of pictures):
-// both builds load it from the published site, and carry the manifest so no
-// extra round trip is needed before the first frame. Without a network the
-// game falls back to pixel art by itself.
+// The illustrated artwork is not inlined (it is several megabytes of pictures).
+// The single-file download loads it from the published site and carries the
+// manifest so no extra round trip is needed; without a network the game
+// falls back to pixel art by itself. The artifact build is published with
+// the assets/illustrated folder beside it, so it uses relative paths.
 const ART_BASE = 'https://sibutler100.github.io/back-to-skool/assets/illustrated/';
 const manifest = readFileSync(join(root, 'assets', 'illustrated', 'manifest.json'), 'utf8');
 const artPreamble = `<script>window.BTS_ART_BASE = ${JSON.stringify(ART_BASE)}; window.BTS_ART_MANIFEST = ${manifest.trim()};</script>`;
@@ -54,7 +55,6 @@ const fragment = `<title>Back to Skool</title>
 ${css}
 </style>
 ${bodyInner}
-${artPreamble}
 <script>
 ${js}
 </script>
