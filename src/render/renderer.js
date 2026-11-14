@@ -245,6 +245,7 @@ export class Renderer {
     const [shakeX, shakeY] = this.options.smoothMotion ? this.fx.shakeOffset() : [0, 0];
     ctx.save();
     ctx.translate(Math.round((-cam + shakeX) * S), Math.round((-camY + shakeY) * S));
+    if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);   // far scenery, behind the backdrop
     p.drawBackdrop(ctx, cam, viewW, camY, viewH);
     p.drawFurniture(ctx, game);
     const viewFrom = cam - 48, viewTo = cam + viewW + 48;
@@ -268,8 +269,19 @@ export class Renderer {
       // rest, otherwise whatever pose the engine says.
       let state = d.animatoryState;
       if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : 'WALK0';
+      if (m.seq && p.hasFrame && p.hasFrame(d.group, m.seq.needs, d.look)) {
+        // A change of pose with in-between pictures: show the current one and,
+        // in the second half of its time, bring the next one in over it.
+        p.drawSprite(ctx, d.group, m.seq.a || state, d.direction, d.look, x, y);
+        if (m.seq.k > 0.5) {
+          ctx.globalAlpha = (m.seq.k - 0.5) * 2;
+          p.drawSprite(ctx, d.group, m.seq.b || state, d.direction, d.look, x, y);
+          ctx.globalAlpha = 1;
+        }
+        return;
+      }
       if (m.fade && p.smooth) {
-        // Blend out of the previous pose over a few frames.
+        // No in-between pictures: blend out of the previous pose over a few frames.
         ctx.globalAlpha = 1 - m.fade.k;
         p.drawSprite(ctx, d.group, m.fade.state, m.fade.direction, d.look, x, y);
         ctx.globalAlpha = Math.min(1, m.fade.k * 1.6);

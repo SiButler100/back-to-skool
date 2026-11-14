@@ -1485,14 +1485,16 @@
     {
       "id": "playground-1",
       "kind": "scene",
-      "name": "playground",
+      "name": "wall",
       "model": "gpt_image_2_6",
       "aspect": "21:9",
       "resolution": "2k",
       "job_id": "44f2c6d9-9d65-40b2-9120-918fd1160215",
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170223_44f2c6d9-9d65-40b2-9120-918fd1160215.png",
       "source": "art-src/playground-1.png",
-      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. A very wide straight-on panoramic view across an empty 1980s British school playground towards its boundary on a summer afternoon. Along the very bottom edge, a thin strip of grey tarmac. Along the back of the playground a long, low, old red-brick wall with a stone coping runs dead level across the entire width, occupying only the bottom tenth of the picture. Behind the wall, the slate rooftops and chimney pots of terraced houses, a distant church spire, and leafy green trees, all in the lower third of the picture. Above them a big pale-blue sky with soft white clouds fills the upper two thirds. Flat horizon, no perspective convergence, no people, no gate, no playground equipment, no lamp posts, no text."
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. A very wide straight-on panoramic view across an empty 1980s British school playground towards its boundary on a summer afternoon. Along the very bottom edge, a thin strip of grey tarmac. Along the back of the playground a long, low, old red-brick wall with a stone coping runs dead level across the entire width, occupying only the bottom tenth of the picture. Behind the wall, the slate rooftops and chimney pots of terraced houses, a distant church spire, and leafy green trees, all in the lower third of the picture. Above them a big pale-blue sky with soft white clouds fills the upper two thirds. Flat horizon, no perspective convergence, no people, no gate, no playground equipment, no lamp posts, no text.",
+      "cropTop": 0.83,
+      "notes": "Only the boundary wall and tarmac are used now (the bottom 18%); the sky and skyline are separate layers so they can scroll at different speeds."
     },
     {
       "id": "textures-1",
@@ -1535,6 +1537,543 @@
         "stage"
       ],
       "prompt": "Hand-painted 2D adventure-game prop art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 2 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. One object alone in each cell, straight-on front view, generous margin inside each cell, no text, no labels, no cast shadows. In reading order: cell 1: an open doorway in a dark oak frame, the tall panelled dark oak door swung wide open inwards against the left side and seen edge-on in perspective, the rest of the doorway a dark shadowy corridor; cell 2: a tall square red-brick gate pier with a pale stone cap and a stone ball on top; cell 3: an old black cast-iron Victorian street lamp post with a glass lantern; cell 4: the front of a low wooden school stage platform, panelled in honey-coloured wood with a darker top edge, wide and low."
+    },
+    {
+      "id": "eric-moves",
+      "kind": "characters",
+      "group": "ERIC",
+      "model": "gpt_image_2_6",
+      "aspect": "4:3",
+      "job_id": "88a72a79-0985-42b1-979a-8360c55e4cb9",
+      "reference_job": "c8ca2ab3-5e92-42d8-9746-94118fb4bf63",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172326_88a72a79-0985-42b1-979a-8360c55e4cb9.png",
+      "source": "art-src/eric-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 3,
+        "cols": 4
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE",
+        "HITTING_A",
+        "HITTING_B",
+        "ARM_UP_A",
+        "CATAPULT_A",
+        "BENDING_A",
+        "WATERPISTOL_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 3 rows by 4 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Eric, the schoolboy with ginger-brown hair in a navy blazer): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground; cell 7: boxing pose: right fist drawn back by the shoulder, left hand up; cell 8: boxing pose: right arm half-way through a straight jab forward; cell 9: right arm half raised, hand level with the head; cell 10: lifting a wooden catapult to chest height, starting to draw the elastic; cell 11: starting to bend forward at the waist, knees bent, right hand reaching down to knee height; cell 12: lifting a small blue water pistol from the hip, elbow bent."
+    },
+    {
+      "id": "boy-moves",
+      "kind": "characters",
+      "group": "BOY",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "e437288e-1a25-4d77-bac6-6b0e7a4eae71",
+      "reference_job": "4f3bacef-9830-4eda-ad82-b37c34bba748",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172327_e437288e-1a25-4d77-bac6-6b0e7a4eae71.png",
+      "source": "art-src/boy-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (the schoolboy pupil with short dark brown hair): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground.",
+      "variant": "A"
+    },
+    {
+      "id": "girl-moves",
+      "kind": "characters",
+      "group": "GIRL",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "e7057d90-3132-44db-af17-80d33a636a5b",
+      "reference_job": "fa79bcde-0d0a-462b-ac52-8584759addd1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172328_e7057d90-3132-44db-af17-80d33a636a5b.png",
+      "source": "art-src/girl-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (the schoolgirl pupil in a blue pinafore with a hairband): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground.",
+      "variant": "A"
+    },
+    {
+      "id": "swot-moves",
+      "kind": "characters",
+      "group": "SWOT",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "0cda3e5f-db20-47b0-9ef5-7efb921ec78b",
+      "reference_job": "132fd05d-bdc1-4744-a1ea-cd45d8e70ce1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172327_0cda3e5f-db20-47b0-9ef5-7efb921ec78b.png",
+      "source": "art-src/swot-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Einstein, the thin schoolboy with round glasses): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground."
+    },
+    {
+      "id": "bully-moves",
+      "kind": "characters",
+      "group": "BULLY",
+      "model": "gpt_image_2_6",
+      "aspect": "16:9",
+      "job_id": "c6b4b951-fc43-4612-b553-fd14d4bde16b",
+      "reference_job": "400975ab-0b04-479c-9e7c-1c885ed88286",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172328_c6b4b951-fc43-4612-b553-fd14d4bde16b.png",
+      "source": "art-src/bully-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 4
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE",
+        "HITTING_A",
+        "HITTING_B"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 4 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Angelface, the big heavy-set schoolboy): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground; cell 7: boxing pose: right fist drawn back by the shoulder, left hand up; cell 8: boxing pose: right arm half-way through a straight jab forward."
+    },
+    {
+      "id": "tearaway-moves",
+      "kind": "characters",
+      "group": "TEARAWAY",
+      "model": "gpt_image_2_6",
+      "aspect": "16:9",
+      "job_id": "3ee4d83c-4ad4-4d24-acb7-37fe94be449a",
+      "reference_job": "b1a1a11c-c778-4765-a956-c1fef9350177",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172326_3ee4d83c-4ad4-4d24-acb7-37fe94be449a.png",
+      "source": "art-src/tearaway-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 4
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE",
+        "ARM_UP_A",
+        "CATAPULT_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 4 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Boy Wander, the wiry schoolboy with spiky blond hair): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground; cell 7: right arm half raised, hand level with the head; cell 8: lifting a wooden catapult to chest height, starting to draw the elastic."
+    },
+    {
+      "id": "heroine-moves",
+      "kind": "characters",
+      "group": "HEROINE",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "3596db50-f7f6-4298-8bc0-3aa269d0317f",
+      "reference_job": "e6502556-9c3b-41bb-a97d-fb11c1e95428",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172327_3596db50-f7f6-4298-8bc0-3aa269d0317f.png",
+      "source": "art-src/heroine-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Hayley, the schoolgirl with long blonde hair in a pink dress): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground."
+    },
+    {
+      "id": "wacker-moves",
+      "kind": "characters",
+      "group": "WACKER",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "2d777482-b741-4abf-8da9-34cff9917095",
+      "reference_job": "9dee3e79-10b0-41fd-84da-2b916ec5a0eb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172327_2d777482-b741-4abf-8da9-34cff9917095.png",
+      "source": "art-src/wacker-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "heightCells": 4,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "FALL_A",
+        "FALL_B",
+        "ARM_UP_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 2 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Mr Wacker, the headmaster in gown and mortarboard): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 3: comedy tumble: landing on the bottom with a bump, knees bent up, hands back on the floor; cell 4: right arm half raised, hand level with the head."
+    },
+    {
+      "id": "withit-moves",
+      "kind": "characters",
+      "group": "WITHIT",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "a894dda6-8fb6-495a-aa72-e128877418fc",
+      "reference_job": "160418ed-95fb-4769-814b-7b4c26638586",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172327_a894dda6-8fb6-495a-aa72-e128877418fc.png",
+      "source": "art-src/withit-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "heightCells": 4,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "FALL_A",
+        "FALL_B",
+        "ARM_UP_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 2 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Mr Withit, the bearded master in a green jacket): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 3: comedy tumble: landing on the bottom with a bump, knees bent up, hands back on the floor; cell 4: right arm half raised, hand level with the head."
+    },
+    {
+      "id": "rockitt-moves",
+      "kind": "characters",
+      "group": "ROCKITT",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "1e3608a4-4c5f-42d5-96ef-a4afa9c953c7",
+      "reference_job": "8bb1f665-8183-40e8-8e62-10cecf458725",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172327_1e3608a4-4c5f-42d5-96ef-a4afa9c953c7.png",
+      "source": "art-src/rockitt-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "heightCells": 4,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "FALL_A",
+        "FALL_B",
+        "ARM_UP_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 2 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Mr Rockitt, the science master in a white lab coat): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 3: comedy tumble: landing on the bottom with a bump, knees bent up, hands back on the floor; cell 4: right arm half raised, hand level with the head."
+    },
+    {
+      "id": "creak-moves",
+      "kind": "characters",
+      "group": "CREAK",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "389507e8-4410-4e1f-8f0f-88473df18060",
+      "reference_job": "b63d1504-aca3-4350-aeb4-3b1be68522b6",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172428_389507e8-4410-4e1f-8f0f-88473df18060.png",
+      "source": "art-src/creak-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "heightCells": 4,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "FALL_A",
+        "FALL_B",
+        "ARM_UP_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 2 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Mr Creak, the very old stooped master in brown tweed): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 3: comedy tumble: landing on the bottom with a bump, knees bent up, hands back on the floor; cell 4: right arm half raised, hand level with the head."
+    },
+    {
+      "id": "take-moves",
+      "kind": "characters",
+      "group": "TAKE",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "36ac12bc-08f2-441c-ac8b-e0b57ba48e78",
+      "reference_job": "5703cb5e-ae97-44da-b835-7c3bc12b9331",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172429_36ac12bc-08f2-441c-ac8b-e0b57ba48e78.png",
+      "source": "art-src/take-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "heightCells": 4,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "FALL_A",
+        "FALL_B",
+        "ARM_UP_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 2 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Miss Take, the headmistress in a long purple dress): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 3: comedy tumble: landing on the bottom with a bump, knees bent up, hands back on the floor; cell 4: right arm half raised, hand level with the head."
+    },
+    {
+      "id": "albert-moves",
+      "kind": "characters",
+      "group": "ALBERT",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "507946fc-4ddf-45ef-b8e0-e23158b82f7a",
+      "reference_job": "c59939d5-5bdf-4f60-88bd-b1a424720944",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172653_507946fc-4ddf-45ef-b8e0-e23158b82f7a.png",
+      "source": "art-src/albert-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "heightCells": 4,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "FALL_A",
+        "FALL_B",
+        "ARM_UP_A"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 2 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (Albert, the caretaker in a flat cap and brown overall coat): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 3: comedy tumble: landing on the bottom with a bump, knees bent up, hands back on the floor; cell 4: right arm half raised, hand level with the head.",
+      "notes": "First attempt had a misty halo; regenerated asking for a clean transparent background."
+    },
+    {
+      "id": "boy-b-moves",
+      "kind": "characters",
+      "group": "BOY",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "86b4f48a-d8e1-428f-94f2-cf6429d50c1b",
+      "reference_job": "0cf359b8-b2c1-4a0b-9021-e0a358eb86ce",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172429_86b4f48a-d8e1-428f-94f2-cf6429d50c1b.png",
+      "source": "art-src/boy-b-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (the schoolboy pupil with curly black hair): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground.",
+      "variant": "B"
+    },
+    {
+      "id": "boy-c-moves",
+      "kind": "characters",
+      "group": "BOY",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "d611b263-ba31-43ab-8758-c51c67d5737a",
+      "reference_job": "01ff69ca-7537-4f35-b7b6-fd974d790091",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172428_d611b263-ba31-43ab-8758-c51c67d5737a.png",
+      "source": "art-src/boy-c-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (the schoolboy pupil with a fair bowl cut and glasses): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground.",
+      "variant": "C"
+    },
+    {
+      "id": "girl-b-moves",
+      "kind": "characters",
+      "group": "GIRL",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "a85dbbb2-52c1-4727-943f-497f3397db63",
+      "reference_job": "b9dada36-0c4c-4cc5-82e2-9e59e83622e0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172427_a85dbbb2-52c1-4727-943f-497f3397db63.png",
+      "source": "art-src/girl-b-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (the schoolgirl pupil with black plaits): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground.",
+      "variant": "B"
+    },
+    {
+      "id": "girl-c-moves",
+      "kind": "characters",
+      "group": "GIRL",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "b7dd577f-1048-4bb8-9490-71b0a58d487e",
+      "reference_job": "00345c03-570e-49ce-bebf-af9bfcd00bc1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172428_b7dd577f-1048-4bb8-9490-71b0a58d487e.png",
+      "source": "art-src/girl-c-moves.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "standing": "_REF",
+      "poses": [
+        "_REF",
+        "SIT_A",
+        "SIT_B",
+        "FALL_A",
+        "FALL_B",
+        "RISE"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions, soft painterly shading, clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines. A sprite sheet: a grid of 2 rows by 3 columns of equal cells on a plain transparent background, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image (the schoolgirl pupil with a blonde bob and glasses): the same face, hair, clothes and proportions, drawn the same size in every cell, full body, side view facing RIGHT, feet on one ground line near the bottom of each cell, generous margin in each cell. The cells are in-between poses for animation, in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: beginning to sit down: knees a little bent, bottom going back, leaning slightly forward; cell 3: half-way down to sitting: knees deeply bent, thighs nearly level, bottom just above an unseen chair; cell 4: comedy slip: tipping over backwards with heels on the ground, arms flung up, surprised face; cell 5: comedy tumble: landing on the bottom, leaning far back, legs kicked up off the ground, arms out; cell 6: getting up from the floor: kneeling on one knee with one hand on the ground.",
+      "variant": "C"
+    },
+    {
+      "id": "icons-1",
+      "kind": "icons",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "a9182b5e-df35-4195-a1a1-89214dec19a7",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172427_a9182b5e-df35-4195-a1a1-89214dec19a7.png",
+      "source": "art-src/icons-1.png",
+      "grid": {
+        "rows": 3,
+        "cols": 3
+      },
+      "items": [
+        "WATER_PISTOL",
+        "SHERRY_PISTOL",
+        "STINKBOMB",
+        "FROG",
+        "MOUSE",
+        "SAFE_KEY",
+        "STOREROOM_KEY",
+        "CATAPULT",
+        "CONKER"
+      ],
+      "prompt": "Hand-painted 2D adventure-game inventory icons, soft painterly shading with clean readable shapes, muted 1980s British colour palette, fine pencil-weight outlines. A sheet of nine icons in a grid of 3 rows by 3 columns of equal cells on a plain transparent background, one object alone and centred in each cell, large in its cell, no text, no labels, no borders, no cast shadows. In reading order: cell 1: a small blue plastic toy water pistol; cell 2: the same toy water pistol with amber sherry glowing in its clear tank; cell 3: a round black stink bomb with a wisp of green vapour; cell 4: a green frog sitting; cell 5: a small grey mouse; cell 6: an ornate old brass key with a red tag; cell 7: a plain iron key with a blue tag; cell 8: a wooden catapult; cell 9: a shiny brown conker on a string.",
+      "skip": [
+        "CATAPULT",
+        "CONKER"
+      ]
+    },
+    {
+      "id": "sky-1",
+      "kind": "scene",
+      "name": "sky",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "resolution": "2k",
+      "job_id": "6341aa88-5ac8-44a3-b6d7-08451d7d40a3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172428_6341aa88-5ac8-44a3-b6d7-08451d7d40a3.png",
+      "source": "art-src/sky-1.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading, warm afternoon light from the upper left, muted 1980s British colour palette. Only sky, filling the whole frame: a very wide pale-blue English summer afternoon sky with soft white cumulus clouds scattered across it, paler and slightly warmer towards the bottom edge. Nothing else at all: no ground, no horizon, no trees, no buildings, no birds, no sun disc, no text.",
+      "maxWidth": 2048
+    },
+    {
+      "id": "skyline-1",
+      "kind": "scene",
+      "name": "skyline",
+      "alpha": true,
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "resolution": "2k",
+      "job_id": "9bcbbb64-cd89-42a8-a367-90a2c746c26e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_172429_9bcbbb64-cd89-42a8-a367-90a2c746c26e.png",
+      "source": "art-src/skyline-1.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading, warm afternoon light from the upper left, muted 1980s British colour palette. A skyline cut-out isolated on a plain transparent background: one long continuous row of the slate rooftops and chimney pots of red-brick terraced houses, leafy green trees and a single church spire, in the same style and colours as the reference image. The row runs across the entire width of the image with no gaps. Its bottom edge is cut straight and level along the very bottom of the image. It fills only the lower half of the image; the upper half is completely empty and transparent. No sky, no clouds, no wall, no ground, no text.",
+      "trim": true
     }
   ]
 }

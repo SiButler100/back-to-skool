@@ -15,8 +15,10 @@
 //     half-way point: the picture starts moving the moment a key is pressed;
 //   * which walk-cycle picture to show comes from the distance covered, so
 //     feet stay planted instead of sliding;
-//   * a change of pose (sitting down, a punch, a fall) reports the old pose
-//     for a moment so the painter can blend the two;
+//   * a change of pose (sitting down, a punch, a fall) is played through one
+//     or two in-between pictures (crouching on the way to a chair, tipping
+//     over on the way to the floor); where a character has no such pictures
+//     the old pose is reported for a moment so the painter can blend the two;
 //   * Eric's jump rises fast and slows at the top, like a real one.
 //
 // Nothing here changes the game: the engine never reads these numbers.
@@ -28,6 +30,39 @@ const CYCLE_CELLS = 2;         // cells covered by one cycle: the engine's own f
 const FADE_MS = 110;           // how long a change of pose is blended
 const SNAP_CELLS = 2.5;        // further than this in one go is a teleport, not a walk
 const SLACK_MS = 28;           // aim to arrive a frame or two late: steps then join without a pause even when a tick lands a frame late
+
+// ---- In-between poses -------------------------------------------------------------
+// For a change from one pose to another, the pictures to pass through on the
+// way. 'STAND' means any of the engine's four walk states. The names on the
+// right are extra frames in each character's sheet (assets/illustrated).
+const SEQUENCES = {
+  'STAND>SITTING_ON_CHAIR': ['SIT_A', 'SIT_B'],
+  'SITTING_ON_CHAIR>STAND': ['SIT_B', 'SIT_A'],
+  'STAND>SITTING_ON_FLOOR': ['SIT_A', 'SIT_B'],
+  'SITTING_ON_FLOOR>STAND': ['RISE', 'SIT_A'],
+  'STAND>KNOCKED_OUT': ['FALL_A', 'FALL_B'],
+  'SITTING_ON_CHAIR>KNOCKED_OUT': ['FALL_B'],
+  'SITTING_ON_FLOOR>KNOCKED_OUT': ['FALL_B'],
+  'KNOCKED_OUT>STAND': ['SITTING_ON_FLOOR', 'RISE'],
+  'STAND>KNOCKED_OVER': ['FALL_A', 'FALL_B'],
+  'KNOCKED_OVER>STAND': ['FALL_B', 'FALL_A'],
+  'STAND>HITTING0': ['HITTING_A'],
+  'HITTING0>HITTING1': ['HITTING_B'],
+  'HITTING1>STAND': ['HITTING_B'],
+  'STAND>ARM_UP': ['ARM_UP_A'],
+  'ARM_UP>STAND': ['ARM_UP_A'],
+  'STAND>CATAPULT0': ['CATAPULT_A'],
+  'CATAPULT1>STAND': ['CATAPULT_A'],
+  'STAND>BENDING_OVER': ['BENDING_A'],
+  'BENDING_OVER>STAND': ['BENDING_A'],
+  'STAND>WATERPISTOL': ['WATERPISTOL_A'],
+  'WATERPISTOL>STAND': ['WATERPISTOL_A'],
+};
+// How long each picture of a sequence is held: falls and sitting are
+// unhurried, a punch or a raised arm is over in a blink.
+const STEP_MS = 72, QUICK_STEP_MS = 44;
+const QUICK = /HITTING|ARM_UP|CATAPULT|WATERPISTOL|BENDING/;
+const poseKind = (state) => (WALK_STATES.has(state) ? 'STAND' : state);
 
 const easeOut = (k) => 1 - (1 - k) * (1 - k);
 const easeIn = (k) => k * k;
@@ -101,8 +136,21 @@ export class Motion {
     // ---- Pose changes ----------------------------------------------------------
     if (state !== tr.state) {
       const bothWalking = walkState && WALK_STATES.has(tr.state);
-      if (!bothWalking && thing.visible) { tr.prevState = tr.state; tr.prevDir = tr.dir ?? thing.direction; tr.stateT = now; }
+      if (!bothWalking && thing.visible) {
+        tr.prevState = tr.state; tr.prevDir = tr.dir ?? thing.direction; tr.stateT = now;
+        // Is there a run of in-between pictures for this change?
+        const mids = smooth ? SEQUENCES[`${poseKind(tr.state)}>${poseKind(state)}`] : null;
+        tr.seq = mids ? { frames: [WALK_STATES.has(tr.state) ? 'WALK0' : tr.state, ...mids, null], t0: now, step: QUICK.test(mids[0]) ? QUICK_STEP_MS : STEP_MS, needs: mids[0] } : null;
+      }
       tr.state = state;
+    }
+    // Where we are in that run: picture `a`, turning into picture `b` (null
+    // means "whatever pose the engine says now") by fraction `k`.
+    let seq = null;
+    if (tr.seq) {
+      const at = (now - tr.seq.t0) / tr.seq.step, i = Math.floor(at);
+      if (i >= tr.seq.frames.length - 1) tr.seq = null;
+      else seq = { a: tr.seq.frames[i], b: tr.seq.frames[i + 1], k: at - i, needs: tr.seq.needs };
     }
     tr.dir = thing.direction;
     const fadeK = (now - tr.stateT) / FADE_MS;
@@ -114,7 +162,7 @@ export class Motion {
     const cycle = Math.round(phase * CYCLE_FRAMES) % CYCLE_FRAMES;
 
     tr.frame = now;
-    tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade };
+    tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade, seq };
     return tr.out;
   }
 }

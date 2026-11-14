@@ -55,6 +55,9 @@ def character_frames(job):
         cell.save(os.path.join(d, f'{name}.raw.png'))
     frames, factor = align(named, standing=job.get('standing', 'WALK0'), target_height=TARGET_HEIGHT[job.get('heightCells', 3)],
                            nudges=job.get('nudge'), height_from=job.get('heightFrom', 'standing'))
+    # A pose whose name starts with '_' is only there to set the scale (a
+    # standing figure in a sheet of in-between poses); it is not kept.
+    frames = {k: v for k, v in frames.items() if not k.startswith('_')}
     print(f"  {job['id']}: {len(frames)} frames, scale factor {factor:.3f}")
     return frames
 
@@ -280,17 +283,51 @@ def build_all_objects(jobs, manifest):
 
 
 def build_scene(job, manifest):
-    """A big backdrop painting (the playground), kept at full size as a JPEG."""
+    """A big backdrop painting or one layer of it. Opaque layers are JPEGs;
+    a layer with 'alpha' (the skyline cut-out) is a PNG trimmed to its
+    content. 'cropTop' keeps only the bottom part (the playground wall)."""
     src = os.path.join(ROOT, job['source'])
     if not os.path.exists(src):
         print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
         return
-    img = Image.open(src).convert('RGB')
-    rel = f"scenes/{job['name']}.jpg"
+    img = Image.open(src)
+    img = img.convert('RGBA' if job.get('alpha') else 'RGB')
+    w, h = img.size
+    if job.get('cropTop'):
+        img = img.crop((0, int(job['cropTop'] * h), w, h))
+    if job.get('trim'):
+        img = img.crop(bbox(img))
+    if job.get('maxWidth') and img.size[0] > job['maxWidth']:
+        f = job['maxWidth'] / img.size[0]
+        img = img.resize((job['maxWidth'], round(img.size[1] * f)), Image.LANCZOS)
     os.makedirs(os.path.join(ASSETS, 'scenes'), exist_ok=True)
-    img.save(os.path.join(ASSETS, rel), quality=86, optimize=True, progressive=True)
+    if job.get('alpha'):
+        rel = f"scenes/{job['name']}.png"
+        img.save(os.path.join(ASSETS, rel), optimize=True)
+    else:
+        rel = f"scenes/{job['name']}.jpg"
+        img.save(os.path.join(ASSETS, rel), quality=86, optimize=True, progressive=True)
     manifest.setdefault('scenes', {})[job['name']] = {'image': rel, 'w': img.size[0], 'h': img.size[1]}
     print(f"  {job['id']}: {img.size[0]}x{img.size[1]} -> {rel}")
+
+
+def build_icons(job, manifest):
+    """A sheet of inventory icons -> one small PNG each (the HUD shows them as
+    ordinary <img> elements, so they are separate files, not a sprite sheet)."""
+    src = os.path.join(ROOT, job['source'])
+    if not os.path.exists(src):
+        print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
+        return
+    cells = slice_components(Image.open(src).convert('RGBA'), job['grid']['rows'], job['grid']['cols'])
+    os.makedirs(os.path.join(ASSETS, 'icons'), exist_ok=True)
+    icons = manifest.setdefault('icons', {})
+    for name, cell in zip(job['items'], cells):
+        if not name or cell is None or name in job.get('skip', []):
+            continue
+        rel = f'icons/{name}.png'
+        fit_into(cell, 96, 96, 'bottom').save(os.path.join(ASSETS, rel), optimize=True)
+        icons[name] = rel
+    print(f"  {job['id']}: {len(icons)} icons")
 
 
 def build_textures(job, manifest):
@@ -376,6 +413,8 @@ def main():
             build_scene(job, manifest)
         elif kind == 'textures':
             build_textures(job, manifest)
+        elif kind == 'icons':
+            build_icons(job, manifest)
     # A character's sheets are always rebuilt together so one image holds every pose.
     for group, variant in touched:
         build_character_set(group, variant, [j for j in jobs if j.get('kind', 'characters') == 'characters' and j['group'] == group and j.get('variant') == variant], manifest)

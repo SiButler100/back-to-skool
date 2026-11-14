@@ -19,7 +19,7 @@ import { drawHdText, HD_LINE_HEIGHT } from '../hd/font.js';
 import { buildIllustratedBackdrop } from './backdrop.js';
 import { ART_SCALE } from './assets.js';
 import { DESK_UNIT } from './backdrop.js';
-import { GROUND_MARGIN } from './structure.js';
+import { GROUND_MARGIN, playgroundSpan } from './structure.js';
 import { loadFonts, drawSpeech, drawCard, drawChalkLines } from './text.js';
 import { drawIllustratedFurniture } from './furniture.js';
 
@@ -34,7 +34,7 @@ export class IllustratedPainter extends ModernPainter {
     this.assets = assets;
     this.flips = new Map();         // frame key -> flipped copy
     this.stats = { drawn: 0, fallback: 0 };
-    assets.onReady(() => { this.backdrop = null; });
+    assets.onReady(() => { this.backdrop = null; this.layers = null; });
     this.view = { x0: 0, x1: 0, y0: 0, y1: 0 };   // the visible strip in canvas pixels, noted each frame
     loadFonts();
   }
@@ -52,6 +52,9 @@ export class IllustratedPainter extends ModernPainter {
 
   // True when this character has walk-cycle pictures (CYCLE0..7).
   hasCycle(group, look) { return group !== 'OBJ' && !!this.assets.frame(group, 'CYCLE0', look?.variant); }
+
+  // True when this character has a picture for `state` (used for the in-between poses).
+  hasFrame(group, state, look) { return group !== 'OBJ' && !!this.assets.frame(group, state, look?.variant); }
 
   // ---- Sprites --------------------------------------------------------------------
   drawSprite(ctx, group, state, direction, look, x, y) {
@@ -102,6 +105,40 @@ export class IllustratedPainter extends ModernPainter {
     const h = Math.min(viewH * S, b.height - camY * S);
     this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: camY * S, y1: camY * S + h };
     ctx.drawImage(b, cam * S, camY * S, viewW * S, h, cam * S, camY * S, viewW * S, h);
+  }
+
+  // ---- Parallax ---------------------------------------------------------------------
+  // Out in the playground the far things move more slowly than the near
+  // ones as the view scrolls: the sky hardly at all, the rooftops a little,
+  // the boundary wall with the ground. The backdrop has a hole where the
+  // playground is; the sky and the skyline are drawn through it here, each
+  // shifted by a fraction of how far the view is from the playground's
+  // middle. Clouds also drift slowly by themselves.
+  drawParallax(ctx, cam, viewW, camY, viewH, now) {
+    const sky = this.assets.scene('sky'), line = this.assets.scene('skyline'), wall = this.assets.scene('wall');
+    if (!sky || !line || !wall) return;
+    const S = this.scale, C = SKOOL.cell * S, u = S / 6, span = playgroundSpan(C);
+    const vx0 = Math.max(span.x0, cam * S), vx1 = Math.min(span.x0 + span.w, (cam + viewW) * S);
+    if (vx1 <= vx0) return;                                   // the playground is off screen
+    const H = (SKOOL.height * SKOOL.cell + GROUND_MARGIN) * S;
+    const wallTop = H - wall.img.height * (span.w / wall.img.width);
+    const away = (cam + viewW / 2) * S - (span.x0 + span.w / 2);   // how far the view's middle is from the playground's
+    ctx.save();
+    ctx.beginPath(); ctx.rect(vx0, camY * S, vx1 - vx0, viewH * S); ctx.clip();
+    ctx.imageSmoothingEnabled = true;
+    // Each layer is scaled to its drawn size once and kept, so a frame only copies pixels.
+    if (!this.layers) {
+      const scaled = (img, k) => { const c = makeCanvas(Math.round(img.width * k), Math.round(img.height * k)); const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(img, 0, 0, c.width, c.height); return c; };
+      this.layers = { sky: scaled(sky.img, 1.3 * u), line: scaled(line.img, 0.9 * u) };
+    }
+    const L = this.layers;
+    mirrorTile(ctx, L.sky, Math.round(span.x0 + away * 0.5 + (now / 1000) * 5 * u), Math.round(wallTop + 60 * u - L.sky.height), L.sky.width, L.sky.height, vx0, vx1);
+    // The skyline is narrower than the playground, so a mirrored copy fills
+    // in beside it. It is anchored by its right-hand end, which keeps that
+    // copy (and a second church spire) out of sight.
+    const lineShift = 0.16, reach = lineShift * (span.w / 2 + (viewW * S) / 2);
+    mirrorTile(ctx, L.line, Math.round(span.x0 + span.w - L.line.width + reach + away * lineShift), Math.round(wallTop + 22 * u - L.line.height), L.line.width, L.line.height, vx0, vx1);
+    ctx.restore();
   }
 
   // Desks are drawn AFTER the people, so a seated pupil's knees go under the
@@ -163,5 +200,15 @@ export class IllustratedPainter extends ModernPainter {
     const ink = box.paper === 'alarm' ? t.boxInkAlarm : t.boxInk;
     const view = { x0: 0, x1: viewW * S, y0: 0 };
     drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C - camY * S - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
+  }
+}
+
+// Cover the strip from x0 to x1 with copies of a picture w wide starting at x,
+// every other copy flipped so neighbouring edges always match.
+function mirrorTile(ctx, img, x, y, w, h, x0, x1) {
+  let k = Math.floor((x0 - x) / w);
+  for (let tx = x + k * w; tx < x1; tx += w, k++) {
+    if (((k % 2) + 2) % 2 === 0) ctx.drawImage(img, tx, y, w, h);
+    else { ctx.save(); ctx.translate(tx + w, y); ctx.scale(-1, 1); ctx.drawImage(img, 0, 0, w, h); ctx.restore(); }
   }
 }

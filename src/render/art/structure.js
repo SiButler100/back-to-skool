@@ -29,6 +29,13 @@ const TILE = { floorboards: 110, darkwood: 170, brickRed: 150, brickBuff: 150, t
 const TINT = { darkwood: 'rgba(46,30,16,0.50)' };
 const FALLBACK = { floorboards: '#b9813f', darkwood: '#4a241a', brickRed: '#a9523d', brickBuff: '#b08a4c', tarmac: '#6f7072', stone: '#b9b4a6' };
 
+// The stretch of the world the playground scenery covers, in canvas pixels
+// (a cell beyond the playground each side, tucked behind the school walls).
+export function playgroundSpan(C) {
+  const p = DECOR.playground;
+  return { x0: (p.x0 - 1) * C, w: (p.x1 - p.x0 + 2) * C };
+}
+
 export class StructurePainter {
   constructor(ctx, theme, S, assets) {
     this.ctx = ctx; this.theme = theme; this.S = S; this.u = S / 6; this.C = SKOOL.cell * S; this.assets = assets;
@@ -71,13 +78,17 @@ export class StructurePainter {
     const sky = ctx.createLinearGradient(0, 0, 0, H);
     sky.addColorStop(0, this.theme.hd.sky[0]); sky.addColorStop(1, this.theme.hd.sky[1]);
     this.fill(sky, 0, 0, W, H);
-    // The playground: one wide painting, its tarmac along the bottom edge.
-    const p = DECOR.playground, scene = this.assets.scene('playground');
-    if (scene) {
-      const x0 = (p.x0 - 1) * C, w = (p.x1 - p.x0 + 2) * C, k = w / scene.img.width, h = scene.img.height * k;
+    // The playground. Its sky and skyline are separate layers drawn every
+    // frame BEHIND this backdrop so they can drift at their own speeds
+    // (IllustratedPainter.drawParallax), so here the playground is left as a
+    // hole, with only the boundary wall and tarmac along the bottom.
+    const span = playgroundSpan(C), wall = this.assets.scene('wall');
+    if (wall && this.assets.scene('sky') && this.assets.scene('skyline')) {
+      ctx.clearRect(span.x0, 0, span.w, H);
+      const h = wall.img.height * (span.w / wall.img.width);
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(scene.img, x0, H - h, w, h);
-      this.sceneWallTop = H - h * 0.178;        // where the painted boundary wall's coping is
+      ctx.drawImage(wall.img, span.x0, H - h, span.w, h);
+      this.sceneWallTop = H - h;                // where the wall's coping is
     }
     // Brick wherever a building stands (the rooms are painted over most of it).
     for (const b of DECOR.buildings) {
@@ -235,7 +246,7 @@ export class StructurePainter {
     const ground = this.feet(17);
     if (this.sceneWallTop) {
       // An opening in the wall between the piers: the tarmac runs on through it.
-      const gx0 = p.gate[0] * C + C / 2, gx1 = p.gate[1] * C + C / 2, top = this.sceneWallTop - 6 * u;
+      const gx0 = p.gate[0] * C + C / 2, gx1 = p.gate[1] * C + C / 2, top = this.sceneWallTop;
       this.fill(this.material('tarmac'), gx0, top, gx1 - gx0, ground - 20 * u - top);
       this.shade(gx0, top, gx1 - gx0, ground - 20 * u - top, 'rgba(10,14,20,0.32)', 'rgba(255,255,255,0.08)');
     }
