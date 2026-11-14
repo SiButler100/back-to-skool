@@ -961,7 +961,8 @@ export class MovePellet extends Command {
     if (!p.visible) return;
     if (this.count <= 0) { this.count = p.range; this.xInc = p.direction; this.yInc = 0; }
     this.count -= 1;
-    if (this.count === 0 || p.barrier) { this.endFlight(); return; }
+    // Out of range, into a wall, or off the edge of the world (fired with Eric's back to the end wall).
+    if (this.count === 0 || p.barrier || p.x < 0 || p.x >= p.world.width) { this.endFlight(); return; }
     if (this.yInc < 0 || this.count <= p.hitZone) {
       if (p.hitCup() || p.hitConker()) { this.endFlight(); return; }
     }

@@ -234,8 +234,12 @@ export class Cast {
   }
   unchainBike() { this.bike.unchain(); }
   waterPlant(pot, liquid) { if (liquid === 'WATER' && pot.plant) pot.plant.grow(); }
-  liftAnyoneAt(x, y) { for (const c of this.characterList) if (c.x === x && c.y === y) c.y -= 1; }
-  dropAnyoneAt(x, y) { for (const c of this.characterList) if (c.x === x && c.y === y) c.fallOffPlant(); }
+  // A growing plant lifts whoever is standing on it, and drops them when it
+  // dies. Only Eric ever stands on a plant or its pot. Anyone else found at
+  // that spot is in mid-air for another reason (a girl jumping from a mouse),
+  // and lifting her too left her walking about a row above the ground.
+  liftAnyoneAt(x, y) { const c = this.eric; if (c.x === x && c.y === y) c.y -= 1; }
+  dropAnyoneAt(x, y) { const c = this.eric; if (c.x === x && c.y === y) c.fallOffPlant(); }
   plant(c) { return this.plants.find((p) => p.supports(c)) || null; }
 
   // ---- Per-tick update -------------------------------------------------------

@@ -20,7 +20,7 @@ const STEPS = [
   ['stinkbombs', 'Stinkbombs',
     'Also in a desk, in any room. You get three. You will need one later to make Mr Wacker open a window.'],
   ['bikeDigits', 'Four bike digits',
-    'First fill the middle or the right-hand cup by the toilets: carry the pistol to the ground floor below the cups, stand seven steps short of the cup, facing it, and press X (in the modern view a blue glow marks each spot). Then go up four steps of the stairs beside the cups (↑), turn to face them (→) and press X as a master walks underneath (an amber glow marks the step, and the cup is ringed when your aim is true). A pellet does nothing to an empty cup, and only that one step works. Each master you soak mutters a digit. Known so far: {digits}'],
+    'First fill the middle or the right-hand cup by the toilets: carry the pistol to the ground floor below the cups, stand six steps back from under the cup, facing it, and press X (in the modern view a blue glow marks each spot; from anywhere else X fires the catapult instead). Then go up four steps of the stairs beside the cups (↑), turn to face them (→) and press X as a master walks underneath (an amber glow marks the step, and the cup is ringed when your aim is true). A pellet does nothing to an empty cup, and only that one step works. Each master you soak mutters a digit. Known so far: {digits}'],
   ['bikeUnchained', 'Bike combination',
     'Stand beside a clean blackboard, press C, type the four digits in any order, then press Enter or walk off. The bike appears by the tree.'],
   ['sherry', 'Sherry in the pistol',

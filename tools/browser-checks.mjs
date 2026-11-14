@@ -10,7 +10,7 @@
 //   node tools/browser-checks.mjs            run everything
 //   node tools/browser-checks.mjs controls   run only the sections named
 //
-// Sections: controls, screens, soak.
+// Sections: controls, screens, quest.
 // It needs Playwright (not a dependency of the game itself). Exit code 0 means
 // every check passed.
 // ============================================================================
@@ -434,6 +434,48 @@ if (wanted('screens')) {
     await page.waitForTimeout(800);
     const fit = await page.evaluate(() => { const r = document.getElementById('game').getBoundingClientRect(); return { w: Math.round(r.width), over: document.documentElement.scrollWidth - window.innerWidth }; });
     check(`At ${width} by ${height} the picture fits the window's width`, fit.w > 0 && fit.w <= width && fit.over <= 0 && errors.length === 0, `picture ${fit.w}px, page overflows by ${fit.over}px ${errors.slice(0, 1).join('')}`);
+    await page.close();
+  }
+}
+
+// =============================================================================
+// QUEST: the whole caper played through the real page
+// =============================================================================
+// tools/playthrough.mjs walks Eric through all eleven steps with key presses
+// alone. Here the same player is let loose on the game inside the page, so the
+// picture, the plan strip, the event log, the effects and the sound all live
+// through every step, and any of them throwing an error is caught.
+if (wanted('quest')) {
+  console.log('\n-- The whole quest, in the page --');
+  for (const { label, settings, drawEvery, seed } of [
+    { label: 'illustrated view', settings: null, drawEvery: 12, seed: 2026 },
+    { label: 'pixel-art view', settings: { artwork: 'pixel' }, drawEvery: 40, seed: 7 },
+    { label: 'original view (stand-in graphics)', settings: { view: 'original' }, drawEvery: 40, seed: 11 },
+  ]) {
+    const { page, errors } = await openGame({ settings });
+    const result = await page.evaluate(async ({ drawEvery, seed }) => {
+      const { runPlaythrough } = await import('/tools/playthrough.mjs');
+      const { game, input, renderer, hud } = window.bts;
+      game.rng.state = seed;                                   // the same school every time this check runs
+      // The page's own keyboard, driven the way the on-screen buttons drive it.
+      const keys = {
+        hold: (a) => input.held.add(`virtual:${a}`), unhold: (a) => input.held.delete(`virtual:${a}`),
+        tap: (a) => input.edges.add(a), type: (text) => { for (const ch of text) input.typed.push(ch); },
+      };
+      const lines = []; let n = 0, frames = 0;
+      const run = runPlaythrough(game, keys, { print: (l) => lines.push(l), afterTick: () => { if (++n % drawEvery === 0) { renderer.draw(n * 50); hud.update(); frames++; } } });
+      const done = [...document.querySelectorAll('.quest-steps .step.done')].length;
+      const logText = [...document.querySelectorAll('#hud li, .event-log li, #sidebar li')].map((li) => li.textContent).join(' | ');
+      return { failures: run.failures, quest: run.quest, done, frames, ticks: game.tickCount, tail: lines.filter((l) => /FAIL|timed out/.test(l)).slice(0, 6),
+        badText: /undefined|NaN|\[object/.test(logText + document.querySelector('.quest-steps').textContent), fallbacks: renderer.painters?.illustrated?.stats?.fallback ?? 0, missing: [...(renderer.painters?.illustrated?.stats?.missing ?? [])].join(', ') };
+    }, { drawEvery, seed });
+    check(`${label}: the scripted player completes every step of the caper`, result.failures === 0, `${result.ticks} ticks, ${result.frames} frames drawn; ${result.tail.join(' / ')}`);
+    check(`${label}: the plan strip ends with all eleven steps ticked`, result.done === 11, `${result.done} ticked; quest events ${result.quest.join('>')}`);
+    check(`${label}: nothing on screen reads "undefined" or "NaN"`, !result.badText);
+    if (!settings) check(`${label}: no picture was missing at any point`, result.fallbacks === 0, `${result.fallbacks} fallbacks: ${result.missing}`);
+    await page.waitForTimeout(3200);
+    check(`${label}: the "up a year" card follows`, (await page.evaluate(() => window.bts.menu.screen)) === 'gameover', String(await page.evaluate(() => window.bts.menu.screen)));
+    check(`${label}: no errors on the page from start to finish`, errors.length === 0, errors.slice(0, 3).join(' | '));
     await page.close();
   }
 }

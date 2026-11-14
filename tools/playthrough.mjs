@@ -30,18 +30,22 @@
 // it. Everything else is the real game.
 // ============================================================================
 
-import { Game } from '../src/engine/game.js';
-import { FakeInput } from '../src/ui/input.js';
-import { measureText, fontHas } from './node-font.mjs';
 import { LESSONS } from '../src/data/timetable.js';
 
-const seed = Number(process.argv[2] || 2026);
-const input = new FakeInput();
-const game = new Game({ input, seed, config: { freezeOnMessages: false, maxLines: 1e9 }, measureText, fontHas });
+// The whole run, against any game and any keyboard. From the command line (at
+// the foot of this file) it is given a bare engine. tools/browser-checks.mjs
+// gives it the game running in the real page instead, so that the picture, the
+// plan, the event log and the sound all live through the whole caper too.
+//   input      needs hold(action), unhold(action), tap(action) and type(text)
+//   afterTick  is called after every tick (the browser run draws frames there)
+//   print      receives each line of the log
+// (The body is not indented, to keep the history of the file readable.)
+export function runPlaythrough(game, input, { afterTick = null, print = (line) => console.log(line), debug = false } = {}) {
+Object.assign(game.config, { freezeOnMessages: false, maxLines: 1e9 });
 const world = game.world, cast = game.cast;
 const eric = cast.eric;
 const T = () => game.tickCount;
-const log = (msg) => console.log(`[${String(T()).padStart(6)}] ${msg}`);
+const log = (msg) => print(`[${String(T()).padStart(6)}] ${msg}`);
 let failures = 0;
 function check(label, ok, detail = '') { log(`${ok ? 'PASS' : 'FAIL'}  ${label}${detail ? '  (' + detail + ')' : ''}`); if (!ok) failures++; return !!ok; }
 const inv = () => [...eric.inventory].join(',');
@@ -51,6 +55,7 @@ function tick(n = 1) {
   for (let i = 0; i < n; i++) {
     game.setVisibleColumns(Math.max(0, eric.x - 16), eric.x + 16);
     game.tick();
+    if (afterTick) afterTick();
     if (eric.frozen) input.tap('act');     // acknowledge whatever a teacher is telling us
   }
 }
@@ -290,7 +295,7 @@ function passAlbert() {
 }
 
 // ---- Scenario ----------------------------------------------------------------------
-if (process.env.BTS_DEBUG) {
+if (debug) {
   // Who opens and shuts the drinks cabinet, and from where.
   const take = cast.get('TAKE'), orig = world.moveDoor.bind(world);
   world.moveDoor = (id, shut) => {
@@ -473,5 +478,18 @@ check('wrote the storeroom combination and got the key', writeOnBoard(world.stor
 }
 
 log(`Finished with score ${game.score}, lines ${game.lines}, lesson ${lessonNow()}. Quest events: ${events.quest.join(' > ')}`);
-console.log(failures ? `\n${failures} step(s) failed` : '\nThe whole caper works end to end.');
-process.exitCode = failures ? 1 : 0;
+print(failures ? `\n${failures} step(s) failed` : '\nThe whole caper works end to end.');
+return { failures, quest: events.quest };
+}
+
+// ---- From the command line ---------------------------------------------------
+if (typeof process !== 'undefined' && process.argv && process.argv[1] && import.meta.url === (await import('node:url')).pathToFileURL(process.argv[1]).href) {
+  const { Game } = await import('../src/engine/game.js');
+  const { FakeInput } = await import('../src/ui/input.js');
+  const { measureText, fontHas } = await import('./node-font.mjs');
+  const seed = Number(process.argv[2] || 2026);
+  const input = new FakeInput();
+  const game = new Game({ input, seed, config: { freezeOnMessages: false, maxLines: 1e9 }, measureText, fontHas });
+  const { failures } = runPlaythrough(game, input, { debug: !!process.env.BTS_DEBUG });
+  process.exitCode = failures ? 1 : 0;
+}
