@@ -691,6 +691,166 @@
       "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160907_5abb1f1b-d52b-474d-8971-8e2c6b1bca4e.png",
       "source": "art-src/room-Kitchen.png",
       "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school kitchen with white tiled walls, a big cream enamel cooker, a deep steel sink with taps, wall cupboards, hanging pans, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "objects-1",
+      "kind": "objects",
+      "model": "gpt_image_2_6",
+      "aspect": "3:4",
+      "job_id": "0201643d-f2cd-4869-b5b3-8d79fb48eea5",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_161648_0201643d-f2cd-4869-b5b3-8d79fb48eea5.png",
+      "source": "art-src/objects-1.png",
+      "grid": {
+        "rows": 4,
+        "cols": 3
+      },
+      "items": [
+        "CONKER",
+        "RUN",
+        "SIT",
+        "HOP1",
+        "HOP2",
+        "STINKBOMB",
+        "DESK_EMPTY",
+        "DESK_WATER_PISTOL",
+        "DESK_STINKBOMBS",
+        "BIKE_ON_FLOOR",
+        "PLANT_GROWING",
+        "PLANT_GROWN"
+      ],
+      "notes": "BIKE_UPRIGHT is taken from the furniture bike by build.py."
+    },
+    {
+      "id": "objects-2",
+      "kind": "objects",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "b151ddc2-4353-48de-820b-ebc83826bc25",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_161648_b151ddc2-4353-48de-820b-ebc83826bc25.png",
+      "source": "art-src/objects-2.png",
+      "grid": {
+        "rows": 3,
+        "cols": 3
+      },
+      "items": [
+        "FLY",
+        "WATER0",
+        "WATER1",
+        "WATER2",
+        "WATER3",
+        "WATER4",
+        "WATER_DROP",
+        "SHERRY_DROP",
+        null
+      ]
+    },
+    {
+      "id": "boy-b",
+      "kind": "characters",
+      "group": "BOY",
+      "variant": "B",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "0cf359b8-b2c1-4a0b-9021-e0a358eb86ce",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_161648_0cf359b8-b2c1-4a0b-9021-e0a358eb86ce.png",
+      "source": "art-src/boy-b.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: a young English schoolboy pupil in a 1985 school uniform, navy blazer, white shirt, red and navy striped tie, grey shorts, grey knee socks, black shoes, curly black hair, freckles, cheerful round face. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: cartoon dizzy, lying on the back on the floor after a comedy fall, head to the left, little cartoon stars above the head."
+    },
+    {
+      "id": "boy-c",
+      "kind": "characters",
+      "group": "BOY",
+      "variant": "C",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "01ff69ca-7537-4f35-b7b6-fd974d790091",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_161648_01ff69ca-7537-4f35-b7b6-fd974d790091.png",
+      "source": "art-src/boy-c.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: a young English schoolboy pupil in a 1985 school uniform, navy blazer, white shirt, red and navy striped tie, grey shorts, grey knee socks, black shoes, straight fair hair in a bowl cut, round glasses, thin serious face. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: cartoon dizzy, lying on the back on the floor after a comedy fall, head to the left, little cartoon stars above the head."
+    },
+    {
+      "id": "girl-b",
+      "kind": "characters",
+      "group": "GIRL",
+      "variant": "B",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "b9dada36-0c4c-4cc5-82e2-9e59e83622e0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_161647_b9dada36-0c4c-4cc5-82e2-9e59e83622e0.png",
+      "source": "art-src/girl-b.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: a young English schoolgirl pupil in a 1985 school uniform, royal-blue pinafore dress over a white blouse, white knee socks, black buckled shoes, black hair in two plaits tied with blue ribbons, freckles, friendly face. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: cartoon dizzy, lying on the back on the floor after a comedy fall, head to the left, little cartoon stars above the head."
+    },
+    {
+      "id": "girl-c",
+      "kind": "characters",
+      "group": "GIRL",
+      "variant": "C",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "00345c03-570e-49ce-bebf-af9bfcd00bc1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_161648_00345c03-570e-49ce-bebf-af9bfcd00bc1.png",
+      "source": "art-src/girl-c.png",
+      "key": null,
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "heightCells": 3,
+      "poses": [
+        "WALK0",
+        "WALK1",
+        "WALK3",
+        "SITTING_ON_CHAIR",
+        "SITTING_ON_FLOOR",
+        "KNOCKED_OUT"
+      ],
+      "nudge": {},
+      "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: a young English schoolgirl pupil in a 1985 school uniform, royal-blue pinafore dress over a white blouse, white knee socks, black buckled shoes, short blonde bob with a fringe, round glasses, friendly face. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: sitting on an unseen chair facing right, hands on the knees; cell 5: sitting on the floor, legs straight out in front; cell 6: cartoon dizzy, lying on the back on the floor after a comedy fall, head to the left, little cartoon stars above the head."
     }
   ]
 }

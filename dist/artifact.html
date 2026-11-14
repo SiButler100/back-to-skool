@@ -236,6 +236,8 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .tape-button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); cursor: pointer; white-space: nowrap; }
 .tape-status { font-size: 13px; color: var(--ink); }
 
+html.art-illustrated #game { image-rendering: auto; }   /* smooth scaling for the illustrated artwork */
+
 /* ---- Modern view chrome ------------------------------------------------------
    A game-style HUD bar flush on top of the screen, pixel keycaps and plan chips.
    Only applies with the modern view; the original view keeps its own look. */
@@ -282,6 +284,1496 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     <footer class="foot"><span>Back to Skool remake · built to be modified</span></footer>
   </div>
   
+<script>window.BTS_ART_BASE = "https://sibutler100.github.io/back-to-skool/assets/illustrated/"; window.BTS_ART_MANIFEST = {
+  "schema": 1,
+  "scale": 4,
+  "box": {
+    "w": 96,
+    "h": 128
+  },
+  "characters": {
+    "ERIC": {
+      "image": "characters/eric.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 20,
+          "h": 94,
+          "ox": -38,
+          "oy": -34
+        },
+        "CATAPULT0": {
+          "x": 24,
+          "y": 2,
+          "w": 30,
+          "h": 93,
+          "ox": -33,
+          "oy": -35
+        },
+        "WALK0": {
+          "x": 56,
+          "y": 2,
+          "w": 19,
+          "h": 92,
+          "ox": -38,
+          "oy": -36
+        },
+        "WATERPISTOL": {
+          "x": 77,
+          "y": 2,
+          "w": 54,
+          "h": 92,
+          "ox": -21,
+          "oy": -36
+        },
+        "RIDING_BIKE0": {
+          "x": 133,
+          "y": 2,
+          "w": 87,
+          "h": 91,
+          "ox": -4,
+          "oy": -37
+        },
+        "RIDING_BIKE1": {
+          "x": 222,
+          "y": 2,
+          "w": 86,
+          "h": 91,
+          "ox": -5,
+          "oy": -37
+        },
+        "WALK1": {
+          "x": 310,
+          "y": 2,
+          "w": 54,
+          "h": 90,
+          "ox": -21,
+          "oy": -38
+        },
+        "WALK3": {
+          "x": 366,
+          "y": 2,
+          "w": 55,
+          "h": 90,
+          "ox": -20,
+          "oy": -38
+        },
+        "CATAPULT1": {
+          "x": 423,
+          "y": 2,
+          "w": 65,
+          "h": 90,
+          "ox": -16,
+          "oy": -38
+        },
+        "HITTING1": {
+          "x": 490,
+          "y": 2,
+          "w": 66,
+          "h": 88,
+          "ox": -15,
+          "oy": -40
+        },
+        "HITTING0": {
+          "x": 558,
+          "y": 2,
+          "w": 46,
+          "h": 84,
+          "ox": -25,
+          "oy": -44
+        },
+        "SITTING_ON_CHAIR": {
+          "x": 606,
+          "y": 2,
+          "w": 41,
+          "h": 76,
+          "ox": -28,
+          "oy": -52
+        },
+        "BENDING_OVER": {
+          "x": 649,
+          "y": 2,
+          "w": 52,
+          "h": 60,
+          "ox": -22,
+          "oy": -68
+        },
+        "SITTING_ON_FLOOR": {
+          "x": 703,
+          "y": 2,
+          "w": 75,
+          "h": 56,
+          "ox": -10,
+          "oy": -72
+        },
+        "KNOCKED_OUT": {
+          "x": 780,
+          "y": 2,
+          "w": 90,
+          "h": 38,
+          "ox": -3,
+          "oy": -90
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "BOY": {
+      "variants": {
+        "A": {
+          "image": "characters/boy-a.png",
+          "frames": {
+            "WALK0": {
+              "x": 2,
+              "y": 2,
+              "w": 21,
+              "h": 92,
+              "ox": -38,
+              "oy": -36
+            },
+            "WALK1": {
+              "x": 25,
+              "y": 2,
+              "w": 56,
+              "h": 90,
+              "ox": -20,
+              "oy": -38
+            },
+            "WALK3": {
+              "x": 83,
+              "y": 2,
+              "w": 55,
+              "h": 90,
+              "ox": -20,
+              "oy": -38
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 140,
+              "y": 2,
+              "w": 40,
+              "h": 74,
+              "ox": -28,
+              "oy": -54
+            },
+            "SITTING_ON_FLOOR": {
+              "x": 182,
+              "y": 2,
+              "w": 73,
+              "h": 59,
+              "ox": -12,
+              "oy": -69
+            },
+            "KNOCKED_OUT": {
+              "x": 257,
+              "y": 2,
+              "w": 100,
+              "h": 41,
+              "ox": 2,
+              "oy": -87
+            },
+            "WALK2": {
+              "alias": "WALK0"
+            }
+          }
+        },
+        "B": {
+          "image": "characters/boy-b.png",
+          "frames": {
+            "WALK0": {
+              "x": 2,
+              "y": 2,
+              "w": 22,
+              "h": 92,
+              "ox": -37,
+              "oy": -36
+            },
+            "WALK1": {
+              "x": 26,
+              "y": 2,
+              "w": 53,
+              "h": 91,
+              "ox": -22,
+              "oy": -37
+            },
+            "WALK3": {
+              "x": 81,
+              "y": 2,
+              "w": 57,
+              "h": 91,
+              "ox": -20,
+              "oy": -37
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 140,
+              "y": 2,
+              "w": 42,
+              "h": 80,
+              "ox": -27,
+              "oy": -48
+            },
+            "SITTING_ON_FLOOR": {
+              "x": 184,
+              "y": 2,
+              "w": 104,
+              "h": 62,
+              "ox": 4,
+              "oy": -66
+            },
+            "KNOCKED_OUT": {
+              "x": 290,
+              "y": 2,
+              "w": 99,
+              "h": 40,
+              "ox": 2,
+              "oy": -88
+            },
+            "WALK2": {
+              "alias": "WALK0"
+            }
+          }
+        },
+        "C": {
+          "image": "characters/boy-c.png",
+          "frames": {
+            "WALK0": {
+              "x": 2,
+              "y": 2,
+              "w": 20,
+              "h": 92,
+              "ox": -38,
+              "oy": -36
+            },
+            "WALK1": {
+              "x": 24,
+              "y": 2,
+              "w": 57,
+              "h": 90,
+              "ox": -20,
+              "oy": -38
+            },
+            "WALK3": {
+              "x": 83,
+              "y": 2,
+              "w": 58,
+              "h": 90,
+              "ox": -19,
+              "oy": -38
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 143,
+              "y": 2,
+              "w": 42,
+              "h": 77,
+              "ox": -27,
+              "oy": -51
+            },
+            "SITTING_ON_FLOOR": {
+              "x": 187,
+              "y": 2,
+              "w": 94,
+              "h": 60,
+              "ox": -1,
+              "oy": -68
+            },
+            "KNOCKED_OUT": {
+              "x": 283,
+              "y": 2,
+              "w": 103,
+              "h": 44,
+              "ox": 4,
+              "oy": -85
+            },
+            "WALK2": {
+              "alias": "WALK0"
+            }
+          }
+        }
+      }
+    },
+    "GIRL": {
+      "variants": {
+        "A": {
+          "image": "characters/girl-a.png",
+          "frames": {
+            "WALK0": {
+              "x": 2,
+              "y": 2,
+              "w": 22,
+              "h": 92,
+              "ox": -37,
+              "oy": -36
+            },
+            "WALK1": {
+              "x": 26,
+              "y": 2,
+              "w": 54,
+              "h": 91,
+              "ox": -21,
+              "oy": -37
+            },
+            "WALK3": {
+              "x": 82,
+              "y": 2,
+              "w": 58,
+              "h": 91,
+              "ox": -19,
+              "oy": -37
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 142,
+              "y": 2,
+              "w": 40,
+              "h": 75,
+              "ox": -28,
+              "oy": -53
+            },
+            "SITTING_ON_FLOOR": {
+              "x": 184,
+              "y": 2,
+              "w": 100,
+              "h": 55,
+              "ox": 2,
+              "oy": -73
+            },
+            "KNOCKED_OUT": {
+              "x": 286,
+              "y": 2,
+              "w": 107,
+              "h": 21,
+              "ox": 6,
+              "oy": -107
+            },
+            "WALK2": {
+              "alias": "WALK0"
+            }
+          }
+        },
+        "B": {
+          "image": "characters/girl-b.png",
+          "frames": {
+            "WALK0": {
+              "x": 2,
+              "y": 2,
+              "w": 23,
+              "h": 92,
+              "ox": -36,
+              "oy": -36
+            },
+            "WALK1": {
+              "x": 27,
+              "y": 2,
+              "w": 55,
+              "h": 91,
+              "ox": -20,
+              "oy": -37
+            },
+            "WALK3": {
+              "x": 84,
+              "y": 2,
+              "w": 57,
+              "h": 91,
+              "ox": -20,
+              "oy": -37
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 143,
+              "y": 2,
+              "w": 47,
+              "h": 81,
+              "ox": -24,
+              "oy": -47
+            },
+            "SITTING_ON_FLOOR": {
+              "x": 192,
+              "y": 2,
+              "w": 110,
+              "h": 64,
+              "ox": 6,
+              "oy": -64
+            },
+            "KNOCKED_OUT": {
+              "x": 304,
+              "y": 2,
+              "w": 103,
+              "h": 41,
+              "ox": 4,
+              "oy": -87
+            },
+            "WALK2": {
+              "alias": "WALK0"
+            }
+          }
+        },
+        "C": {
+          "image": "characters/girl-c.png",
+          "frames": {
+            "WALK0": {
+              "x": 2,
+              "y": 2,
+              "w": 21,
+              "h": 92,
+              "ox": -38,
+              "oy": -36
+            },
+            "WALK3": {
+              "x": 25,
+              "y": 2,
+              "w": 52,
+              "h": 91,
+              "ox": -22,
+              "oy": -37
+            },
+            "WALK1": {
+              "x": 79,
+              "y": 2,
+              "w": 52,
+              "h": 90,
+              "ox": -22,
+              "oy": -38
+            },
+            "SITTING_ON_CHAIR": {
+              "x": 133,
+              "y": 2,
+              "w": 40,
+              "h": 78,
+              "ox": -28,
+              "oy": -50
+            },
+            "SITTING_ON_FLOOR": {
+              "x": 175,
+              "y": 2,
+              "w": 104,
+              "h": 59,
+              "ox": 2,
+              "oy": -69
+            },
+            "KNOCKED_OUT": {
+              "x": 281,
+              "y": 2,
+              "w": 96,
+              "h": 28,
+              "ox": 0,
+              "oy": -100
+            },
+            "WALK2": {
+              "alias": "WALK0"
+            }
+          }
+        }
+      }
+    },
+    "SWOT": {
+      "image": "characters/swot.png",
+      "frames": {
+        "WALK0": {
+          "x": 2,
+          "y": 2,
+          "w": 22,
+          "h": 92,
+          "ox": -37,
+          "oy": -36
+        },
+        "WALK1": {
+          "x": 26,
+          "y": 2,
+          "w": 52,
+          "h": 91,
+          "ox": -22,
+          "oy": -38
+        },
+        "WALK3": {
+          "x": 80,
+          "y": 2,
+          "w": 57,
+          "h": 91,
+          "ox": -20,
+          "oy": -37
+        },
+        "SITTING_ON_CHAIR": {
+          "x": 139,
+          "y": 2,
+          "w": 41,
+          "h": 79,
+          "ox": -28,
+          "oy": -49
+        },
+        "SITTING_ON_FLOOR": {
+          "x": 182,
+          "y": 2,
+          "w": 113,
+          "h": 59,
+          "ox": 8,
+          "oy": -69
+        },
+        "KNOCKED_OUT": {
+          "x": 297,
+          "y": 2,
+          "w": 108,
+          "h": 22,
+          "ox": 6,
+          "oy": -106
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "BULLY": {
+      "image": "characters/bully.png",
+      "frames": {
+        "WALK0": {
+          "x": 2,
+          "y": 2,
+          "w": 33,
+          "h": 92,
+          "ox": -32,
+          "oy": -36
+        },
+        "WALK1": {
+          "x": 37,
+          "y": 2,
+          "w": 58,
+          "h": 89,
+          "ox": -19,
+          "oy": -39
+        },
+        "WALK3": {
+          "x": 97,
+          "y": 2,
+          "w": 62,
+          "h": 89,
+          "ox": -17,
+          "oy": -39
+        },
+        "HITTING0": {
+          "x": 161,
+          "y": 2,
+          "w": 62,
+          "h": 89,
+          "ox": -17,
+          "oy": -39
+        },
+        "HITTING1": {
+          "x": 225,
+          "y": 2,
+          "w": 80,
+          "h": 88,
+          "ox": -8,
+          "oy": -40
+        },
+        "SITTING_ON_CHAIR": {
+          "x": 307,
+          "y": 2,
+          "w": 56,
+          "h": 82,
+          "ox": -20,
+          "oy": -46
+        },
+        "SITTING_ON_FLOOR": {
+          "x": 365,
+          "y": 2,
+          "w": 79,
+          "h": 63,
+          "ox": -8,
+          "oy": -65
+        },
+        "KNOCKED_OUT": {
+          "x": 446,
+          "y": 2,
+          "w": 96,
+          "h": 31,
+          "ox": 0,
+          "oy": -97
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "TEARAWAY": {
+      "image": "characters/tearaway.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 26,
+          "h": 99,
+          "ox": -35,
+          "oy": -29
+        },
+        "WALK0": {
+          "x": 30,
+          "y": 2,
+          "w": 23,
+          "h": 92,
+          "ox": -36,
+          "oy": -36
+        },
+        "WALK1": {
+          "x": 55,
+          "y": 2,
+          "w": 55,
+          "h": 91,
+          "ox": -20,
+          "oy": -37
+        },
+        "WALK3": {
+          "x": 112,
+          "y": 2,
+          "w": 57,
+          "h": 91,
+          "ox": -20,
+          "oy": -37
+        },
+        "CATAPULT0": {
+          "x": 171,
+          "y": 2,
+          "w": 35,
+          "h": 89,
+          "ox": -30,
+          "oy": -39
+        },
+        "CATAPULT1": {
+          "x": 208,
+          "y": 2,
+          "w": 60,
+          "h": 88,
+          "ox": -18,
+          "oy": -40
+        },
+        "SITTING_ON_CHAIR": {
+          "x": 270,
+          "y": 2,
+          "w": 52,
+          "h": 79,
+          "ox": -22,
+          "oy": -49
+        },
+        "SITTING_ON_FLOOR": {
+          "x": 324,
+          "y": 2,
+          "w": 80,
+          "h": 61,
+          "ox": -8,
+          "oy": -67
+        },
+        "KNOCKED_OUT": {
+          "x": 406,
+          "y": 2,
+          "w": 104,
+          "h": 41,
+          "ox": 4,
+          "oy": -87
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "HEROINE": {
+      "image": "characters/heroine.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 32,
+          "h": 108,
+          "ox": -32,
+          "oy": -20
+        },
+        "KISSING_ERIC": {
+          "x": 36,
+          "y": 2,
+          "w": 65,
+          "h": 99,
+          "ox": -16,
+          "oy": -29
+        },
+        "WALK0": {
+          "x": 103,
+          "y": 2,
+          "w": 22,
+          "h": 92,
+          "ox": -37,
+          "oy": -36
+        },
+        "WALK1": {
+          "x": 127,
+          "y": 2,
+          "w": 55,
+          "h": 89,
+          "ox": -20,
+          "oy": -39
+        },
+        "WALK3": {
+          "x": 184,
+          "y": 2,
+          "w": 56,
+          "h": 89,
+          "ox": -20,
+          "oy": -39
+        },
+        "SITTING_ON_CHAIR": {
+          "x": 242,
+          "y": 2,
+          "w": 47,
+          "h": 76,
+          "ox": -24,
+          "oy": -52
+        },
+        "SITTING_ON_FLOOR": {
+          "x": 291,
+          "y": 2,
+          "w": 78,
+          "h": 58,
+          "ox": -9,
+          "oy": -70
+        },
+        "KNOCKED_OUT": {
+          "x": 371,
+          "y": 2,
+          "w": 99,
+          "h": 21,
+          "ox": 2,
+          "oy": -107
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "WACKER": {
+      "image": "characters/wacker.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 41,
+          "h": 136,
+          "ox": -28,
+          "oy": 8
+        },
+        "WALK0": {
+          "x": 45,
+          "y": 2,
+          "w": 38,
+          "h": 122,
+          "ox": -29,
+          "oy": -6
+        },
+        "WALK1": {
+          "x": 85,
+          "y": 2,
+          "w": 75,
+          "h": 122,
+          "ox": -10,
+          "oy": -7
+        },
+        "WALK3": {
+          "x": 162,
+          "y": 2,
+          "w": 74,
+          "h": 122,
+          "ox": -11,
+          "oy": -7
+        },
+        "KNOCKED_OVER": {
+          "x": 238,
+          "y": 2,
+          "w": 118,
+          "h": 82,
+          "ox": 11,
+          "oy": -47
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "WITHIT": {
+      "image": "characters/withit.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 43,
+          "h": 143,
+          "ox": -26,
+          "oy": 15
+        },
+        "WALK0": {
+          "x": 47,
+          "y": 2,
+          "w": 36,
+          "h": 122,
+          "ox": -30,
+          "oy": -6
+        },
+        "WALK1": {
+          "x": 85,
+          "y": 2,
+          "w": 82,
+          "h": 122,
+          "ox": -7,
+          "oy": -7
+        },
+        "WALK3": {
+          "x": 169,
+          "y": 2,
+          "w": 79,
+          "h": 122,
+          "ox": -8,
+          "oy": -7
+        },
+        "KNOCKED_OVER": {
+          "x": 250,
+          "y": 2,
+          "w": 119,
+          "h": 84,
+          "ox": 12,
+          "oy": -44
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "ROCKITT": {
+      "image": "characters/rockitt.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 38,
+          "h": 136,
+          "ox": -29,
+          "oy": 8
+        },
+        "WALK0": {
+          "x": 42,
+          "y": 2,
+          "w": 35,
+          "h": 122,
+          "ox": -30,
+          "oy": -6
+        },
+        "WALK1": {
+          "x": 79,
+          "y": 2,
+          "w": 72,
+          "h": 119,
+          "ox": -12,
+          "oy": -9
+        },
+        "WALK3": {
+          "x": 153,
+          "y": 2,
+          "w": 73,
+          "h": 119,
+          "ox": -12,
+          "oy": -9
+        },
+        "KNOCKED_OVER": {
+          "x": 228,
+          "y": 2,
+          "w": 104,
+          "h": 76,
+          "ox": 4,
+          "oy": -53
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "CREAK": {
+      "image": "characters/creak.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 53,
+          "h": 139,
+          "ox": -22,
+          "oy": 11
+        },
+        "WALK0": {
+          "x": 57,
+          "y": 2,
+          "w": 50,
+          "h": 122,
+          "ox": -23,
+          "oy": -6
+        },
+        "WALK1": {
+          "x": 109,
+          "y": 2,
+          "w": 72,
+          "h": 119,
+          "ox": -12,
+          "oy": -10
+        },
+        "WALK3": {
+          "x": 183,
+          "y": 2,
+          "w": 74,
+          "h": 119,
+          "ox": -11,
+          "oy": -10
+        },
+        "KNOCKED_OVER": {
+          "x": 259,
+          "y": 2,
+          "w": 94,
+          "h": 97,
+          "ox": -1,
+          "oy": -32
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "TAKE": {
+      "image": "characters/take.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 37,
+          "h": 134,
+          "ox": -30,
+          "oy": 6
+        },
+        "WALK0": {
+          "x": 41,
+          "y": 2,
+          "w": 32,
+          "h": 122,
+          "ox": -32,
+          "oy": -6
+        },
+        "WALK1": {
+          "x": 75,
+          "y": 2,
+          "w": 71,
+          "h": 120,
+          "ox": -12,
+          "oy": -8
+        },
+        "WALK3": {
+          "x": 148,
+          "y": 2,
+          "w": 75,
+          "h": 120,
+          "ox": -10,
+          "oy": -8
+        },
+        "KNOCKED_OVER": {
+          "x": 225,
+          "y": 2,
+          "w": 105,
+          "h": 98,
+          "ox": 4,
+          "oy": -31
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    },
+    "ALBERT": {
+      "image": "characters/albert.png",
+      "frames": {
+        "ARM_UP": {
+          "x": 2,
+          "y": 2,
+          "w": 53,
+          "h": 132,
+          "ox": -22,
+          "oy": 4
+        },
+        "WALK0": {
+          "x": 57,
+          "y": 2,
+          "w": 43,
+          "h": 122,
+          "ox": -26,
+          "oy": -6
+        },
+        "WALK1": {
+          "x": 102,
+          "y": 2,
+          "w": 78,
+          "h": 121,
+          "ox": -9,
+          "oy": -8
+        },
+        "WALK3": {
+          "x": 182,
+          "y": 2,
+          "w": 77,
+          "h": 121,
+          "ox": -10,
+          "oy": -7
+        },
+        "KNOCKED_OVER": {
+          "x": 261,
+          "y": 2,
+          "w": 99,
+          "h": 88,
+          "ox": 2,
+          "oy": -40
+        },
+        "WALK2": {
+          "alias": "WALK0"
+        }
+      }
+    }
+  },
+  "objects": {
+    "image": "objects.png",
+    "frames": {
+      "WATER4": {
+        "x": 2,
+        "y": 2,
+        "w": 60,
+        "h": 128,
+        "ox": -18,
+        "oy": 0
+      },
+      "PLANT_GROWN": {
+        "x": 64,
+        "y": 2,
+        "w": 45,
+        "h": 116,
+        "ox": -25,
+        "oy": -12
+      },
+      "WATER3": {
+        "x": 111,
+        "y": 2,
+        "w": 96,
+        "h": 72,
+        "ox": 0,
+        "oy": -28
+      },
+      "STINKBOMB": {
+        "x": 209,
+        "y": 2,
+        "w": 78,
+        "h": 53,
+        "ox": -9,
+        "oy": -67
+      },
+      "WATER0": {
+        "x": 289,
+        "y": 2,
+        "w": 94,
+        "h": 50,
+        "ox": -1,
+        "oy": -39
+      },
+      "WATER2": {
+        "x": 385,
+        "y": 2,
+        "w": 96,
+        "h": 48,
+        "ox": 0,
+        "oy": -40
+      },
+      "BIKE_UPRIGHT": {
+        "x": 483,
+        "y": 2,
+        "w": 66,
+        "h": 48,
+        "ox": -15,
+        "oy": -80
+      },
+      "DESK_EMPTY": {
+        "x": 551,
+        "y": 2,
+        "w": 32,
+        "h": 40,
+        "ox": -32,
+        "oy": -52
+      },
+      "DESK_WATER_PISTOL": {
+        "x": 585,
+        "y": 2,
+        "w": 32,
+        "h": 40,
+        "ox": -32,
+        "oy": -52
+      },
+      "DESK_STINKBOMBS": {
+        "x": 619,
+        "y": 2,
+        "w": 32,
+        "h": 40,
+        "ox": -32,
+        "oy": -52
+      },
+      "PLANT_GROWING": {
+        "x": 653,
+        "y": 2,
+        "w": 34,
+        "h": 40,
+        "ox": -31,
+        "oy": -88
+      },
+      "WATER1": {
+        "x": 689,
+        "y": 2,
+        "w": 96,
+        "h": 39,
+        "ox": 0,
+        "oy": -44
+      },
+      "SIT": {
+        "x": 787,
+        "y": 2,
+        "w": 45,
+        "h": 32,
+        "ox": -25,
+        "oy": -96
+      },
+      "BIKE_ON_FLOOR": {
+        "x": 834,
+        "y": 2,
+        "w": 65,
+        "h": 32,
+        "ox": -15,
+        "oy": -96
+      },
+      "HOP2": {
+        "x": 901,
+        "y": 2,
+        "w": 48,
+        "h": 30,
+        "ox": -24,
+        "oy": -98
+      },
+      "HOP1": {
+        "x": 951,
+        "y": 2,
+        "w": 47,
+        "h": 28,
+        "ox": -25,
+        "oy": -100
+      },
+      "RUN": {
+        "x": 1000,
+        "y": 2,
+        "w": 41,
+        "h": 18,
+        "ox": -21,
+        "oy": -100
+      },
+      "CONKER": {
+        "x": 1043,
+        "y": 2,
+        "w": 12,
+        "h": 12,
+        "ox": -32,
+        "oy": -96
+      },
+      "WATER_DROP": {
+        "x": 1057,
+        "y": 2,
+        "w": 6,
+        "h": 9,
+        "ox": -33,
+        "oy": -97
+      },
+      "SHERRY_DROP": {
+        "x": 1065,
+        "y": 2,
+        "w": 6,
+        "h": 9,
+        "ox": -33,
+        "oy": -97
+      },
+      "FLY": {
+        "x": 1073,
+        "y": 2,
+        "w": 8,
+        "h": 8,
+        "ox": -32,
+        "oy": -32
+      }
+    }
+  },
+  "rooms": {
+    "BlueRoom": {
+      "image": "rooms/BlueRoom.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Library": {
+      "image": "rooms/Library.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "YellowRoom": {
+      "image": "rooms/YellowRoom.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "HeadsCorridor": {
+      "image": "rooms/HeadsCorridor.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "HeadsStudy": {
+      "image": "rooms/HeadsStudy.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Landing": {
+      "image": "rooms/Landing.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "UpperRoom": {
+      "image": "rooms/UpperRoom.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "TakesStudy": {
+      "image": "rooms/TakesStudy.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Toilets": {
+      "image": "rooms/Toilets.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Corridor": {
+      "image": "rooms/Corridor.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "ScienceLab": {
+      "image": "rooms/ScienceLab.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Storeroom": {
+      "image": "rooms/Storeroom.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "HallUpper": {
+      "image": "rooms/HallUpper.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "StageUpper": {
+      "image": "rooms/StageUpper.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "MiddleRoom": {
+      "image": "rooms/MiddleRoom.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "GirlsCorridor": {
+      "image": "rooms/GirlsCorridor.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Cloakroom": {
+      "image": "rooms/Cloakroom.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "CupCorridor": {
+      "image": "rooms/CupCorridor.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "DinnerHall": {
+      "image": "rooms/DinnerHall.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "AssemblyHall": {
+      "image": "rooms/AssemblyHall.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "UnderLanding": {
+      "image": "rooms/UnderLanding.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "GirlsDinner": {
+      "image": "rooms/GirlsDinner.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Kitchen": {
+      "image": "rooms/Kitchen.jpg",
+      "w": 1045,
+      "h": 448
+    }
+  },
+  "furniture": {
+    "tree": {
+      "image": "furniture/items.png",
+      "x": 2,
+      "y": 2,
+      "w": 448,
+      "h": 640
+    },
+    "door:shut": {
+      "image": "furniture/items.png",
+      "x": 452,
+      "y": 2,
+      "w": 96,
+      "h": 176
+    },
+    "door:open": {
+      "image": "furniture/items.png",
+      "x": 550,
+      "y": 2,
+      "w": 96,
+      "h": 176
+    },
+    "railing": {
+      "image": "furniture/items.png",
+      "x": 648,
+      "y": 2,
+      "w": 160,
+      "h": 144
+    },
+    "gate:shut": {
+      "image": "furniture/items.png",
+      "x": 810,
+      "y": 2,
+      "w": 128,
+      "h": 144
+    },
+    "gate:open": {
+      "image": "furniture/items.png",
+      "x": 940,
+      "y": 2,
+      "w": 128,
+      "h": 144
+    },
+    "window2x4:shut": {
+      "image": "furniture/items.png",
+      "x": 1070,
+      "y": 2,
+      "w": 64,
+      "h": 128
+    },
+    "window2x4:open": {
+      "image": "furniture/items.png",
+      "x": 1136,
+      "y": 2,
+      "w": 64,
+      "h": 128
+    },
+    "blackboard": {
+      "image": "furniture/items.png",
+      "x": 1202,
+      "y": 2,
+      "w": 280,
+      "h": 104
+    },
+    "window3x3:shut": {
+      "image": "furniture/items.png",
+      "x": 1484,
+      "y": 2,
+      "w": 96,
+      "h": 96
+    },
+    "window3x3:open": {
+      "image": "furniture/items.png",
+      "x": 1582,
+      "y": 2,
+      "w": 96,
+      "h": 96
+    },
+    "desk": {
+      "image": "furniture/items.png",
+      "x": 1680,
+      "y": 2,
+      "w": 112,
+      "h": 96
+    },
+    "cabinet:shut": {
+      "image": "furniture/items.png",
+      "x": 1794,
+      "y": 2,
+      "w": 80,
+      "h": 72
+    },
+    "cabinet:open": {
+      "image": "furniture/items.png",
+      "x": 1876,
+      "y": 2,
+      "w": 80,
+      "h": 72
+    },
+    "bike": {
+      "image": "furniture/items.png",
+      "x": 2,
+      "y": 644,
+      "w": 96,
+      "h": 64
+    },
+    "safe": {
+      "image": "furniture/items.png",
+      "x": 100,
+      "y": 644,
+      "w": 80,
+      "h": 56
+    },
+    "cup:EMPTY": {
+      "image": "furniture/items.png",
+      "x": 182,
+      "y": 644,
+      "w": 40,
+      "h": 32
+    },
+    "cup:WATER": {
+      "image": "furniture/items.png",
+      "x": 224,
+      "y": 644,
+      "w": 40,
+      "h": 32
+    },
+    "cup:SHERRY": {
+      "image": "furniture/items.png",
+      "x": 266,
+      "y": 644,
+      "w": 40,
+      "h": 32
+    },
+    "cup:FROG": {
+      "image": "furniture/items.png",
+      "x": 308,
+      "y": 644,
+      "w": 40,
+      "h": 32
+    },
+    "conker": {
+      "image": "furniture/items.png",
+      "x": 350,
+      "y": 644,
+      "w": 16,
+      "h": 16
+    }
+  },
+  "textures": {}
+};</script>
 <script>
 (() => {
   // src/data/skool.js
@@ -2747,24 +4239,24 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   // src/data/cast.js
   var CHARACTERS = [
     // --- Girls -------------------------------------------------------------
-    { id: "GIRL01", name: "JESSICA", group: "GIRL", dir: -1, x: 117, y: 17, headXY: [1, 1], flags: "FGM", look: { hair: "#5b3a1e", dress: "#2f7df6" } },
-    { id: "GIRL02", name: "HYACINTH", group: "GIRL", dir: 1, x: 114, y: 17, headXY: [1, 1], flags: "FGM", look: { hair: "#1c1c1c", dress: "#2f7df6" } },
-    { id: "GIRL03", name: "PENELOPE", group: "GIRL", dir: -1, x: 120, y: 17, headXY: [1, 1], flags: "FGM", look: { hair: "#c98a2c", dress: "#2f7df6" } },
-    { id: "GIRL04", name: "VIOLET", group: "GIRL", dir: 1, x: 160, y: 17, headXY: [1, 1], flags: "FGM", look: { hair: "#7a2a1a", dress: "#2f7df6" } },
-    { id: "GIRL05", name: "AMELIA", group: "GIRL", dir: -1, x: 163, y: 17, headXY: [1, 1], flags: "FGM", look: { hair: "#f0d36b", dress: "#2f7df6" } },
-    { id: "GIRL06", name: "SARAH-JANE", group: "GIRL", dir: 1, x: 166, y: 17, headXY: [1, 1], flags: "FGM", look: { hair: "#3b2a1a", dress: "#2f7df6" } },
-    { id: "GIRL07", name: "PHILIPPA", group: "GIRL", dir: -1, x: 165, y: 17, headXY: [1, 1], flags: "FGM", look: { hair: "#a04a2a", dress: "#2f7df6" } },
+    { id: "GIRL01", name: "JESSICA", group: "GIRL", dir: -1, x: 117, y: 17, headXY: [1, 1], flags: "FGM", look: { variant: "A", hair: "#5b3a1e", dress: "#2f7df6" } },
+    { id: "GIRL02", name: "HYACINTH", group: "GIRL", dir: 1, x: 114, y: 17, headXY: [1, 1], flags: "FGM", look: { variant: "B", hair: "#1c1c1c", dress: "#2f7df6" } },
+    { id: "GIRL03", name: "PENELOPE", group: "GIRL", dir: -1, x: 120, y: 17, headXY: [1, 1], flags: "FGM", look: { variant: "C", hair: "#c98a2c", dress: "#2f7df6" } },
+    { id: "GIRL04", name: "VIOLET", group: "GIRL", dir: 1, x: 160, y: 17, headXY: [1, 1], flags: "FGM", look: { variant: "A", hair: "#7a2a1a", dress: "#2f7df6" } },
+    { id: "GIRL05", name: "AMELIA", group: "GIRL", dir: -1, x: 163, y: 17, headXY: [1, 1], flags: "FGM", look: { variant: "B", hair: "#f0d36b", dress: "#2f7df6" } },
+    { id: "GIRL06", name: "SARAH-JANE", group: "GIRL", dir: 1, x: 166, y: 17, headXY: [1, 1], flags: "FGM", look: { variant: "C", hair: "#3b2a1a", dress: "#2f7df6" } },
+    { id: "GIRL07", name: "PHILIPPA", group: "GIRL", dir: -1, x: 165, y: 17, headXY: [1, 1], flags: "FGM", look: { variant: "A", hair: "#a04a2a", dress: "#2f7df6" } },
     // --- Boys ---------------------------------------------------------------
-    { id: "BOY01", name: "PERKINS", group: "BOY", dir: -1, x: 5, y: 10, headXY: [1, 1], flags: "BF", look: { hair: "#4a2e14" } },
-    { id: "BOY02", name: "GIBSON", group: "BOY", dir: 1, x: 7, y: 10, headXY: [1, 1], flags: "BF", look: { hair: "#1c1c1c" } },
-    { id: "BOY03", name: "FANSHAW", group: "BOY", dir: -1, x: 10, y: 10, headXY: [1, 1], flags: "BF", look: { hair: "#d8a640" } },
-    { id: "BOY04", name: "SMITH", group: "BOY", dir: 1, x: 72, y: 17, headXY: [1, 1], flags: "BF", look: { hair: "#6a3f1c" } },
-    { id: "BOY05", name: "HARRIS", group: "BOY", dir: -1, x: 74, y: 17, headXY: [1, 1], flags: "BF", look: { hair: "#8a2a1a" } },
-    { id: "BOY06", name: "MILLER", group: "BOY", dir: 1, x: 104, y: 17, headXY: [1, 1], flags: "BF", look: { hair: "#2a2a2a" } },
-    { id: "BOY07", name: "JONES", group: "BOY", dir: -1, x: 107, y: 17, headXY: [1, 1], flags: "BF", look: { hair: "#4a2e14" } },
-    { id: "BOY08", name: "VICKERS", group: "BOY", dir: 1, x: 110, y: 17, headXY: [1, 1], flags: "BF", look: { hair: "#c08030" } },
-    { id: "BOY09", name: "BUTLER", group: "BOY", dir: -1, x: 123, y: 17, headXY: [1, 1], flags: "BF", look: { hair: "#3a2a1a" } },
-    { id: "BOY10", name: "COOK", group: "BOY", dir: 1, x: 126, y: 17, headXY: [1, 1], flags: "BF", look: { hair: "#1c1c1c" } },
+    { id: "BOY01", name: "PERKINS", group: "BOY", dir: -1, x: 5, y: 10, headXY: [1, 1], flags: "BF", look: { variant: "A", hair: "#4a2e14" } },
+    { id: "BOY02", name: "GIBSON", group: "BOY", dir: 1, x: 7, y: 10, headXY: [1, 1], flags: "BF", look: { variant: "B", hair: "#1c1c1c" } },
+    { id: "BOY03", name: "FANSHAW", group: "BOY", dir: -1, x: 10, y: 10, headXY: [1, 1], flags: "BF", look: { variant: "C", hair: "#d8a640" } },
+    { id: "BOY04", name: "SMITH", group: "BOY", dir: 1, x: 72, y: 17, headXY: [1, 1], flags: "BF", look: { variant: "A", hair: "#6a3f1c" } },
+    { id: "BOY05", name: "HARRIS", group: "BOY", dir: -1, x: 74, y: 17, headXY: [1, 1], flags: "BF", look: { variant: "B", hair: "#8a2a1a" } },
+    { id: "BOY06", name: "MILLER", group: "BOY", dir: 1, x: 104, y: 17, headXY: [1, 1], flags: "BF", look: { variant: "C", hair: "#2a2a2a" } },
+    { id: "BOY07", name: "JONES", group: "BOY", dir: -1, x: 107, y: 17, headXY: [1, 1], flags: "BF", look: { variant: "A", hair: "#4a2e14" } },
+    { id: "BOY08", name: "VICKERS", group: "BOY", dir: 1, x: 110, y: 17, headXY: [1, 1], flags: "BF", look: { variant: "B", hair: "#c08030" } },
+    { id: "BOY09", name: "BUTLER", group: "BOY", dir: -1, x: 123, y: 17, headXY: [1, 1], flags: "BF", look: { variant: "C", hair: "#3a2a1a" } },
+    { id: "BOY10", name: "COOK", group: "BOY", dir: 1, x: 126, y: 17, headXY: [1, 1], flags: "BF", look: { variant: "A", hair: "#1c1c1c" } },
     // --- Staff --------------------------------------------------------------
     { id: "WACKER", name: "MR WACKER", title: "Sir", group: "WACKER", dir: -1, x: 76, y: 3, headXY: [1, 0], flags: "ABCDLNPWXY", look: { hair: "#dddddd", suit: "#1b1b1b", gown: true, mortarboard: true } },
     { id: "WITHIT", name: "MR WITHIT", title: "Sir", group: "WITHIT", dir: 1, x: 15, y: 17, headXY: [1, 0], flags: "ABCDLPWXY", look: { hair: "#2a1a0a", suit: "#4b6b3a", beard: true } },
@@ -8544,10 +10036,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   var STOREY_TOP = { top: 0, middle: 7, ground: 14 };
   function buildHdBackdrop(theme, S) {
     const C5 = SKOOL.cell * S;
+    const canvas = makeCanvas(SKOOL.width * C5, SKOOL.height * C5);
+    const ctx = canvas.getContext("2d");
+    paintBase(ctx, theme, S);
+    paintStructure(ctx, theme, S);
+    return canvas;
+  }
+  function paintBase(ctx, theme, S) {
+    const C5 = SKOOL.cell * S;
     const W2 = SKOOL.width * C5, H = SKOOL.height * C5;
     const hd = theme.hd;
-    const canvas = makeCanvas(W2, H);
-    const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = false;
     const rect = (x, y, w, h, colour) => {
       ctx.fillStyle = colour;
@@ -8566,6 +10064,16 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     rect(0, feet(17), W2, 4, hd.groundEdge);
     for (const b of DECOR.buildings) paintShell(ctx, hd, b, C5, W2, H);
     for (const z of DECOR.zones) paintZone(ctx, hd, z, C5);
+  }
+  function paintStructure(ctx, theme, S, skip = {}) {
+    const C5 = SKOOL.cell * S;
+    const hd = theme.hd;
+    ctx.imageSmoothingEnabled = false;
+    const rect = (x, y, w, h, colour) => {
+      ctx.fillStyle = colour;
+      ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+    };
+    const feet = (row) => (row + 4) * C5;
     for (const f of SKOOL.floors) {
       if (f.id === "Stage") continue;
       const y = feet(f.y) - 6, x0 = f.minX * C5, x1 = (f.maxX + 3) * C5;
@@ -8595,25 +10103,29 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     rect(95 * C5 + 8, 0, 8, feet(17) + 4, hd.brick.boysDark);
     rect(159 * C5, 0, 8, feet(17) + 4, hd.brick.girlsDark);
     for (const s of SKOOL.staircases) paintStaircase2(ctx, hd, s, C5);
-    for (const b of SKOOL.blackboards) {
-      const x = b.topLeft[0] * C5, y = b.topLeft[1] * C5, w = b.size[0] * C5, h = b.size[1] * C5;
-      rect(x - 6, y - 6, w + 12, h + 12, hd.boardFrame);
-      rect(x - 6, y - 6, w + 12, 2, hd.boardFrameLight);
-      rect(x - 6, y - 6, 2, h + 12, hd.boardFrameLight);
-      rect(x, y, w, h, theme.blackboard);
-      rect(x - 6, y + h + 6, w + 12, 4, hd.boardFrame);
-      rect(x - 4, y + h + 7, 8, 2, "#f5f5dc");
+    if (!skip.boards) {
+      for (const b of SKOOL.blackboards) {
+        const x = b.topLeft[0] * C5, y = b.topLeft[1] * C5, w = b.size[0] * C5, h = b.size[1] * C5;
+        rect(x - 6, y - 6, w + 12, h + 12, hd.boardFrame);
+        rect(x - 6, y - 6, w + 12, 2, hd.boardFrameLight);
+        rect(x - 6, y - 6, 2, h + 12, hd.boardFrameLight);
+        rect(x, y, w, h, theme.blackboard);
+        rect(x - 6, y + h + 6, w + 12, 4, hd.boardFrame);
+        rect(x - 4, y + h + 7, 8, 2, "#f5f5dc");
+      }
     }
-    for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
-      const room = SKOOL.rooms.find((r) => r.id === roomId);
-      const floor = (room.bottomRight[1] + 1) * C5;
-      for (const x of xs) paintDesk2(ctx, hd, x * C5, floor);
+    if (!skip.desks) {
+      for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
+        const room = SKOOL.rooms.find((r) => r.id === roomId);
+        const floor = (room.bottomRight[1] + 1) * C5;
+        for (const x of xs) paintDesk2(ctx, hd, x * C5, floor);
+      }
     }
     for (const cup2 of SKOOL.cups) {
       rect(cup2.x * C5 + 6, cup2.y * C5 - 2, 4, 4, hd.wall);
     }
     rect(SKOOL.safe.x * C5 - 6, SKOOL.safe.y * C5 + 20, 44, 4, hd.wall);
-    paintPlayground(ctx, hd, C5, feet(17));
+    paintPlayground(ctx, hd, C5, feet(17), skip.tree, skip.railings);
     for (const z of DECOR.zones) {
       if (!z.plaque) continue;
       const cx = (z.x0 + z.x1) / 2 * C5, y = STOREY_TOP[z.storey] * C5 + 8;
@@ -8621,7 +10133,9 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       rect(cx - w / 2, y - 4, w, 22, hd.plaque);
       drawHdText(ctx, z.plaque, Math.round(cx - measureHd(z.plaque) / 2), y, hd.plaqueInk);
     }
-    return canvas;
+  }
+  function zoneRect(z) {
+    return { x0: z.x0, x1: z.x1, top: STOREY_TOP[z.storey], floor: FLOOR_Y[z.storey] + 4 };
   }
   function paintShell(ctx, hd, b, C5, W2, H) {
     const x0 = b.x0 * C5, x1 = Math.min(W2, b.x1 * C5);
@@ -8897,7 +10411,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
   .....AAAAAAAZZA.....
   .......AAAZZA.......
 `, "leaves");
-  function paintPlayground(ctx, hd, C5, ground) {
+  function paintPlayground(ctx, hd, C5, ground, skipTree = false, skipRailings = false) {
     const rect = (x, y, w, h, c) => {
       ctx.fillStyle = c;
       ctx.fillRect(x, y, w, h);
@@ -8916,9 +10430,12 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       rect(gx * C5 + 6, 14 * C5, 2, 6 * C5 + 8, hd.ironLight);
       rect(gx * C5 + 4, 14 * C5 - 4, 12, 4, hd.iron);
     }
-    for (let x = p.gate[1] * C5 + 20; x < p.x1 * C5; x += 16) rect(x, 16 * C5, 4, 4 * C5 + 8, hd.iron);
-    rect(p.gate[1] * C5 + 16, 16 * C5, (p.x1 - p.gate[1]) * C5 - 16, 4, hd.iron);
-    rect(p.gate[1] * C5 + 16, 19 * C5, (p.x1 - p.gate[1]) * C5 - 16, 4, hd.iron);
+    if (!skipRailings) {
+      for (let x = p.gate[1] * C5 + 20; x < p.x1 * C5; x += 16) rect(x, 16 * C5, 4, 4 * C5 + 8, hd.iron);
+      rect(p.gate[1] * C5 + 16, 16 * C5, (p.x1 - p.gate[1]) * C5 - 16, 4, hd.iron);
+      rect(p.gate[1] * C5 + 16, 19 * C5, (p.x1 - p.gate[1]) * C5 - 16, 4, hd.iron);
+    }
+    if (skipTree) return;
     const tx = p.treeX * C5 + 8;
     rect(tx - 8, 2 * C5, 16, ground - 2 * C5, hd.trunk);
     rect(tx - 8, 2 * C5, 4, ground - 2 * C5, hd.trunkLight);
@@ -9033,34 +10550,41 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     return cache3.get(key);
   }
   var DOOR_KIND = { SkoolGate: "gate", DrinksCabinet: "cabinet" };
-  function drawFurniture(ctx, game, S, drawChalk) {
-    const world = game.world;
+  function furniturePieces(game, S) {
+    const world = game.world, C5 = 8 * S, u = S / 2;
+    const out = [];
+    const add = (key, img, x, y) => out.push({ key, img, x, y, w: img.width * u, h: img.height * u });
     for (const d of world.doors.values()) {
       const kind = DOOR_KIND[d.id] || "door";
       const [cx, cy] = d.coords, [w, h] = d.size;
+      const state = d.shut ? "shut" : "open";
       if (kind === "cabinet") {
-        ctx.drawImage(image(`cabinet ${d.shut}`, cabinet(d.shut)), cx * 8 * S - 4, cy * 8 * S - 4);
+        add(`cabinet:${state}`, image(`cabinet ${d.shut}`, cabinet(d.shut)), cx * C5 - 4 * u, cy * C5 - 4 * u);
         continue;
       }
       const lay = kind === "gate" ? gate(d.shut) : door(w, h, d.shut);
-      ctx.drawImage(image(`${kind} ${w}x${h} ${d.shut}`, lay), cx * 8 * S, cy * 8 * S);
+      add(`${kind}:${state}`, image(`${kind} ${w}x${h} ${d.shut}`, lay), cx * C5, cy * C5);
     }
     for (const win of world.windows.values()) {
       const [cx, cy] = win.coords, [w, h] = win.size;
-      ctx.drawImage(image(`window ${w}x${h} ${win.shut}`, windowArt(w, h, win.shut)), cx * 8 * S, cy * 8 * S);
+      add(`window${w}x${h}:${win.shut ? "shut" : "open"}`, image(`window ${w}x${h} ${win.shut}`, windowArt(w, h, win.shut)), cx * C5, cy * C5);
     }
     const s = world.safe;
-    ctx.drawImage(image("safe", SAFE), s.x * 8 * S - 4, s.y * 8 * S - 8);
+    add("safe", image("safe", SAFE), s.x * C5 - 4 * u, s.y * C5 - 8 * u);
     for (const c of world.cups.values()) {
       const contents = c.frogs.length ? "FROG" : c.contents;
-      ctx.drawImage(image(`cup ${contents}`, cup(contents)), c.x * 8 * S - 2, c.y * 8 * S);
+      add(`cup:${contents}`, image(`cup ${contents}`, cup(contents)), c.x * C5 - 2 * u, c.y * C5);
     }
-    if (drawChalk) drawChalk(ctx);
-    if (!game.cast.conker.visible) ctx.drawImage(image("conker tree", CONKER_IN_TREE), 100 * 8 * S + 12, 3 * 8 * S + 4);
+    if (!game.cast.conker.visible) add("conker", image("conker tree", CONKER_IN_TREE), 100 * C5 + 12 * u, 3 * C5 + 4 * u);
     if (game.cast.bike.chained) {
-      ctx.drawImage(image("bike", BIKE), 96 * 8 * S + BIKE.x, 17 * 8 * S + BIKE.y);
-      ctx.drawImage(image("chain", CHAIN), 96 * 8 * S + 10, 17 * 8 * S + 30);
+      add("bike", image("bike", BIKE), 96 * C5 + BIKE.x * u, 17 * C5 + BIKE.y * u);
+      add("chain", image("chain", CHAIN), 96 * C5 + 10 * u, 17 * C5 + 30 * u);
     }
+    return out;
+  }
+  function drawFurniture(ctx, game, S, drawChalk) {
+    for (const p of furniturePieces(game, S)) ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
+    if (drawChalk) drawChalk(ctx);
   }
   function clearFurnitureCache() {
     cache3.clear();
@@ -9224,6 +10748,324 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     }
   };
 
+  // src/render/art/backdrop.js
+  var PIXEL_SCALE = 2;
+  function buildIllustratedBackdrop(theme, S, assets) {
+    const C5 = SKOOL.cell * S, P = PIXEL_SCALE, up = S / P;
+    const W2 = SKOOL.width * C5, H = SKOOL.height * C5;
+    const canvas = makeCanvas(W2, H);
+    const ctx = canvas.getContext("2d");
+    const hasBoards = !!assets.furniture("blackboard"), hasDesks = !!assets.furniture("desk");
+    const hasTree = !!assets.furniture("tree"), hasRailings = !!assets.furniture("railing");
+    const base = makeCanvas(W2 / up, H / up);
+    paintBase(base.getContext("2d"), theme, P);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(base, 0, 0, W2, H);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    let painted = 0;
+    for (const z of DECOR.zones) {
+      const pic = assets.room(z.id);
+      if (!pic) continue;
+      const r = zoneRect(z);
+      fitRoom(ctx, pic.img, r.x0 * C5, r.top * C5, (r.x1 - r.x0) * C5, (r.floor - r.top) * C5);
+      painted++;
+    }
+    if (assets.room("HallUpper") && assets.room("AssemblyHall")) {
+      ctx.fillStyle = theme.hd.wall;
+      ctx.fillRect(63 * C5, 14 * C5 - 2 * up, 14 * C5, 4 * up);
+      ctx.fillStyle = theme.hd.wallLight;
+      ctx.fillRect(63 * C5, 14 * C5 - 2 * up, 14 * C5, up);
+    }
+    const over = makeCanvas(W2 / up, H / up);
+    paintStructure(over.getContext("2d"), theme, P, { boards: hasBoards, desks: hasDesks, tree: hasTree, railings: hasRailings });
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(over, 0, 0, W2, H);
+    ctx.imageSmoothingEnabled = true;
+    const stamp = (f, x, y, w, h) => ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+    if (hasBoards) {
+      const f = assets.furniture("blackboard");
+      for (const b of SKOOL.blackboards) {
+        const x = b.topLeft[0] * C5, y = b.topLeft[1] * C5, w = b.size[0] * C5, h = b.size[1] * C5;
+        stamp(f, x - 12, y - 12, w + 24, h + 32);
+      }
+    }
+    if (hasDesks) {
+      const f = assets.furniture("desk");
+      for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
+        const room = SKOOL.rooms.find((r) => r.id === roomId);
+        const floor = (room.bottomRight[1] + 1) * C5;
+        for (const x of xs) stamp(f, x * C5 - 40, floor - 96, 112, 96);
+      }
+    }
+    if (hasRailings) {
+      const f = assets.furniture("railing"), p = DECOR.playground;
+      const y = 16 * C5, x1 = p.x1 * C5;
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(p.gate[1] * C5 + 32, y, x1 - p.gate[1] * C5 - 32, f.h);
+      ctx.clip();
+      for (let x = p.gate[1] * C5 + 32; x < x1; x += f.w) stamp(f, x, y, f.w, f.h);
+      ctx.restore();
+    }
+    if (hasTree) {
+      const f = assets.furniture("tree"), tx = DECOR.playground.treeX * C5 + C5 / 2;
+      stamp(f, tx - f.w / 2, SKOOL.height * C5 - f.h, f.w, f.h);
+    }
+    canvas.painted = painted;
+    return canvas;
+  }
+  function fitRoom(ctx, img, x, y, w, h) {
+    const scale = Math.max(h / img.height, Math.min(w / img.width, 1.15 * h / img.height));
+    const sw = img.width * scale, sh = img.height * scale;
+    const srcY = (sh - h) / scale;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+    ctx.clip();
+    if (sw >= w) {
+      const srcX = (sw - w) / 2 / scale;
+      ctx.drawImage(img, srcX, srcY, w / scale, h / scale, x, y, w, h);
+    } else {
+      const left = x + (w - sw) / 2;
+      ctx.drawImage(img, 0, srcY, img.width, h / scale, left, y, sw, h);
+      for (let i = 1; i <= 8 && (left - (i - 1) * sw > x || left + i * sw < x + w); i++) {
+        drawMirrored(ctx, img, srcY, h / scale, left + i * sw, y, sw, h, i % 2 === 1);
+        drawMirrored(ctx, img, srcY, h / scale, left - i * sw, y, sw, h, i % 2 === 1);
+      }
+    }
+    ctx.restore();
+  }
+  function drawMirrored(ctx, img, srcY, srcH, dx, dy, dw, dh, mirror) {
+    ctx.save();
+    if (mirror) {
+      ctx.translate(dx + dw, dy);
+      ctx.scale(-1, 1);
+      ctx.drawImage(img, 0, srcY, img.width, srcH, 0, 0, dw, dh);
+    } else ctx.drawImage(img, 0, srcY, img.width, srcH, dx, dy, dw, dh);
+    ctx.restore();
+  }
+
+  // src/render/art/furniture.js
+  function drawIllustratedFurniture(ctx, game, S, assets, stats) {
+    for (const p of furniturePieces(game, S)) {
+      const f = assets.furniture(p.key);
+      if (f) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(f.img, f.x, f.y, f.w, f.h, Math.round(p.x), Math.round(p.y), Math.round(p.w), Math.round(p.h));
+        if (stats) stats.drawn++;
+      } else {
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
+        if (stats && p.key !== "chain") stats.fallback++;
+      }
+    }
+  }
+
+  // src/render/art/illustrated.js
+  var PIXEL_SCALE2 = 2;
+  var IllustratedPainter = class extends ModernPainter {
+    constructor(theme, assets) {
+      super(theme);
+      this.scale = 4;
+      this.smooth = true;
+      this.assets = assets;
+      this.flips = /* @__PURE__ */ new Map();
+      this.stats = { drawn: 0, fallback: 0 };
+      assets.onReady(() => {
+        this.backdrop = null;
+      });
+    }
+    setTheme(theme) {
+      super.setTheme(theme);
+      this.flips.clear();
+    }
+    // Run a pixel-art drawing routine at our size: scale the context by two
+    // and let the inherited code think it is drawing at its own scale.
+    atPixelScale(ctx, fn) {
+      ctx.save();
+      ctx.scale(this.scale / PIXEL_SCALE2, this.scale / PIXEL_SCALE2);
+      ctx.imageSmoothingEnabled = false;
+      const s = this.scale;
+      this.scale = PIXEL_SCALE2;
+      try {
+        fn();
+      } finally {
+        this.scale = s;
+        ctx.restore();
+      }
+    }
+    // ---- Sprites --------------------------------------------------------------------
+    drawSprite(ctx, group, state, direction, look, x, y) {
+      const S = this.scale, bx = Math.round(x * S), by = Math.round(y * S);
+      const f = group === "OBJ" ? this.assets.object(state) : this.assets.frame(group, state, look?.variant);
+      if (f) {
+        if (direction < 0) {
+          const img = this.flipped(f);
+          ctx.drawImage(img, bx - (f.w - f.ox - 24 * S), by - f.oy);
+        } else {
+          ctx.drawImage(f.img, f.x, f.y, f.w, f.h, bx - f.ox, by - f.oy, f.w, f.h);
+        }
+        this.stats.drawn++;
+        return true;
+      }
+      const s = this.sprite(group, state, direction, look);
+      if (!s) return false;
+      ctx.save();
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(s, bx, by, 24 * S, 32 * S);
+      ctx.restore();
+      this.stats.fallback++;
+      return true;
+    }
+    flipped(f) {
+      const key = `${f.img.src}|${f.x},${f.y},${f.w},${f.h}`;
+      let c = this.flips.get(key);
+      if (!c) {
+        c = makeCanvas(f.w, f.h);
+        const cx = c.getContext("2d");
+        cx.translate(f.w, 0);
+        cx.scale(-1, 1);
+        cx.drawImage(f.img, f.x, f.y, f.w, f.h, 0, 0, f.w, f.h);
+        this.flips.set(key, c);
+      }
+      return c;
+    }
+    // ---- The building ----------------------------------------------------------------
+    // Painted rooms over the pixel-art structure (see art/backdrop.js); rebuilt
+    // when the pictures finish loading.
+    ensureBackdrop() {
+      if (!this.backdrop) this.backdrop = buildIllustratedBackdrop(this.theme, this.scale, this.assets);
+      return this.backdrop;
+    }
+    drawBackdrop(ctx, cam, viewW) {
+      const S = this.scale, b = this.ensureBackdrop();
+      const h = SKOOL.height * SKOOL.cell * S;
+      ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
+    }
+    // ---- Furniture, chalk, bubbles, boxes --------------------------------------------
+    drawFurniture(ctx, game) {
+      drawIllustratedFurniture(ctx, game, this.scale, this.assets, this.stats);
+      this.drawChalk(ctx, game);
+    }
+    // Chalk is the 2x font drawn through the 2x scale; a wiped column is
+    // restored from our own backdrop so the illustrated board comes back.
+    drawChalk(ctx, game) {
+      const S = this.scale, C5 = SKOOL.cell * S, b = this.ensureBackdrop();
+      for (const room of game.world.rooms.values()) {
+        const board = room.blackboard;
+        if (!board || !board.lines.length) continue;
+        this.atPixelScale(ctx, () => {
+          const x2 = board.x * SKOOL.cell * PIXEL_SCALE2, y2 = board.y * SKOOL.cell * PIXEL_SCALE2;
+          board.lines.forEach((line, i) => drawHdText(ctx, line, x2 + 4, y2 + 4 + i * HD_LINE_HEIGHT, this.theme.chalk));
+        });
+        const x = board.x * C5, y = board.y * C5;
+        for (const col of board.wipedColumns) ctx.drawImage(b, x + col * C5, y, C5, board.height * C5, x + col * C5, y, C5, board.height * C5);
+      }
+    }
+    drawBubble(ctx, c) {
+      this.atPixelScale(ctx, () => super.drawBubble(ctx, c));
+    }
+    drawMessageBox(ctx, box, cam, viewW) {
+      this.atPixelScale(ctx, () => super.drawMessageBox(ctx, box, cam, viewW));
+    }
+  };
+
+  // src/render/art/assets.js
+  var ART_BASE = typeof window !== "undefined" && window.BTS_ART_BASE || (typeof document !== "undefined" ? new URL("assets/illustrated/", document.baseURI).href : "assets/illustrated/");
+  var ArtAssets = class {
+    constructor(base = ART_BASE) {
+      this.base = base;
+      this.manifest = null;
+      this.images = /* @__PURE__ */ new Map();
+      this.ready = false;
+      this.failed = false;
+      this.listeners = [];
+    }
+    onReady(cb) {
+      if (this.ready || this.failed) cb(this);
+      else this.listeners.push(cb);
+    }
+    async load() {
+      try {
+        const inline = typeof window !== "undefined" ? window.BTS_ART_MANIFEST : null;
+        this.manifest = inline || await (await fetch(`${this.base}manifest.json`, { cache: "no-cache" })).json();
+        await Promise.all([...this.imagePaths()].map((p) => this.loadImage(p)));
+        this.ready = true;
+      } catch (err) {
+        this.failed = true;
+        console.warn("Illustrated artwork not available; showing pixel art.", err.message);
+      }
+      this.listeners.splice(0).forEach((cb) => cb(this));
+    }
+    // Every image path the manifest refers to.
+    imagePaths() {
+      const m = this.manifest || {}, out = /* @__PURE__ */ new Set();
+      for (const g of Object.values(m.characters || {})) {
+        if (g.image) out.add(g.image);
+        for (const v of Object.values(g.variants || {})) if (v.image) out.add(v.image);
+      }
+      if (m.objects?.image) out.add(m.objects.image);
+      for (const r of Object.values(m.rooms || {})) if (r.image) out.add(r.image);
+      for (const f of Object.values(m.furniture || {})) if (f.image) out.add(f.image);
+      for (const t of Object.values(m.textures || {})) if (typeof t === "string") out.add(t);
+      else if (t?.image) out.add(t.image);
+      return out;
+    }
+    loadImage(path) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          this.images.set(path, img);
+          resolve(img);
+        };
+        img.onerror = () => {
+          console.warn("Illustrated artwork: could not load", path);
+          resolve(null);
+        };
+        img.src = this.base + path;
+      });
+    }
+    image(path) {
+      return path && this.images.get(path) || null;
+    }
+    // The frame for a character pose, honouring aliases and variants
+    // (a missing variant falls back to A, then to whatever exists).
+    frame(group, state, variant) {
+      const g = this.manifest?.characters?.[group];
+      if (!g) return null;
+      let set = g;
+      if (g.variants) set = g.variants[variant] || g.variants.A || Object.values(g.variants)[0];
+      if (!set?.frames) return null;
+      let f = set.frames[state];
+      for (let guard = 0; f && f.alias && guard < 5; guard++) f = set.frames[f.alias];
+      const img = this.image(set.image);
+      return f && img ? { img, ...f } : null;
+    }
+    object(state) {
+      const o = this.manifest?.objects;
+      let f = o?.frames?.[state];
+      for (let guard = 0; f && f.alias && guard < 5; guard++) f = o.frames[f.alias];
+      const img = this.image(o?.image);
+      return f && img ? { img, ...f } : null;
+    }
+    furniture(key) {
+      const f = this.manifest?.furniture?.[key];
+      const img = this.image(f?.image);
+      return f && img ? { img, ...f } : null;
+    }
+    room(zoneId) {
+      const r = this.manifest?.rooms?.[zoneId];
+      const img = this.image(r?.image);
+      return r && img ? { img, ...r } : null;
+    }
+    texture(name) {
+      const t = this.manifest?.textures?.[name];
+      const path = typeof t === "string" ? t : t?.image;
+      return this.image(path);
+    }
+  };
+
   // src/render/renderer.js
   var C4 = SKOOL.cell;
   var SPRITE_W = 24;
@@ -9234,7 +11076,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.game = game;
       this.ctx = canvas.getContext("2d");
       this.ctx.imageSmoothingEnabled = false;
-      this.options = { theme: "modern", smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, hdGraphics: true, onResize: null, ...options };
+      this.options = { theme: "modern", smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, artwork: "illustrated", onResize: null, ...options };
       this.original = new OriginalPainter();
       this.scale = 1;
       this.setTheme(this.options.theme);
@@ -9250,8 +11092,19 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       this.options.theme = name;
       this.backdrop = buildBackdrop(this.theme);
       clearSpriteCache();
-      if (!this.hd) this.hd = new ModernPainter(this.theme);
-      else this.hd.setTheme(this.theme);
+      if (!this.painters) {
+        this.assets = new ArtAssets();
+        this.painters = { pixel: new ModernPainter(this.theme), illustrated: new IllustratedPainter(this.theme, this.assets) };
+        this.assets.load();
+      } else {
+        this.painters.pixel.setTheme(this.theme);
+        this.painters.illustrated.setTheme(this.theme);
+      }
+      this.hd = this.painters.pixel;
+    }
+    // The painter the artwork option asks for.
+    get painter() {
+      return this.options.artwork === "illustrated" ? this.painters.illustrated : this.painters.pixel;
     }
     // The view's width in game pixels (the canvas may be a multiple of this).
     get viewW() {
@@ -9271,7 +11124,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     // can change mid-session (the tape loads, an option is toggled), so this is
     // checked every frame.
     ensureScale() {
-      const want = this.useOriginal() ? 1 : this.useHd() ? this.hd.scale : 1;
+      const want = this.useOriginal() ? 1 : this.useHd() ? this.painter.scale : 1;
       if (want !== this.scale) this.resize(this.columns, this.options.retroStatus, want);
     }
     // ---- Camera ----------------------------------------------------------------
@@ -9312,9 +11165,9 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     useOriginal() {
       return this.options.originalGraphics && this.original.ready;
     }
-    // True when the view should use the HD pixel art (modern palette only).
+    // True when the view should use the HD painters (modern palette only).
     useHd() {
-      return !this.useOriginal() && this.options.hdGraphics && !!this.theme.hd;
+      return !this.useOriginal() && this.options.artwork !== "painted" && !!this.theme.hd;
     }
     // ---- The frame -------------------------------------------------------------
     draw() {
@@ -9349,7 +11202,8 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     // The frame in HD pixel art. Anything without HD art yet is drawn with the
     // painted stand-in, enlarged, so nothing is ever missing from the screen.
     drawHd(cam) {
-      const p = this.hd, S = p.scale, { ctx, game } = this, viewW = this.viewW;
+      const p = this.painter, S = p.scale, { ctx, game } = this, viewW = this.viewW;
+      ctx.imageSmoothingEnabled = !!p.smooth;
       ctx.save();
       ctx.translate(-cam * S, 0);
       p.drawBackdrop(ctx, cam, viewW);
@@ -10210,7 +12064,9 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
         <label class="opt"><span>Palette</span>
           <select data-setting="theme"><option value="modern" ${s.theme === "modern" ? "selected" : ""}>Modern</option><option value="spectrum" ${s.theme === "spectrum" ? "selected" : ""}>Spectrum</option></select></label>
         <label class="opt"><span>View width <output data-out="columns">${formatSetting("columns", s.columns)}</output></span><input type="range" min="32" max="96" step="8" value="${s.columns}" data-setting="columns"><small>32 columns is what the original showed.</small></label>
-        ${check("hdGraphics", "HD pixel art", "Hand-drawn pixel sprites and rooms at twice the detail, in the modern palette. Off shows the simple painted graphics.")}
+        <label class="opt"><span>Artwork</span>
+          <select data-setting="artwork"><option value="illustrated" ${s.artwork === "illustrated" ? "selected" : ""}>Illustrated</option><option value="pixel" ${s.artwork === "pixel" ? "selected" : ""}>HD pixel art</option><option value="painted" ${s.artwork === "painted" ? "selected" : ""}>Painted stand-ins</option></select>
+          <small>Illustrated is the lifelike artwork; pixel art is the hand-drawn 2x set; painted stand-ins are the simple shapes. Modern palette only.</small></label>
         ${check("originalGraphics", "Original 1985 graphics", "The Spectrum game's own school, sprites and font, loaded from your own tape image or snapshot in the original view.")}
         ${check("retroStatus", "Status rows on the canvas", "Score, lines and lesson drawn under the play area, as in 1985.")}
         ${check("smoothMotion", "Smooth motion", "Ease sprites between steps instead of 8-pixel hops.")}
@@ -11167,14 +13023,18 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
 
   // src/main.js
   var VIEW_PRESETS = {
-    original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, hdGraphics: false },
-    modern: { theme: "modern", columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, hdGraphics: true }
+    original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: "painted" },
+    modern: { theme: "modern", columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: "illustrated" }
   };
-  var SETTINGS_VERSION = 2;
+  var SETTINGS_VERSION = 3;
   var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
   function migrateSettings(s) {
     const v = s.settingsVersion || 1;
     if (v < 2) s.hdGraphics = s.view !== "original";
+    if (v < 3) {
+      s.artwork = s.hdGraphics === false ? "painted" : "illustrated";
+      delete s.hdGraphics;
+    }
     s.settingsVersion = SETTINGS_VERSION;
     return s;
   }
@@ -11197,7 +13057,7 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
     input.attach(window);
     const game = new Game({ input, measureText, fontHas });
     const canvas = document.getElementById("game");
-    const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, hdGraphics: settings.hdGraphics, onResize: () => fitCanvas() });
+    const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, onResize: () => fitCanvas() });
     const hud = new HUD(document.getElementById("hud"), game, DEFAULT_BINDINGS);
     const tapeLoader = new TapeLoader(document.getElementById("tape"), renderer, () => {
       tapeLoader.update(settings.view);
@@ -11236,12 +13096,13 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       if (renderer.columns !== s.columns || renderer.options.retroStatus !== s.retroStatus) renderer.resize(s.columns, s.retroStatus);
       game.config.freezeOnMessages = s.freezeOnMessages;
       renderer.options.originalGraphics = !!s.originalGraphics;
-      renderer.options.hdGraphics = !!s.hdGraphics;
+      renderer.options.artwork = s.artwork || "illustrated";
       game.measureText = s.originalGraphics ? originalMeasure : measureText;
       game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
       sound.enabled = s.sound;
       document.documentElement.classList.toggle("view-original", s.view === "original");
       document.documentElement.classList.toggle("view-modern", s.view !== "original");
+      document.documentElement.classList.toggle("art-illustrated", s.view !== "original" && s.artwork === "illustrated");
       hud.setView(s.view);
       tapeLoader.update(s.view);
       hud.setGraphicsStatus(s.view, renderer.original.ready);
@@ -11260,10 +13121,12 @@ html.view-modern .panel h2::after { content: ''; display: block; height: 2px; ma
       const stage = document.getElementById("stage");
       const border = settings.view === "original" ? 48 : 0;
       const avail = (stage.clientWidth || window.innerWidth) - border;
-      let scale = Math.max(0.5, Math.floor(avail / canvas.width * 2) / 2);
+      const illustrated = settings.view !== "original" && settings.artwork === "illustrated";
+      const step = (v) => illustrated ? v : Math.floor(v * 2) / 2;
+      let scale = Math.max(0.25, step(avail / canvas.width));
       const top = stage.getBoundingClientRect().top + window.scrollY;
       const availH = window.innerHeight - top - border - 12;
-      scale = Math.min(scale, Math.max(0.5, Math.floor(availH / canvas.height * 2) / 2));
+      scale = Math.min(scale, Math.max(0.25, step(availH / canvas.height)));
       if (settings.view === "original") scale = Math.max(1, Math.floor(scale));
       canvas.style.width = `${canvas.width * scale}px`;
       canvas.style.height = `${canvas.height * scale}px`;

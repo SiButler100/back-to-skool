@@ -22,25 +22,25 @@
 
 export const CHARACTERS = [
   // --- Girls -------------------------------------------------------------
-  { id: 'GIRL01', name: 'JESSICA',    group: 'GIRL', dir: -1, x: 117, y: 17, headXY: [1, 1], flags: 'FGM', look: { hair: '#5b3a1e', dress: '#2f7df6' } },
-  { id: 'GIRL02', name: 'HYACINTH',   group: 'GIRL', dir: 1,  x: 114, y: 17, headXY: [1, 1], flags: 'FGM', look: { hair: '#1c1c1c', dress: '#2f7df6' } },
-  { id: 'GIRL03', name: 'PENELOPE',   group: 'GIRL', dir: -1, x: 120, y: 17, headXY: [1, 1], flags: 'FGM', look: { hair: '#c98a2c', dress: '#2f7df6' } },
-  { id: 'GIRL04', name: 'VIOLET',     group: 'GIRL', dir: 1,  x: 160, y: 17, headXY: [1, 1], flags: 'FGM', look: { hair: '#7a2a1a', dress: '#2f7df6' } },
-  { id: 'GIRL05', name: 'AMELIA',     group: 'GIRL', dir: -1, x: 163, y: 17, headXY: [1, 1], flags: 'FGM', look: { hair: '#f0d36b', dress: '#2f7df6' } },
-  { id: 'GIRL06', name: 'SARAH-JANE', group: 'GIRL', dir: 1,  x: 166, y: 17, headXY: [1, 1], flags: 'FGM', look: { hair: '#3b2a1a', dress: '#2f7df6' } },
-  { id: 'GIRL07', name: 'PHILIPPA',   group: 'GIRL', dir: -1, x: 165, y: 17, headXY: [1, 1], flags: 'FGM', look: { hair: '#a04a2a', dress: '#2f7df6' } },
+  { id: 'GIRL01', name: 'JESSICA',    group: 'GIRL', dir: -1, x: 117, y: 17, headXY: [1, 1], flags: 'FGM', look: { variant: 'A', hair: '#5b3a1e', dress: '#2f7df6' } },
+  { id: 'GIRL02', name: 'HYACINTH',   group: 'GIRL', dir: 1,  x: 114, y: 17, headXY: [1, 1], flags: 'FGM', look: { variant: 'B', hair: '#1c1c1c', dress: '#2f7df6' } },
+  { id: 'GIRL03', name: 'PENELOPE',   group: 'GIRL', dir: -1, x: 120, y: 17, headXY: [1, 1], flags: 'FGM', look: { variant: 'C', hair: '#c98a2c', dress: '#2f7df6' } },
+  { id: 'GIRL04', name: 'VIOLET',     group: 'GIRL', dir: 1,  x: 160, y: 17, headXY: [1, 1], flags: 'FGM', look: { variant: 'A', hair: '#7a2a1a', dress: '#2f7df6' } },
+  { id: 'GIRL05', name: 'AMELIA',     group: 'GIRL', dir: -1, x: 163, y: 17, headXY: [1, 1], flags: 'FGM', look: { variant: 'B', hair: '#f0d36b', dress: '#2f7df6' } },
+  { id: 'GIRL06', name: 'SARAH-JANE', group: 'GIRL', dir: 1,  x: 166, y: 17, headXY: [1, 1], flags: 'FGM', look: { variant: 'C', hair: '#3b2a1a', dress: '#2f7df6' } },
+  { id: 'GIRL07', name: 'PHILIPPA',   group: 'GIRL', dir: -1, x: 165, y: 17, headXY: [1, 1], flags: 'FGM', look: { variant: 'A', hair: '#a04a2a', dress: '#2f7df6' } },
 
   // --- Boys ---------------------------------------------------------------
-  { id: 'BOY01', name: 'PERKINS', group: 'BOY', dir: -1, x: 5,   y: 10, headXY: [1, 1], flags: 'BF', look: { hair: '#4a2e14' } },
-  { id: 'BOY02', name: 'GIBSON',  group: 'BOY', dir: 1,  x: 7,   y: 10, headXY: [1, 1], flags: 'BF', look: { hair: '#1c1c1c' } },
-  { id: 'BOY03', name: 'FANSHAW', group: 'BOY', dir: -1, x: 10,  y: 10, headXY: [1, 1], flags: 'BF', look: { hair: '#d8a640' } },
-  { id: 'BOY04', name: 'SMITH',   group: 'BOY', dir: 1,  x: 72,  y: 17, headXY: [1, 1], flags: 'BF', look: { hair: '#6a3f1c' } },
-  { id: 'BOY05', name: 'HARRIS',  group: 'BOY', dir: -1, x: 74,  y: 17, headXY: [1, 1], flags: 'BF', look: { hair: '#8a2a1a' } },
-  { id: 'BOY06', name: 'MILLER',  group: 'BOY', dir: 1,  x: 104, y: 17, headXY: [1, 1], flags: 'BF', look: { hair: '#2a2a2a' } },
-  { id: 'BOY07', name: 'JONES',   group: 'BOY', dir: -1, x: 107, y: 17, headXY: [1, 1], flags: 'BF', look: { hair: '#4a2e14' } },
-  { id: 'BOY08', name: 'VICKERS', group: 'BOY', dir: 1,  x: 110, y: 17, headXY: [1, 1], flags: 'BF', look: { hair: '#c08030' } },
-  { id: 'BOY09', name: 'BUTLER',  group: 'BOY', dir: -1, x: 123, y: 17, headXY: [1, 1], flags: 'BF', look: { hair: '#3a2a1a' } },
-  { id: 'BOY10', name: 'COOK',    group: 'BOY', dir: 1,  x: 126, y: 17, headXY: [1, 1], flags: 'BF', look: { hair: '#1c1c1c' } },
+  { id: 'BOY01', name: 'PERKINS', group: 'BOY', dir: -1, x: 5,   y: 10, headXY: [1, 1], flags: 'BF', look: { variant: 'A', hair: '#4a2e14' } },
+  { id: 'BOY02', name: 'GIBSON',  group: 'BOY', dir: 1,  x: 7,   y: 10, headXY: [1, 1], flags: 'BF', look: { variant: 'B', hair: '#1c1c1c' } },
+  { id: 'BOY03', name: 'FANSHAW', group: 'BOY', dir: -1, x: 10,  y: 10, headXY: [1, 1], flags: 'BF', look: { variant: 'C', hair: '#d8a640' } },
+  { id: 'BOY04', name: 'SMITH',   group: 'BOY', dir: 1,  x: 72,  y: 17, headXY: [1, 1], flags: 'BF', look: { variant: 'A', hair: '#6a3f1c' } },
+  { id: 'BOY05', name: 'HARRIS',  group: 'BOY', dir: -1, x: 74,  y: 17, headXY: [1, 1], flags: 'BF', look: { variant: 'B', hair: '#8a2a1a' } },
+  { id: 'BOY06', name: 'MILLER',  group: 'BOY', dir: 1,  x: 104, y: 17, headXY: [1, 1], flags: 'BF', look: { variant: 'C', hair: '#2a2a2a' } },
+  { id: 'BOY07', name: 'JONES',   group: 'BOY', dir: -1, x: 107, y: 17, headXY: [1, 1], flags: 'BF', look: { variant: 'A', hair: '#4a2e14' } },
+  { id: 'BOY08', name: 'VICKERS', group: 'BOY', dir: 1,  x: 110, y: 17, headXY: [1, 1], flags: 'BF', look: { variant: 'B', hair: '#c08030' } },
+  { id: 'BOY09', name: 'BUTLER',  group: 'BOY', dir: -1, x: 123, y: 17, headXY: [1, 1], flags: 'BF', look: { variant: 'C', hair: '#3a2a1a' } },
+  { id: 'BOY10', name: 'COOK',    group: 'BOY', dir: 1,  x: 126, y: 17, headXY: [1, 1], flags: 'BF', look: { variant: 'A', hair: '#1c1c1c' } },
 
   // --- Staff --------------------------------------------------------------
   { id: 'WACKER',  name: 'MR WACKER',  title: 'Sir',  group: 'WACKER',  dir: -1, x: 76,  y: 3,  headXY: [1, 0], flags: 'ABCDLNPWXY', look: { hair: '#dddddd', suit: '#1b1b1b', gown: true, mortarboard: true } },

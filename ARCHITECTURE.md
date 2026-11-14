@@ -57,12 +57,14 @@ flowchart TD
     subgraph Art["src/render/art — illustrated artwork"]
       artassets[assets.js loads manifest + images]
       illustrated[illustrated.js IllustratedPainter]
+      artbackdrop[backdrop.js rooms over the pixel structure]
+      artfurniture[furniture.js cut-outs per piece]
     end
   end
 
   subgraph Assets["assets/illustrated — pictures"]
-    manifest[manifest.json which frame is where]
-    sheets[characters/*.png sprite sheets]
+    manifest[manifest.json which picture is where]
+    sheets[characters, objects, furniture, rooms]
   end
 
   subgraph ArtTools["tools/art — the art pipeline"]
@@ -116,6 +118,11 @@ flowchart TD
   painter --> renderer
   painter --> illustrated
   artassets --> illustrated
+  artassets --> artbackdrop
+  artbackdrop --> illustrated
+  artfurniture --> illustrated
+  hdbackdrop --> artbackdrop
+  furniture --> artfurniture
   illustrated --> renderer
   manifest --> artassets
   sheets --> artassets
@@ -164,7 +171,7 @@ flowchart TD
 | Rename a character, change hair/clothes, add a pupil | `src/data/cast.js` (and `RANDOM_LOCATIONS`), then add them to each lesson in `src/data/timetable.js` |
 | Change what teachers write or say | `src/data/messages.js` |
 | Give a character a new routine | `src/data/commandLists.js`; new verbs go in `src/engine/commands.js` |
-| Change the look of the building | `src/data/decor.js` (which room is where, its wall colour, its props) and `src/render/hd/backdrop.js` (how props are painted); colours in `theme.js` under `hd` |
+| Change the look of the building | illustrated view: the room descriptions in `tools/art/rooms.json` (regenerate a room and run `python3 tools/art/build.py room-<Zone>`); the floors, stairs and walls come from the map and `src/render/hd/backdrop.js`. Pixel view: `src/data/decor.js` (which room is where, its wall colour, its props) and the same backdrop file; colours in `theme.js` under `hd` |
 | Change how a character looks in the illustrated view | regenerate their sheet: the prompt is in `tools/art/characters.json`, the generation record in `tools/art/jobs.json`; drop the new picture in `art-src/` and run `python3 tools/art/build.py <job>` (see `tools/art/prompts.md`) |
 | Change how people look in pixel art | `src/render/hd/palette.js` (each group's colours) and `src/render/hd/people.js` (the body parts, drawn as text bitmaps); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
 | Draw a new object or icon | `src/render/hd/objects.js`, `src/render/hd/icons.js`; the bitmap alphabet is explained at the top of `src/render/hd/pixelart.js` |

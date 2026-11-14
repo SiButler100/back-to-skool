@@ -15,7 +15,7 @@ import sys
 from PIL import Image, ImageEnhance
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from artlib import (ASSETS, EXPECTED, JOBS, ROOT, WORK, align, bbox, key, load_json, pack, save_json,
+from artlib import (ASSETS, BOX_H, BOX_W, EXPECTED, JOBS, ROOT, WORK, align, bbox, key, load_json, pack, save_json,
                     slice_auto, slice_components, slice_grid)
 
 MANIFEST = os.path.join(ASSETS, 'manifest.json')
@@ -163,6 +163,67 @@ def build_room(job, manifest):
     print(f"  {job['id']}: {img.size[0]}x{img.size[1]} -> {rel}")
 
 
+# Where an object sits inside its pixel-art footprint: on the floor, or
+# centred (things that fly or float).
+OBJECT_ANCHOR = {'FLY': 'centre', 'WATER0': 'centre', 'WATER1': 'centre', 'WATER2': 'centre', 'WATER3': 'centre', 'WATER4': 'centre',
+                 'WATER_DROP': 'centre', 'SHERRY_DROP': 'centre', 'STINKBOMB': 'centre', 'CONKER': 'centre'}
+
+
+def build_objects(job, manifest, footprints, extra=None):
+    """A sheet of object pictures -> frames placed where the pixel art puts
+    them (expected.json footprints, doubled to HD pixels) inside the 96x128
+    box, trimmed and packed into objects.png."""
+    src = os.path.join(ROOT, job['source'])
+    if not os.path.exists(src):
+        print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
+        return {}
+    img = Image.open(src).convert('RGBA')
+    grid = job['grid']
+    cells = slice_components(img, grid['rows'], grid['cols'])
+    frames = {}
+    for state, cell in zip(job['items'], cells):
+        if not state or cell is None or state not in footprints:
+            continue
+        d = os.path.join(WORK, 'objects'); os.makedirs(d, exist_ok=True)
+        cell.save(os.path.join(d, f'{state}.raw.png'))
+        frames[state] = place_object(cell, footprints[state], OBJECT_ANCHOR.get(state, 'bottom'))
+    return frames
+
+
+def place_object(cell, fp, anchor):
+    """Fit a cut-out into its doubled footprint inside the box; return
+    (trimmed image, ox, oy) in the manifest's frame convention."""
+    rx, ry, rw, rh = fp['x'] * 2, fp['y'] * 2, fp['w'] * 2, fp['h'] * 2
+    f = min(rw / cell.size[0], rh / cell.size[1])
+    sw, sh = max(1, round(cell.size[0] * f)), max(1, round(cell.size[1] * f))
+    small = cell.resize((sw, sh), Image.LANCZOS)
+    box = Image.new('RGBA', (BOX_W, BOX_H), (0, 0, 0, 0))
+    px = rx + (rw - sw) // 2
+    py = ry + ((rh - sh) // 2 if anchor == 'centre' else rh - sh)
+    box.paste(small, (px, py), small)
+    bb = bbox(box) or (0, 0, BOX_W, BOX_H)
+    return (box.crop(bb), -bb[0], -bb[1])
+
+
+def build_all_objects(jobs, manifest):
+    expected = load_json(EXPECTED) or {}
+    footprints = expected.get('objects', {})
+    frames = {}
+    for job in jobs:
+        frames.update(build_objects(job, manifest, footprints))
+    if not frames:
+        return
+    # The upright bike is the furniture bike, where the pixel art stands it.
+    bike_raw = os.path.join(WORK, 'furniture', 'bike.raw.png')
+    if 'BIKE_UPRIGHT' in footprints and os.path.exists(bike_raw):
+        frames['BIKE_UPRIGHT'] = place_object(Image.open(bike_raw).convert('RGBA'), footprints['BIKE_UPRIGHT'], 'bottom')
+    sheet, placed = pack(frames)
+    rel = 'objects.png'
+    sheet.save(os.path.join(ASSETS, rel), optimize=True)
+    manifest['objects'] = {'image': rel, 'frames': placed}
+    print(f"  objects: {len(frames)} frames, sheet {sheet.size[0]}x{sheet.size[1]} -> {rel}")
+
+
 def report(manifest):
     expected = load_json(EXPECTED)
     if not expected:
@@ -200,7 +261,7 @@ def main():
     if '--report' in sys.argv:
         sys.exit(report(manifest))
     jobs = load_json(JOBS, {'jobs': []})['jobs']
-    furniture_jobs = []
+    furniture_jobs, object_jobs = [], []
     for job in jobs:
         if args and job['id'] not in args:
             continue
@@ -211,9 +272,13 @@ def main():
             furniture_jobs.append(job)
         elif kind == 'room':
             build_room(job, manifest)
+        elif kind == 'objects':
+            object_jobs.append(job)
     # Furniture is always rebuilt as a whole so the sheet holds every piece.
     if furniture_jobs:
         build_all_furniture([j for j in jobs if j.get('kind') == 'furniture'], manifest)
+    if object_jobs:
+        build_all_objects([j for j in jobs if j.get('kind') == 'objects'], manifest)
     save_json(MANIFEST, manifest)
     report(manifest)
 

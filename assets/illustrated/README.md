@@ -10,9 +10,15 @@ Pictures for the modern view's illustrated artwork. Nothing here is from the
   from the top-left of the character's 96×128 box (`ox, oy`). An `alias`
   entry reuses another pose's frame. The game reads only this file and the
   images it names, so artwork can be replaced without touching code.
-- `characters/` one sheet per sprite group (`boy-a.png` is variant A of the
-  plain boys; more variants can be added as `boy-b.png` and so on).
-- `rooms/`, `furniture/`, `textures/` are filled by later passes.
+- `characters/` one sheet per sprite group; the plain boys and girls have
+  three looks each (`boy-a.png`, `boy-b.png`, `boy-c.png`), chosen by each
+  pupil's `look.variant` in `src/data/cast.js`.
+- `objects.png` the frog, mouse, conker, plants, stinkbomb, water, pellet,
+  desk lids and fallen bike, each placed where the pixel art puts it.
+- `furniture/items.png` doors, windows, gate, cabinet, safe, cups, blackboard,
+  desk and chair, railings, bike, conker in the tree, and the tree.
+- `rooms/` one JPEG per room zone (see `src/data/decor.js`), fitted to the
+  wall by `src/render/art/backdrop.js`; the floor line is the bottom edge.
 
 The raw generations (`art-src/`) and intermediate cut-outs (`art-work/`) are
 not committed. `tools/art/jobs.json` records every generation (model, job id,

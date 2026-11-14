@@ -128,29 +128,134 @@
       "ARM_UP"
     ]
   },
-  "objects": [
-    "FLY",
-    "WATER0",
-    "WATER1",
-    "WATER2",
-    "WATER3",
-    "WATER4",
-    "WATER_DROP",
-    "SHERRY_DROP",
-    "CONKER",
-    "RUN",
-    "SIT",
-    "HOP1",
-    "HOP2",
-    "STINKBOMB",
-    "DESK_EMPTY",
-    "DESK_WATER_PISTOL",
-    "DESK_STINKBOMBS",
-    "BIKE_ON_FLOOR",
-    "BIKE_UPRIGHT",
-    "PLANT_GROWING",
-    "PLANT_GROWN"
-  ],
+  "objects": {
+    "FLY": {
+      "x": 16,
+      "y": 16,
+      "w": 4,
+      "h": 4
+    },
+    "WATER0": {
+      "x": 0,
+      "y": 0,
+      "w": 48,
+      "h": 64
+    },
+    "WATER1": {
+      "x": 0,
+      "y": 0,
+      "w": 48,
+      "h": 64
+    },
+    "WATER2": {
+      "x": 0,
+      "y": 0,
+      "w": 48,
+      "h": 64
+    },
+    "WATER3": {
+      "x": 0,
+      "y": 0,
+      "w": 48,
+      "h": 64
+    },
+    "WATER4": {
+      "x": 0,
+      "y": 0,
+      "w": 48,
+      "h": 64
+    },
+    "WATER_DROP": {
+      "x": 16,
+      "y": 48,
+      "w": 4,
+      "h": 5
+    },
+    "SHERRY_DROP": {
+      "x": 16,
+      "y": 48,
+      "w": 4,
+      "h": 5
+    },
+    "CONKER": {
+      "x": 16,
+      "y": 48,
+      "w": 6,
+      "h": 6
+    },
+    "RUN": {
+      "x": 10,
+      "y": 50,
+      "w": 21,
+      "h": 9
+    },
+    "SIT": {
+      "x": 12,
+      "y": 48,
+      "w": 24,
+      "h": 16
+    },
+    "HOP1": {
+      "x": 12,
+      "y": 48,
+      "w": 24,
+      "h": 16
+    },
+    "HOP2": {
+      "x": 12,
+      "y": 48,
+      "w": 24,
+      "h": 16
+    },
+    "STINKBOMB": {
+      "x": 4,
+      "y": 30,
+      "w": 40,
+      "h": 34
+    },
+    "DESK_EMPTY": {
+      "x": 8,
+      "y": 26,
+      "w": 32,
+      "h": 20
+    },
+    "DESK_WATER_PISTOL": {
+      "x": 8,
+      "y": 26,
+      "w": 32,
+      "h": 20
+    },
+    "DESK_STINKBOMBS": {
+      "x": 8,
+      "y": 26,
+      "w": 32,
+      "h": 20
+    },
+    "BIKE_ON_FLOOR": {
+      "x": 0,
+      "y": 48,
+      "w": 48,
+      "h": 16
+    },
+    "BIKE_UPRIGHT": {
+      "x": 0,
+      "y": 40,
+      "w": 48,
+      "h": 24
+    },
+    "PLANT_GROWING": {
+      "x": 12,
+      "y": 44,
+      "w": 24,
+      "h": 20
+    },
+    "PLANT_GROWN": {
+      "x": 8,
+      "y": 6,
+      "w": 32,
+      "h": 58
+    }
+  },
   "zones": [
     {
       "id": "BlueRoom",

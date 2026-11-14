@@ -26,9 +26,17 @@ const html = readFileSync(join(root, 'index.html'), 'utf8');
 const css = readFileSync(join(root, 'styles.css'), 'utf8');
 const js = readFileSync(bundlePath, 'utf8');
 
+// The illustrated artwork is not inlined (it is a few megabytes of pictures):
+// both builds load it from the published site, and carry the manifest so no
+// extra round trip is needed before the first frame. Without a network the
+// game falls back to pixel art by itself.
+const ART_BASE = 'https://sibutler100.github.io/back-to-skool/assets/illustrated/';
+const manifest = readFileSync(join(root, 'assets', 'illustrated', 'manifest.json'), 'utf8');
+const artPreamble = `<script>window.BTS_ART_BASE = ${JSON.stringify(ART_BASE)}; window.BTS_ART_MANIFEST = ${manifest.trim()};</script>`;
+
 const single = html
   .replace('<link rel="stylesheet" href="styles.css">', `<style>\n${css}\n</style>`)
-  .replace('<script type="module" src="src/main.js"></script>', `<script>\n${js}\n</script>`)
+  .replace('<script type="module" src="src/main.js"></script>', `${artPreamble}\n<script>\n${js}\n</script>`)
   .replace(/<footer class="foot">[\s\S]*?<\/footer>/, '<footer class="foot"><span>Back to Skool remake · single-file build</span></footer>');
 
 writeFileSync(join(root, 'dist', 'back-to-skool.html'), single);
@@ -46,6 +54,7 @@ const fragment = `<title>Back to Skool</title>
 ${css}
 </style>
 ${bodyInner}
+${artPreamble}
 <script>
 ${js}
 </script>

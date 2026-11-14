@@ -14,7 +14,13 @@ import { OBJECT_ART } from '../../src/render/hd/objects.js';
 const here = dirname(fileURLToPath(import.meta.url));
 const expected = {
   groups: SPRITE_GROUPS,
-  objects: Object.keys(OBJECT_ART),
+  // Each object's pixel-art footprint inside its 48x64 (scale 2) frame, so the
+  // illustrated cut-out can be placed exactly where the engine expects it.
+  objects: Object.fromEntries(Object.entries(OBJECT_ART).map(([state, layers]) => {
+    const x0 = Math.min(...layers.map((l) => l.x)), y0 = Math.min(...layers.map((l) => l.y));
+    const x1 = Math.max(...layers.map((l) => l.x + l.w)), y1 = Math.max(...layers.map((l) => l.y + l.h));
+    return [state, { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }];
+  })),
   zones: DECOR.zones.map((z) => ({ id: z.id, x0: z.x0, x1: z.x1, storey: z.storey })),
   // Fixed-size pictures the furniture painter needs, in HD pixels (scale 4).
   furniture: {
@@ -30,4 +36,4 @@ const expected = {
   },
 };
 writeFileSync(join(here, 'expected.json'), JSON.stringify(expected, null, 2) + '\n');
-console.log(`expected.json: ${Object.keys(expected.groups).length} groups, ${expected.objects.length} objects, ${expected.zones.length} zones, ${Object.keys(expected.furniture).length} furniture pictures`);
+console.log(`expected.json: ${Object.keys(expected.groups).length} groups, ${Object.keys(expected.objects).length} objects, ${expected.zones.length} zones, ${Object.keys(expected.furniture).length} furniture pictures`);

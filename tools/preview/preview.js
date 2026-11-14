@@ -74,8 +74,15 @@ section('Objects');
   states.forEach((state, i) => {
     const x = i * cellW;
     ctx.fillStyle = '#2f343b'; ctx.fillRect(x, 16, FW * zoom, FH * zoom);
-    const s = painter.sprite('OBJ', state, 1, {});
-    if (s) ctx.drawImage(s, x, 16, FW * zoom, FH * zoom);
+    // Through the painter, so the illustrated object (with its overhang) shows as the game draws it.
+    const cell = 8 * painter.scale;
+    const frame = document.createElement('canvas'); frame.width = FW + 2 * cell; frame.height = FH + 2 * cell;
+    const fctx = frame.getContext('2d'); fctx.imageSmoothingEnabled = !!painter.smooth;
+    const before = painter.stats ? painter.stats.fallback : 0;
+    const ok = painter.drawSprite(fctx, 'OBJ', state, 1, {}, 8, 8);
+    ctx.imageSmoothingEnabled = !!painter.smooth;
+    ctx.drawImage(frame, x - cell * zoom, 16 - cell * zoom, frame.width * zoom, frame.height * zoom);
+    if (!ok || (art === 'illustrated' && painter.stats && painter.stats.fallback > before)) { ctx.strokeStyle = '#ff2fd0'; ctx.lineWidth = 2; ctx.strokeRect(x + 1, 17, FW * zoom - 2, FH * zoom - 2); missing.push(`OBJ/${state}`); }
     ctx.fillStyle = '#cfd6de'; ctx.font = '11px Ubuntu, sans-serif'; ctx.fillText(state, x, 11);
   });
   out.appendChild(canvas);
