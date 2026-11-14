@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------
 // Plain HTML around the game canvas. It listens to game events and updates
 // the DOM; it never touches game state. Features (src/features/) can add
-// their own panels with hud.addPanel(title, element).
+// their own panels with hud.addPanel(title, element, kind).
 //
 // The key strip under the canvas is always visible, in both views.
 // ============================================================================
@@ -60,7 +60,7 @@ export class HUD {
     };
     this.el.menu.addEventListener('click', () => this.menuHandlers.forEach((h) => h()));
     this.sidebar = document.getElementById('sidebar');
-    this.logEl = this.addPanel('What just happened', document.createElement('ul'));
+    this.logEl = this.addPanel('What just happened', document.createElement('ul'), 'log');
     this.logEl.className = 'event-log';
     this.buildKeyStrip();
   }
@@ -113,8 +113,12 @@ export class HUD {
       window.addEventListener('keydown', (e) => { if (e.code === 'KeyH' && !this.game.cast.eric.writing && !e.repeat && this.view === 'modern') this.toggleKeys(); });
       this.game.events.on('start', () => this.showKeysBriefly());
     }
-    if (view === 'modern') { screen.append(quest, keys, this.keysChip); this.showKeysBriefly(); }
-    else { stage.insertBefore(quest, tape); stage.insertBefore(keys, tape); this.keysChip.remove(); keys.classList.remove('tucked'); clearTimeout(this.keysTimer); }
+    // The panels (what just happened, the map, the radar) go the same way:
+    // in the modern view the whole sidebar becomes a see-through layer over
+    // the picture and each panel is placed by its class.
+    const app = document.getElementById('app');
+    if (view === 'modern') { screen.append(quest, keys, this.keysChip, this.sidebar); this.showKeysBriefly(); }
+    else { stage.insertBefore(quest, tape); stage.insertBefore(keys, tape); this.keysChip.remove(); keys.classList.remove('tucked'); clearTimeout(this.keysTimer); app.insertBefore(this.sidebar, app.querySelector('.foot')); }
   }
   // The legend shows for the first seconds of a game, then tucks away so the
   // picture is clear; H (or the tab) brings it back or sends it away.
@@ -139,10 +143,12 @@ export class HUD {
     el.className = `gfx-status ${loaded ? 'on' : 'off'}`;
   }
 
-  // Add a titled panel to the sidebar. Returns the content element.
-  addPanel(title, contentEl) {
+  // Add a titled panel. Returns the content element. `kind` becomes a class
+  // (panel-log, panel-minimap, panel-radar...) so the stylesheet can place the
+  // panel inside the game picture in the modern view.
+  addPanel(title, contentEl, kind = 'extra') {
     const section = document.createElement('section');
-    section.className = 'panel';
+    section.className = `panel panel-${kind}`;
     const h = document.createElement('h2');
     h.textContent = title;
     section.append(h, contentEl);

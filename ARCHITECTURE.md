@@ -193,6 +193,7 @@ The engine only knows whole cells: a walker is at column 40, then 41. Twenty tim
 | Change floors, stairs, walls, the playground or room signs in the illustrated view | `src/render/art/structure.js` (drawn by code from the swatches in `assets/illustrated/textures/`) |
 | Change speech bubbles, reprimand cards or chalk | `src/render/art/text.js` |
 | Add or change a sound, the tune, footsteps or birdsong | `src/ui/sound.js` |
+| Change where the plan, keys, feed, map or radar sit in the picture | `styles.css` (the rules under `html.view-modern .screen > ...`); `HUD.placeStrips` in `src/ui/hud.js` moves them in and out of the picture |
 | Add a panel, an overlay, a new rule | a new file in `src/features/`, registered in `src/features/index.js` |
 | Change the HUD or menus | `src/ui/hud.js`, `src/ui/menu.js`, `styles.css` |
 

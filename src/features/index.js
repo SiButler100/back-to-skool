@@ -24,9 +24,9 @@ import questTracker from './quest-tracker.js';
 import minimap from './minimap.js';
 import teacherRadar from './teacher-radar.js';
 
-// teacher-radar is kept as an example but switched off; set defaultOn in its
-// file or add it back here to use it.
-export const FEATURES = [questTracker, minimap, { ...teacherRadar, defaultOn: false }];
+// All three are set up at boot. The map and the radar are shown or hidden by
+// their switches in Options (the radar starts hidden).
+export const FEATURES = [questTracker, minimap, teacherRadar];
 
 export function setupFeatures(ctx, enabled = {}) {
   for (const f of FEATURES) {

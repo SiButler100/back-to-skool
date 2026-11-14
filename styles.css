@@ -323,3 +323,39 @@ html.view-modern .screen > .keys-strip .writing-hint { color: #ffd34d; }
 html.art-illustrated .inventory .item.pix img { width: 30px; height: 30px; image-rendering: auto; object-fit: contain; }
 html.art-illustrated .inventory .item.pix { width: 38px; height: 38px; }
 html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
+
+/* ---- The sidebar panels inside the game picture (modern view) --------------- */
+/* ui/hud.js moves #sidebar into .screen; it becomes a see-through layer and
+   each panel is placed by its class. The menus must stay on top of all this. */
+.overlay { z-index: 10; }
+html.view-modern .screen > #sidebar { position: absolute; inset: 0; display: block; pointer-events: none; z-index: 2; }
+html.view-modern .screen > #sidebar .panel {
+  position: absolute; margin: 0; border: 0; border-radius: 10px; padding: 6px 8px; flex: none;
+  background: rgba(14, 18, 26, 0.58); backdrop-filter: blur(6px); color: #f3eee0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+html.view-modern .screen > #sidebar .panel h2 { display: none; }
+html.view-modern .screen > #sidebar .panel-extra { display: none; }
+/* The map: top right. */
+html.view-modern .screen > #sidebar .panel-minimap { top: 10px; right: 12px; padding: 5px; }
+html.view-modern .screen > #sidebar .panel-minimap .minimap { display: block; width: min(320px, 28vw); border-radius: 6px; }
+html.hide-minimap .panel-minimap { display: none; }
+/* What just happened: a feed under the plan. The newest three lines show,
+   and each fades away by itself after a few seconds. */
+html.view-modern .screen > #sidebar .panel-log { top: 50px; left: 12px; padding: 0; background: none; backdrop-filter: none; box-shadow: none; max-width: min(440px, 46%); }
+html.view-modern .screen > #sidebar .panel-log .event-log li { display: none; border: 0; }
+html.view-modern .screen > #sidebar .panel-log .event-log li:nth-child(-n+3) {
+  display: block; width: max-content; max-width: 100%; margin-top: 5px; padding: 3px 10px; border-radius: 8px;
+  background: rgba(14, 18, 26, 0.60); color: #f3eee0; font-size: 13px; animation: feed-line 7s forwards;
+}
+html.view-modern .screen > #sidebar .panel-log .event-log li.highlight { color: #ffd34d; }
+@keyframes feed-line { 0% { opacity: 0; transform: translateX(-8px); } 5% { opacity: 1; transform: none; } 82% { opacity: 1; } 100% { opacity: 0; } }
+/* The teacher radar: under the map, only when switched on in Options. */
+.panel-radar { display: none; }
+html.show-radar .panel-radar { display: block; }
+html.view-modern .screen > #sidebar .panel-radar { top: 64px; right: 12px; width: min(300px, 28vw); }
+html.hide-minimap.view-modern .screen > #sidebar .panel-radar { top: 10px; }
+html.view-modern .screen > #sidebar .radar { font-size: 12px; }
+html.view-modern .screen > #sidebar .radar li { border-top-color: rgba(255, 255, 255, 0.14); padding: 3px 0; }
+html.view-modern .screen > #sidebar .radar .where { color: rgba(243, 238, 224, 0.7); }
+html.view-modern .screen > #sidebar .radar .tag { background: rgba(255, 255, 255, 0.14); color: #f3eee0; }
+html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }

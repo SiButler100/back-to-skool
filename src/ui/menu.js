@@ -140,6 +140,8 @@ export class Menu {
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting('speed', s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
         ${check('sound', 'Sound effects', 'Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.')}
         ${check('music', 'Music', 'A quiet tune while you play.')}
+        ${check('minimap', 'Map', 'A small map of the whole school in the corner of the picture, with a dot for everyone.')}
+        ${check('radar', 'Teacher radar', 'Lists the staff, how far away they are and whether they can see Eric. An aid the original never had.')}
       </div>
       <h2>Advanced</h2>
       <div class="options">

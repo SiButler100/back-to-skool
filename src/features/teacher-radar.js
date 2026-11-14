@@ -6,7 +6,8 @@
 // lines happen. Also shows who is meant to be teaching Eric this period.
 //
 // This is a template for the kind of "quality of life" addition the original
-// never had. Copy it to make your own.
+// never had. Copy it to make your own. It is always set up but only shown when
+// "Teacher radar" is ticked in Options (off by default: it makes the game easier).
 // ============================================================================
 
 export default {
@@ -17,7 +18,7 @@ export default {
   setup({ game, hud }) {
     const el = document.createElement('ul');
     el.className = 'radar';
-    hud.addPanel('Staff room', el);
+    hud.addPanel('Staff room', el, 'radar');
     const staff = ['WACKER', 'WITHIT', 'ROCKITT', 'CREAK', 'TAKE', 'ALBERT'].map((id) => game.cast.get(id));
 
     const render = () => {

@@ -27,7 +27,8 @@ Pictures for the modern view's illustrated artwork. Nothing here is from the
   into a 2×2 block so it repeats, used for floors, stairs and walls.
 - Each character sheet also holds an eight-frame walk cycle (`CYCLE0`..`CYCLE7`)
   and in-between poses (`SIT_A`, `SIT_B`, `FALL_A`, `FALL_B`, `RISE`, and for
-  some `HITTING_A/B`, `ARM_UP_A`, `CATAPULT_A`, `BENDING_A`, `WATERPISTOL_A`),
+  some `HITTING_A/B`, `ARM_UP_A`, `CATAPULT_A`, `BENDING_A`, `WATERPISTOL_A`;
+  Eric also has `MOUNT_A/B`, `LEAP`, `DROP_A/B`, and Hayley `KISS_A/B`),
   generated with the character's first sheet as a reference. Which pose
   change uses which pictures is the SEQUENCES table in `src/render/motion.js`.
 - `rooms/` one JPEG per room zone (see `src/data/decor.js`), fitted to the

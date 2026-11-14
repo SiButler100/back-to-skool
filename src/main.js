@@ -31,8 +31,8 @@ export const VIEW_PRESETS = {
   modern: { theme: 'modern', columns: CLOSE_COLUMNS, camera: 'close', smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: 'illustrated' },
 };
 
-const SETTINGS_VERSION = 4;
-const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+const SETTINGS_VERSION = 5;      // 5: the map and radar switches (their defaults are filled in from DEFAULT_SETTINGS)
+const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, minimap: true, radar: false, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
 
 // Settings saved by an older version of the game get the new keys filled in.
 function migrateSettings(s) {
@@ -108,6 +108,8 @@ export function boot() {
     document.documentElement.classList.toggle('view-original', s.view === 'original');
     document.documentElement.classList.toggle('view-modern', s.view !== 'original');
     document.documentElement.classList.toggle('art-illustrated', s.view !== 'original' && s.artwork === 'illustrated');
+    document.documentElement.classList.toggle('hide-minimap', s.minimap === false);
+    document.documentElement.classList.toggle('show-radar', !!s.radar);
     hud.setView(s.view);
     tapeLoader.update(s.view);
     hud.setGraphicsStatus(s.view, renderer.original.ready);

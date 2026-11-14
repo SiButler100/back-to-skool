@@ -329,6 +329,42 @@ html.art-illustrated .inventory .item.pix img { width: 30px; height: 30px; image
 html.art-illustrated .inventory .item.pix { width: 38px; height: 38px; }
 html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
 
+/* ---- The sidebar panels inside the game picture (modern view) --------------- */
+/* ui/hud.js moves #sidebar into .screen; it becomes a see-through layer and
+   each panel is placed by its class. The menus must stay on top of all this. */
+.overlay { z-index: 10; }
+html.view-modern .screen > #sidebar { position: absolute; inset: 0; display: block; pointer-events: none; z-index: 2; }
+html.view-modern .screen > #sidebar .panel {
+  position: absolute; margin: 0; border: 0; border-radius: 10px; padding: 6px 8px; flex: none;
+  background: rgba(14, 18, 26, 0.58); backdrop-filter: blur(6px); color: #f3eee0; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+html.view-modern .screen > #sidebar .panel h2 { display: none; }
+html.view-modern .screen > #sidebar .panel-extra { display: none; }
+/* The map: top right. */
+html.view-modern .screen > #sidebar .panel-minimap { top: 10px; right: 12px; padding: 5px; }
+html.view-modern .screen > #sidebar .panel-minimap .minimap { display: block; width: min(320px, 28vw); border-radius: 6px; }
+html.hide-minimap .panel-minimap { display: none; }
+/* What just happened: a feed under the plan. The newest three lines show,
+   and each fades away by itself after a few seconds. */
+html.view-modern .screen > #sidebar .panel-log { top: 50px; left: 12px; padding: 0; background: none; backdrop-filter: none; box-shadow: none; max-width: min(440px, 46%); }
+html.view-modern .screen > #sidebar .panel-log .event-log li { display: none; border: 0; }
+html.view-modern .screen > #sidebar .panel-log .event-log li:nth-child(-n+3) {
+  display: block; width: max-content; max-width: 100%; margin-top: 5px; padding: 3px 10px; border-radius: 8px;
+  background: rgba(14, 18, 26, 0.60); color: #f3eee0; font-size: 13px; animation: feed-line 7s forwards;
+}
+html.view-modern .screen > #sidebar .panel-log .event-log li.highlight { color: #ffd34d; }
+@keyframes feed-line { 0% { opacity: 0; transform: translateX(-8px); } 5% { opacity: 1; transform: none; } 82% { opacity: 1; } 100% { opacity: 0; } }
+/* The teacher radar: under the map, only when switched on in Options. */
+.panel-radar { display: none; }
+html.show-radar .panel-radar { display: block; }
+html.view-modern .screen > #sidebar .panel-radar { top: 64px; right: 12px; width: min(300px, 28vw); }
+html.hide-minimap.view-modern .screen > #sidebar .panel-radar { top: 10px; }
+html.view-modern .screen > #sidebar .radar { font-size: 12px; }
+html.view-modern .screen > #sidebar .radar li { border-top-color: rgba(255, 255, 255, 0.14); padding: 3px 0; }
+html.view-modern .screen > #sidebar .radar .where { color: rgba(243, 238, 224, 0.7); }
+html.view-modern .screen > #sidebar .radar .tag { background: rgba(255, 255, 255, 0.14); color: #f3eee0; }
+html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
+
 </style>
 
   <div id="app">
@@ -10201,12 +10237,24 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
     "STAND>BENDING_OVER": ["BENDING_A"],
     "BENDING_OVER>STAND": ["BENDING_A"],
     "STAND>WATERPISTOL": ["WATERPISTOL_A"],
-    "WATERPISTOL>STAND": ["WATERPISTOL_A"]
+    "WATERPISTOL>STAND": ["WATERPISTOL_A"],
+    // The bike: 'RIDE' is either pedalling picture. Getting on and off passes
+    // through holding the bike and swinging a leg over; the 'UP' and 'DOWN'
+    // entries are standing up on the saddle and sitting back down (the same
+    // change of pose, but Eric moves a row), which pass through a crouch.
+    "STAND>RIDE": ["MOUNT_A", "MOUNT_B"],
+    "RIDE>STAND": ["MOUNT_B", "MOUNT_A"],
+    "RIDE>STAND:UP": ["SIT_B"],
+    "STAND>RIDE:DOWN": ["SIT_B"],
+    // The kiss (Hayley's sheet: both of them are in these pictures, because
+    // the engine hides Eric for the length of it).
+    "STAND>KISSING_ERIC": ["KISS_A", "KISS_B"],
+    "KISSING_ERIC>STAND": ["KISS_B", "KISS_A"]
   };
   var STEP_MS = 72;
   var QUICK_STEP_MS = 44;
   var QUICK = /HITTING|ARM_UP|CATAPULT|WATERPISTOL|BENDING/;
-  var poseKind = (state) => WALK_STATES2.has(state) ? "STAND" : state;
+  var poseKind = (state) => WALK_STATES2.has(state) ? "STAND" : state === "RIDING_BIKE0" || state === "RIDING_BIKE1" ? "RIDE" : state;
   var easeOut = (k) => 1 - (1 - k) * (1 - k);
   var easeIn = (k) => k * k;
   var Motion = class {
@@ -10299,14 +10347,27 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
         tr.y = tr.fromY + (tr.toY - tr.fromY) * k;
       }
       tr.seen = now;
+      const flying = !!(thing.controller && thing.controller.phases);
+      const rise = tr.toY - tr.fromY;
+      const air = smooth && flying && walkState && Math.abs(rise) > 0.01 && tr.y !== tr.toY ? rise < 0 ? "up" : "down" : null;
+      if (tr.lastY === void 0) tr.lastY = thing.y;
       if (state !== tr.state) {
         const bothWalking = walkState && WALK_STATES2.has(tr.state);
         if (!bothWalking && thing.visible) {
           tr.prevState = tr.state;
           tr.prevDir = tr.dir ?? thing.direction;
           tr.stateT = now;
-          const mids = smooth ? SEQUENCES[`${poseKind(tr.state)}>${poseKind(state)}`] : null;
-          tr.seq = mids ? { frames: [WALK_STATES2.has(tr.state) ? "WALK0" : tr.state, ...mids, null], t0: now, step: QUICK.test(mids[0]) ? QUICK_STEP_MS : STEP_MS, needs: mids[0] } : null;
+          const from = poseKind(tr.state), to = poseKind(state);
+          const row = thing.y < tr.lastY ? ":UP" : thing.y > tr.lastY ? ":DOWN" : "";
+          const mids = smooth && !flying && from !== to ? SEQUENCES[`${from}>${to}${row}`] || SEQUENCES[`${from}>${to}`] : null;
+          tr.seq = mids ? {
+            frames: [WALK_STATES2.has(tr.state) ? "WALK0" : tr.state, ...mids, null],
+            t0: now,
+            step: QUICK.test(mids[0]) ? QUICK_STEP_MS : STEP_MS,
+            needs: mids[0],
+            fromDir: tr.prevDir,
+            midDir: to === "STAND" ? tr.prevDir : thing.direction
+          } : null;
         }
         tr.state = state;
       }
@@ -10314,7 +10375,10 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
       if (tr.seq) {
         const at = (now - tr.seq.t0) / tr.seq.step, i = Math.floor(at);
         if (i >= tr.seq.frames.length - 1) tr.seq = null;
-        else seq = { a: tr.seq.frames[i], b: tr.seq.frames[i + 1], k: at - i, needs: tr.seq.needs };
+        else {
+          const dirOf = (j) => j === 0 ? tr.seq.fromDir : j === tr.seq.frames.length - 1 ? thing.direction : tr.seq.midDir;
+          seq = { a: tr.seq.frames[i], b: tr.seq.frames[i + 1], k: at - i, needs: tr.seq.needs, dirA: dirOf(i), dirB: dirOf(i + 1) };
+        }
       }
       tr.dir = thing.direction;
       const fadeK = (now - tr.stateT) / FADE_MS;
@@ -10322,8 +10386,9 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
       const moving = tr.x !== tr.toX || tr.y !== tr.toY || midstride;
       const phase = (tr.x * thing.direction % CYCLE_CELLS + CYCLE_CELLS) % CYCLE_CELLS / CYCLE_CELLS;
       const cycle = Math.round(phase * CYCLE_FRAMES) % CYCLE_FRAMES;
+      tr.lastY = thing.y;
       tr.frame = now;
-      tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade, seq };
+      tr.out = { x: tr.x, y: tr.y, walkState, moving, walking: walkState && moving, cycle, fade, seq, air };
       return tr.out;
     }
   };
@@ -10785,14 +10850,15 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
       people.sort((a, b) => a.lane - b.lane);
       const drawOne = ({ d, m, lane }) => {
         const x = m.x * C4, y = m.y * C4 + lane * LANE_STEP;
-        if (d.group !== "OBJ" && d.isStanding?.()) p.drawShadow(ctx, x, y);
+        if (d.group !== "OBJ" && d.isStanding?.() && !m.air) p.drawShadow(ctx, x, y);
         let state = d.animatoryState;
         if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : "WALK0";
+        if (m.air && p.hasFrame && p.hasFrame(d.group, "DROP_A", d.look)) state = m.air === "up" ? "LEAP" : Math.floor(this.lastDraw / 120) % 2 ? "DROP_B" : "DROP_A";
         if (m.seq && p.hasFrame && p.hasFrame(d.group, m.seq.needs, d.look)) {
-          p.drawSprite(ctx, d.group, m.seq.a || state, d.direction, d.look, x, y);
+          p.drawSprite(ctx, d.group, m.seq.a || state, m.seq.dirA, d.look, x, y);
           if (m.seq.k > 0.5) {
             ctx.globalAlpha = (m.seq.k - 0.5) * 2;
-            p.drawSprite(ctx, d.group, m.seq.b || state, d.direction, d.look, x, y);
+            p.drawSprite(ctx, d.group, m.seq.b || state, m.seq.dirB, d.look, x, y);
             ctx.globalAlpha = 1;
           }
           return;
@@ -11383,7 +11449,7 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
       };
       this.el.menu.addEventListener("click", () => this.menuHandlers.forEach((h) => h()));
       this.sidebar = document.getElementById("sidebar");
-      this.logEl = this.addPanel("What just happened", document.createElement("ul"));
+      this.logEl = this.addPanel("What just happened", document.createElement("ul"), "log");
       this.logEl.className = "event-log";
       this.buildKeyStrip();
     }
@@ -11441,8 +11507,9 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
         });
         this.game.events.on("start", () => this.showKeysBriefly());
       }
+      const app = document.getElementById("app");
       if (view === "modern") {
-        screen.append(quest, keys, this.keysChip);
+        screen.append(quest, keys, this.keysChip, this.sidebar);
         this.showKeysBriefly();
       } else {
         stage.insertBefore(quest, tape);
@@ -11450,6 +11517,7 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
         this.keysChip.remove();
         keys.classList.remove("tucked");
         clearTimeout(this.keysTimer);
+        app.insertBefore(this.sidebar, app.querySelector(".foot"));
       }
     }
     // The legend shows for the first seconds of a game, then tucks away so the
@@ -11476,10 +11544,12 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
       el.textContent = loaded ? "1985 graphics: loaded" : "1985 graphics: NOT loaded (painted stand-ins shown)";
       el.className = `gfx-status ${loaded ? "on" : "off"}`;
     }
-    // Add a titled panel to the sidebar. Returns the content element.
-    addPanel(title2, contentEl) {
+    // Add a titled panel. Returns the content element. `kind` becomes a class
+    // (panel-log, panel-minimap, panel-radar...) so the stylesheet can place the
+    // panel inside the game picture in the modern view.
+    addPanel(title2, contentEl, kind = "extra") {
       const section = document.createElement("section");
-      section.className = "panel";
+      section.className = `panel panel-${kind}`;
       const h = document.createElement("h2");
       h.textContent = title2;
       section.append(h, contentEl);
@@ -11721,6 +11791,8 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting("speed", s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
         ${check("sound", "Sound effects", "Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.")}
         ${check("music", "Music", "A quiet tune while you play.")}
+        ${check("minimap", "Map", "A small map of the whole school in the corner of the picture, with a dot for everyone.")}
+        ${check("radar", "Teacher radar", "Lists the staff, how far away they are and whether they can see Eric. An aid the original never had.")}
       </div>
       <h2>Advanced</h2>
       <div class="options">
@@ -12777,17 +12849,23 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
       canvas.width = SKOOL.width * scale;
       canvas.height = (SKOOL.height + 1) * scale;
       canvas.className = "minimap";
-      hud.addPanel("Where everyone is", canvas);
+      hud.addPanel("Where everyone is", canvas, "minimap");
       const ctx = canvas.getContext("2d");
-      const colourFor = (c) => c.isEric() ? "#d8322a" : c.id === "ALBERT" ? "#8a5a2a" : c.isAdult() ? "#111" : c.has("G") ? "#e04070" : "#2a6fd6";
+      const LIGHT = { ground: "#eef3f8", boys: "#f3d9cf", girls: "#f1e6cf", floor: "#9a9a9a", view: "rgba(255,255,255,0.6)", box: "#6b5a48", eric: "#d8322a", albert: "#8a5a2a", adult: "#111", girl: "#e04070", boy: "#2a6fd6" };
+      const DARK = { ground: null, boys: "rgba(255,255,255,0.20)", girls: "rgba(255,255,255,0.20)", floor: "rgba(255,255,255,0.60)", view: "rgba(255,211,77,0.16)", box: "#ffd34d", eric: "#ff5a5f", albert: "#d9a066", adult: "#ffffff", girl: "#ff9ac1", boy: "#7fb6ff" };
       const draw = () => {
-        ctx.fillStyle = "#eef3f8";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#f3d9cf";
+        const modern = document.documentElement.classList.contains("view-modern");
+        const pal = modern ? DARK : LIGHT;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (pal.ground) {
+          ctx.fillStyle = pal.ground;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        ctx.fillStyle = pal.boys;
         ctx.fillRect(0, 0, 96 * scale, SKOOL.height * scale);
-        ctx.fillStyle = "#f1e6cf";
+        ctx.fillStyle = pal.girls;
         ctx.fillRect(159 * scale, 0, 33 * scale, SKOOL.height * scale);
-        ctx.fillStyle = "#9a9a9a";
+        ctx.fillStyle = pal.floor;
         for (const f of SKOOL.floors) ctx.fillRect(f.minX * scale, (f.y + 4) * scale - 1, (f.maxX - f.minX + 3) * scale, 1);
         for (const s of SKOOL.staircases) {
           const steps = s.bottom[1] - s.top[1];
@@ -12795,14 +12873,16 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
           for (let i = 0; i <= steps; i++) ctx.fillRect((s.bottom[0] + dir * i) * scale, (s.bottom[1] - i + 4) * scale - 1, scale, 1);
         }
         const [from, to] = game.visibleColumns;
-        ctx.fillStyle = "rgba(255,255,255,0.6)";
-        ctx.fillRect(from * scale, 0, (to - from) * scale, canvas.height);
-        ctx.strokeStyle = "#6b5a48";
+        const top = Math.max(0, (renderer.cameraY || 0) / SKOOL.cell * scale);
+        const height = Math.min(canvas.height - top, (renderer.viewH || SKOOL.height * SKOOL.cell) / SKOOL.cell * scale);
+        ctx.fillStyle = pal.view;
+        ctx.fillRect(from * scale, top, (to - from) * scale, height);
+        ctx.strokeStyle = pal.box;
         ctx.lineWidth = 1;
-        ctx.strokeRect(from * scale + 0.5, 0.5, (to - from) * scale - 1, canvas.height - 1);
+        ctx.strokeRect(from * scale + 0.5, top + 0.5, (to - from) * scale - 1, height - 1);
         for (const c of game.cast.characterList) {
           if (!c.visible) continue;
-          ctx.fillStyle = colourFor(c);
+          ctx.fillStyle = c.isEric() ? pal.eric : c.id === "ALBERT" ? pal.albert : c.isAdult() ? pal.adult : c.has("G") ? pal.girl : pal.boy;
           const size = c.isEric() ? 4 : 3;
           ctx.fillRect((c.x + 1) * scale - 1, (c.y + 4) * scale - size, size, size);
         }
@@ -12825,7 +12905,7 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
     setup({ game, hud }) {
       const el = document.createElement("ul");
       el.className = "radar";
-      hud.addPanel("Staff room", el);
+      hud.addPanel("Staff room", el, "radar");
       const staff = ["WACKER", "WITHIT", "ROCKITT", "CREAK", "TAKE", "ALBERT"].map((id) => game.cast.get(id));
       const render = () => {
         const eric = game.cast.eric;
@@ -12855,7 +12935,7 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
   };
 
   // src/features/index.js
-  var FEATURES = [quest_tracker_default, minimap_default, { ...teacher_radar_default, defaultOn: false }];
+  var FEATURES = [quest_tracker_default, minimap_default, teacher_radar_default];
   function setupFeatures(ctx, enabled = {}) {
     for (const f of FEATURES) {
       const on = enabled[f.id] ?? f.defaultOn ?? true;
@@ -12875,8 +12955,8 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
     original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: "painted", camera: "whole" },
     modern: { theme: "modern", columns: CLOSE_COLUMNS, camera: "close", smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: "illustrated" }
   };
-  var SETTINGS_VERSION = 4;
-  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+  var SETTINGS_VERSION = 5;
+  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, minimap: true, radar: false, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
   function migrateSettings(s) {
     const v = s.settingsVersion || 1;
     if (v < 2) s.hdGraphics = s.view !== "original";
@@ -12981,6 +13061,8 @@ html.art-illustrated .inventory .item.pix img { width: 32px; height: 32px; }
       document.documentElement.classList.toggle("view-original", s.view === "original");
       document.documentElement.classList.toggle("view-modern", s.view !== "original");
       document.documentElement.classList.toggle("art-illustrated", s.view !== "original" && s.artwork === "illustrated");
+      document.documentElement.classList.toggle("hide-minimap", s.minimap === false);
+      document.documentElement.classList.toggle("show-radar", !!s.radar);
       hud.setView(s.view);
       tapeLoader.update(s.view);
       hud.setGraphicsStatus(s.view, renderer.original.ready);
