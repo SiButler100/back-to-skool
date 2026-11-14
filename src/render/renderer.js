@@ -7,9 +7,9 @@
 //   3. everyone and everything in the cast
 //   4. speech bubbles, then any message box
 //
-// The camera follows Eric. "Smooth motion" eases each sprite towards its true
-// cell position so walking looks fluid; switch it off for the original's
-// chunky 8-pixel steps.
+// The camera follows Eric. "Smooth motion" (render/motion.js) turns the
+// engine's cell-sized steps into steady movement; switch it off for the
+// original's chunky 8-pixel steps.
 // ============================================================================
 
 import { SKOOL } from '../data/skool.js';
@@ -21,6 +21,7 @@ import { OriginalPainter, originalMeasure, originalFontHas } from './original.js
 import { ModernPainter } from './hd/painter.js';
 import { IllustratedPainter } from './art/illustrated.js';
 import { ArtAssets } from './art/assets.js';
+import { Motion } from './motion.js';
 export { originalMeasure, originalFontHas };
 
 const C = SKOOL.cell;
@@ -37,7 +38,9 @@ export class Renderer {
     this.scale = 1;                          // canvas pixels per game pixel (the HD painter asks for 2)
     this.setTheme(this.options.theme);
     this.cameraX = 0;               // left edge of the view, in pixels
-    this.positions = new Map();     // id -> {x, y} eased pixel positions
+    this.motion = new Motion();     // where everything appears to be between the engine's steps
+    this.positions = this.motion.tracks;   // (older scripts clear this map to snap everything)
+    this.lastDraw = 0;              // time of the previous frame, for time-based easing
     this.tint = document.createElement('canvas'); this.tint.width = 24; this.tint.height = 32;
     this.resize(this.options.viewportColumns);
   }
@@ -86,39 +89,37 @@ export class Renderer {
   }
 
   // ---- Camera ----------------------------------------------------------------
-  updateCamera() {
+  // `dt` is the time since the last frame in milliseconds, so the camera
+  // moves at the same speed whatever the screen's refresh rate.
+  updateCamera(dt) {
     const eric = this.game.cast.eric;
     const viewW = this.viewW;
     const maxX = SKOOL.width * C - viewW;
-    let target = eric.x * C + 12 - viewW / 2;
-    target = Math.max(0, Math.min(maxX, target));
+    const clamp = (v) => Math.max(0, Math.min(maxX, v));
     if (this.options.retroScroll) {
       // Original behaviour: jump the view by 8 columns when Eric nears an edge.
+      const target = clamp(eric.x * C + 12 - viewW / 2);
       const col = Math.floor(this.cameraX / C);
       const offset = eric.x - col;
       if (offset >= this.columns - 10) this.cameraX = Math.min(maxX, (col + 8) * C);
       else if (offset <= 9 && col > 0) this.cameraX = Math.max(0, (col - 8) * C);
       if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;
     } else {
-      this.cameraX += (target - this.cameraX) * 0.12;
-      if (Math.abs(this.cameraX - target) < 0.5) this.cameraX = target;
+      // Follow where Eric is DRAWN (which glides), not his cell (which jumps).
+      const [ex] = this.spritePos(eric);
+      const target = clamp(ex + 12 - viewW / 2);
+      if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;        // a new game or a big jump: cut
+      else this.cameraX += (target - this.cameraX) * (1 - Math.exp(-dt / 150));
+      if (Math.abs(this.cameraX - target) < 0.05) this.cameraX = target;
     }
     const from = Math.floor(this.cameraX / C), to = from + this.columns;
     this.game.setVisibleColumns(from, to);
   }
 
-  // Eased screen position for a sprite.
+  // Where a thing is drawn this frame, in game pixels (see render/motion.js).
   spritePos(thing) {
-    let tx = thing.x * C, ty = thing.y * C;
-    const p = this.positions.get(thing.id);
-    if (!this.options.smoothMotion || !p || !thing.visible || Math.abs(p.x - tx) > 4 * C || Math.abs(p.y - ty) > 4 * C) {
-      this.positions.set(thing.id, { x: tx, y: ty });
-      return [tx, ty];
-    }
-    p.x += (tx - p.x) * 0.35; p.y += (ty - p.y) * 0.35;
-    if (Math.abs(p.x - tx) < 0.3) p.x = tx;
-    if (Math.abs(p.y - ty) < 0.3) p.y = ty;
-    return [p.x, p.y];
+    const m = this.motion.sample(thing, this.options.smoothMotion);
+    return [m.x * C, m.y * C];
   }
 
   // True when the view should use the genuine Spectrum graphics.
@@ -127,13 +128,16 @@ export class Renderer {
   useHd() { return !this.useOriginal() && this.options.artwork !== 'painted' && !!this.theme.hd; }
 
   // ---- The frame -------------------------------------------------------------
-  draw() {
+  draw(now = performance.now()) {
     const { ctx, game, theme } = this;
-    this.updateCamera();
+    const dt = Math.max(0, Math.min(100, now - this.lastDraw));
+    this.lastDraw = now;
+    this.motion.begin(now, 1000 / (game.config.ticksPerSecond * (this.options.gameSpeed || 1)));
+    this.updateCamera(dt);
     this.ensureScale();
     const cam = Math.round(this.cameraX);
     if (this.useOriginal()) return this.drawOriginal(cam);
-    if (this.useHd()) return this.drawHd(cam);
+    if (this.useHd()) return this.drawHd();
     ctx.save();
     ctx.translate(-cam, 0);
     const viewFrom = cam - 32, viewTo = cam + this.canvas.width + 32;
@@ -164,23 +168,40 @@ export class Renderer {
     if (this.options.retroStatus) this.drawStatus();
   }
 
-  // The frame in HD pixel art. Anything without HD art yet is drawn with the
-  // painted stand-in, enlarged, so nothing is ever missing from the screen.
-  drawHd(cam) {
+  // The frame from one of the HD painters (pixel art or illustrated).
+  // Anything a painter cannot draw falls back to the painted stand-in,
+  // enlarged, so nothing is ever missing from the screen.
+  drawHd() {
     const p = this.painter, S = p.scale, { ctx, game } = this, viewW = this.viewW;
+    // The camera may sit between game pixels: at scale S there are S canvas
+    // pixels to each one, so scrolling is S times finer than the old view.
+    const cam = Math.round(this.cameraX * S) / S;
     ctx.imageSmoothingEnabled = !!p.smooth;     // smooth for illustrations, crisp for pixel art
     ctx.save();
     ctx.translate(-cam * S, 0);
     p.drawBackdrop(ctx, cam, viewW);
     p.drawFurniture(ctx, game);
-    const viewFrom = cam - 32, viewTo = cam + viewW + 32;
+    const viewFrom = cam - 48, viewTo = cam + viewW + 48;
+    const cycles = !!p.hasCycle;                // only the illustrated painter has walk cycles
     for (const d of game.cast.drawables) {
       if (!d.visible || d.x * C + SPRITE_W < viewFrom || d.x * C > viewTo) continue;
-      const [x, y] = this.spritePos(d);
+      const m = this.motion.sample(d, this.options.smoothMotion);
+      const x = m.x * C, y = m.y * C;
       if (d.group !== 'OBJ' && d.isStanding?.()) p.drawShadow(ctx, x, y);
-      if (!p.drawSprite(ctx, d.group, d.animatoryState, d.direction, d.look, x, y)) {
+      // Which picture: the walk cycle while gliding, the standing pose at
+      // rest, otherwise whatever pose the engine says.
+      let state = d.animatoryState;
+      if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : 'WALK0';
+      if (m.fade && p.smooth) {
+        // Blend out of the previous pose over a few frames.
+        ctx.globalAlpha = 1 - m.fade.k;
+        p.drawSprite(ctx, d.group, m.fade.state, m.fade.direction, d.look, x, y);
+        ctx.globalAlpha = Math.min(1, m.fade.k * 1.6);
+      }
+      if (!p.drawSprite(ctx, d.group, state, d.direction, d.look, x, y)) {
         ctx.drawImage(getSprite(d.group, d.animatoryState, d.direction, d.look), Math.round(x * S), Math.round(y * S), SPRITE_W * S, SPRITE_H * S);
       }
+      ctx.globalAlpha = 1;
     }
     for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c);
     ctx.restore();

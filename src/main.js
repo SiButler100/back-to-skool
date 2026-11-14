@@ -68,6 +68,7 @@ export function boot() {
   function applySettings(s) {
     if (renderer.options.theme !== s.theme) renderer.setTheme(s.theme);
     renderer.options.smoothMotion = s.smoothMotion;
+    renderer.options.gameSpeed = s.speed;       // the motion smoothing needs to know how long a tick lasts
     renderer.options.retroScroll = s.retroScroll;
     if (renderer.columns !== s.columns || renderer.options.retroStatus !== s.retroStatus) renderer.resize(s.columns, s.retroStatus);
     game.config.freezeOnMessages = s.freezeOnMessages;
@@ -147,7 +148,7 @@ export function boot() {
       let guard = 0;
       while (acc >= step && guard++ < 10) { game.tick(); acc -= step; }
     }
-    renderer.draw();
+    renderer.draw(now);
     hud.update();
     requestAnimationFrame(frame);
   }

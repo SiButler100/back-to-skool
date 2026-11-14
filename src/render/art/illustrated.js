@@ -2,8 +2,8 @@
 // ILLUSTRATED PAINTER (lifelike artwork for the modern view)
 // ----------------------------------------------------------------------------
 // Draws the modern view from the generated illustrations in assets/illustrated
-// at four times the Spectrum's resolution (a cell is 32 pixels, a character
-// box 96 x 128). It extends the pixel-art painter and falls back to it, frame
+// at six times the Spectrum's resolution (a cell is 48 pixels, a character
+// box 144 x 192). It extends the pixel-art painter and falls back to it, frame
 // by frame and piece by piece, whenever an illustration is missing or still
 // loading, so the screen is always complete.
 //
@@ -17,14 +17,15 @@ import { ModernPainter } from '../hd/painter.js';
 import { makeCanvas } from '../hd/pixelart.js';
 import { drawHdText, HD_LINE_HEIGHT } from '../hd/font.js';
 import { buildIllustratedBackdrop } from './backdrop.js';
+import { ART_SCALE } from './assets.js';
 import { drawIllustratedFurniture } from './furniture.js';
 
-const PIXEL_SCALE = 2;    // the pixel-art painter's scale; our scale is twice that
+const PIXEL_SCALE = 2;    // the pixel-art painter's scale; ours is three times that
 
 export class IllustratedPainter extends ModernPainter {
   constructor(theme, assets) {
     super(theme);
-    this.scale = 4;
+    this.scale = ART_SCALE;
     this.smooth = true;             // the renderer turns image smoothing on for us
     this.assets = assets;
     this.flips = new Map();         // frame key -> flipped copy
@@ -42,6 +43,9 @@ export class IllustratedPainter extends ModernPainter {
     const s = this.scale; this.scale = PIXEL_SCALE;
     try { fn(); } finally { this.scale = s; ctx.restore(); }
   }
+
+  // True when this character has walk-cycle pictures (CYCLE0..7).
+  hasCycle(group, look) { return group !== 'OBJ' && !!this.assets.frame(group, 'CYCLE0', look?.variant); }
 
   // ---- Sprites --------------------------------------------------------------------
   drawSprite(ctx, group, state, direction, look, x, y) {

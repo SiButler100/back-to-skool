@@ -25,8 +25,13 @@ JOBS = os.path.join(HERE, 'jobs.json')
 EXPECTED = os.path.join(HERE, 'expected.json')
 ASSETS = os.path.join(ROOT, 'assets', 'illustrated')
 WORK = os.path.join(ROOT, 'art-work')
-CELL = 32
-BOX_W, BOX_H = 96, 128
+# The illustrated view draws at SCALE canvas pixels per Spectrum pixel. A cell
+# is 8 Spectrum pixels and a character's box is 3 x 4 cells. U converts sizes
+# first worked out at scale 4 (furniture, slabs) to the current scale.
+SCALE = 6
+U = SCALE / 4
+CELL = 8 * SCALE
+BOX_W, BOX_H = 24 * SCALE, 32 * SCALE
 
 
 def load_json(path, default=None):
@@ -236,14 +241,35 @@ def feet_row(img, min_px=3):
     return int(rows.max()) if len(rows) else img.size[1] - 1
 
 
-def align(poses, standing='WALK0', target_height=92, nudges=None):
-    """Scale every pose by one factor (so the standing pose is target_height
-    tall), then work out each frame's offset so its lowest solid row sits on
-    the box's bottom edge and it is centred on the box. Returns
-    {pose: (image, ox, oy)}."""
+# Poses where the figure stands upright: these are lined up by the trunk of the
+# body rather than the outline, so a punching arm or a long stride does not
+# shove the body sideways from one frame to the next.
+UPRIGHT_PREFIXES = ('WALK', 'CYCLE', 'ARM_UP', 'HITTING', 'CATAPULT', 'WATERPISTOL')
+
+
+def trunk_centre(img, feet, height):
+    """The horizontal centre of the body's trunk: the middle of the solid
+    pixels in the band from 45% to 70% of the standing height above the
+    feet (pelvis to chest). None if the band is empty."""
+    a = np.array(img.split()[-1]) > 128
+    top, bottom = max(0, int(feet - 0.70 * height)), max(1, int(feet - 0.45 * height))
+    cols = a[top:bottom].sum(axis=0)
+    if cols.sum() < 10:
+        return None
+    return float((cols * np.arange(len(cols))).sum() / cols.sum())
+
+
+def align(poses, standing='WALK0', target_height=92, nudges=None, height_from='standing'):
+    """Scale every pose by one factor (so the standing pose, or with
+    height_from='max' the tallest pose, is target_height tall), then work out
+    each frame's offset so its lowest solid row sits on the box's bottom edge
+    and it is centred on the box. Returns ({pose: (image, ox, oy)}, factor)."""
     nudges = nudges or {}
-    ref = poses.get(standing) or next(p for p in poses.values() if p is not None)
-    factor = target_height / ref.size[1]
+    if height_from == 'max':
+        ref_h = max(p.size[1] for p in poses.values() if p is not None)
+    else:
+        ref_h = (poses.get(standing) or next(p for p in poses.values() if p is not None)).size[1]
+    factor = target_height / ref_h
     out = {}
     for name, img in poses.items():
         if img is None:
@@ -253,6 +279,8 @@ def align(poses, standing='WALK0', target_height=92, nudges=None):
         bb = bbox(scaled) or (0, 0, w, h)
         fr = feet_row(scaled)
         cx = (bb[0] + bb[2]) / 2
+        if name.startswith(UPRIGHT_PREFIXES):
+            cx = trunk_centre(scaled, fr, target_height) or cx
         n = nudges.get(name, {})
         ox = int(round(cx - BOX_W / 2)) - int(n.get('dx', 0))
         oy = int(round(fr - (BOX_H - 1))) - int(n.get('dy', 0))
@@ -262,7 +290,7 @@ def align(poses, standing='WALK0', target_height=92, nudges=None):
 
 # ---- Packing ------------------------------------------------------------------------
 
-def pack(frames, max_width=2048, gutter=2):
+def pack(frames, max_width=4096, gutter=2):
     """Shelf-pack {name: (image, ox, oy)} into one RGBA sheet. Returns
     (sheet, {name: {x, y, w, h, ox, oy}})."""
     items = sorted(frames.items(), key=lambda kv: -kv[1][0].size[1])

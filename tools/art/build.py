@@ -15,20 +15,22 @@ import sys
 from PIL import Image, ImageEnhance
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from artlib import (ASSETS, BOX_H, BOX_W, EXPECTED, JOBS, ROOT, WORK, align, bbox, key, load_json, pack, save_json,
+from artlib import (ASSETS, BOX_H, BOX_W, EXPECTED, JOBS, ROOT, SCALE, U, WORK, align, bbox, key, load_json, pack, save_json,
                     slice_auto, slice_components, slice_grid)
 
 MANIFEST = os.path.join(ASSETS, 'manifest.json')
-DEFAULT_MANIFEST = {'schema': 1, 'scale': 4, 'box': {'w': 96, 'h': 128}, 'characters': {}, 'objects': {'frames': {}}, 'rooms': {}, 'furniture': {}, 'textures': {}}
+DEFAULT_MANIFEST = {'schema': 1, 'scale': SCALE, 'box': {'w': BOX_W, 'h': BOX_H}, 'characters': {}, 'objects': {'frames': {}}, 'rooms': {}, 'furniture': {}, 'textures': {}}
 # Standing heights in HD pixels: children fit the lower three cells, adults the box.
-TARGET_HEIGHT = {3: 92, 4: 122}
+TARGET_HEIGHT = {3: round(23 * SCALE), 4: round(30.5 * SCALE)}
 
 
-def build_characters(job, manifest):
+def character_frames(job):
+    """One sheet -> {pose: (image, ox, oy)}, each job scaled by its own factor
+    (sheets of the same character are drawn at different sizes)."""
     src = os.path.join(ROOT, job['source'])
     if not os.path.exists(src):
         print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
-        return False
+        return {}
     img = Image.open(src)
     keyed = key(img, job.get('key', '#FF00FF'), job.get('tolerance', 80), erode=job.get('erode', 1)) if job.get('key') else img.convert('RGBA')
     grid = job.get('grid')
@@ -47,17 +49,28 @@ def build_characters(job, manifest):
     for i, name in enumerate(poses):
         if name and i < len(cells) and cells[i] is not None:
             named[name] = cells[i]
+    d = os.path.join(WORK, job['group'], job.get('variant', 'A'))
+    os.makedirs(d, exist_ok=True)
     for name, cell in named.items():
-        d = os.path.join(WORK, job['group'], job.get('variant', 'A'))
-        os.makedirs(d, exist_ok=True)
         cell.save(os.path.join(d, f'{name}.raw.png'))
-    frames, factor = align(named, standing=job.get('standing', 'WALK0'), target_height=TARGET_HEIGHT[job.get('heightCells', 3)], nudges=job.get('nudge'))
+    frames, factor = align(named, standing=job.get('standing', 'WALK0'), target_height=TARGET_HEIGHT[job.get('heightCells', 3)],
+                           nudges=job.get('nudge'), height_from=job.get('heightFrom', 'standing'))
+    print(f"  {job['id']}: {len(frames)} frames, scale factor {factor:.3f}")
+    return frames
+
+
+def build_character_set(group, variant, jobs, manifest):
+    """Every sheet of one character (poses, walk cycle...) packed into one image."""
+    frames = {}
+    for job in jobs:
+        frames.update(character_frames(job))
+    if not frames:
+        return
     sheet, placed = pack(frames)
-    group, variant = job['group'], job.get('variant')
     rel = f"characters/{group.lower()}{('-' + variant.lower()) if variant else ''}.png"
     os.makedirs(os.path.dirname(os.path.join(ASSETS, rel)), exist_ok=True)
     sheet.save(os.path.join(ASSETS, rel), optimize=True)
-    # Two-frame walk until a distinct WALK3 exists.
+    # The engine's four walk states: two distinct frames unless the sheet has more.
     if 'WALK2' not in placed:
         placed['WALK2'] = {'alias': 'WALK0'}
     if 'WALK3' not in placed:
@@ -70,8 +83,7 @@ def build_characters(job, manifest):
         g.setdefault('variants', {})[variant] = entry
     else:
         chars[group] = entry
-    print(f"  {job['id']}: {len(frames)} frames, scale factor {factor:.3f}, sheet {sheet.size[0]}x{sheet.size[1]} -> {rel}")
-    return True
+    print(f"    {group}{'/' + variant if variant else ''}: {len(frames)} frames, sheet {sheet.size[0]}x{sheet.size[1]} -> {rel}")
 
 
 # How each furniture cut-out fills its rectangle: things that fill an opening
@@ -110,18 +122,18 @@ def build_furniture(job, manifest, sizes):
             continue
         d = os.path.join(WORK, 'furniture'); os.makedirs(d, exist_ok=True)
         cell.save(os.path.join(d, key.replace(':', '_') + '.raw.png'))
-        frames[key] = fit_into(cell, sizes[key]['w'], sizes[key]['h'], FIT.get(key, 'bottom'))
+        frames[key] = fit_into(cell, round(sizes[key]['w'] * U), round(sizes[key]['h'] * U), FIT.get(key, 'bottom'))
     return frames
 
 
 def derive_open(frames, sizes):
     """An open door or gate is the shut one seen edge-on: a narrow, darker slab
     at the left of the opening, as the pixel art draws it."""
-    for shut, open_, slab in (('door:shut', 'door:open', 24), ('gate:shut', 'gate:open', 16)):
+    for shut, open_, slab in (('door:shut', 'door:open', round(24 * U)), ('gate:shut', 'gate:open', round(16 * U))):
         if shut in frames and open_ in sizes and open_ not in frames:
-            w, h = sizes[open_]['w'], sizes[open_]['h']
+            w, h = round(sizes[open_]['w'] * U), round(sizes[open_]['h'] * U)
             edge = ImageEnhance.Brightness(frames[shut].resize((slab, h), Image.LANCZOS)).enhance(0.8)
-            out = Image.new('RGBA', (w, h), (0, 0, 0, 0)); out.paste(edge, (4, 0), edge)
+            out = Image.new('RGBA', (w, h), (0, 0, 0, 0)); out.paste(edge, (round(4 * U), 0), edge)
             frames[open_] = out
 
 
@@ -193,7 +205,8 @@ def build_objects(job, manifest, footprints, extra=None):
 def place_object(cell, fp, anchor):
     """Fit a cut-out into its doubled footprint inside the box; return
     (trimmed image, ox, oy) in the manifest's frame convention."""
-    rx, ry, rw, rh = fp['x'] * 2, fp['y'] * 2, fp['w'] * 2, fp['h'] * 2
+    k = SCALE // 2                                  # footprints are in pixel-art pixels (scale 2)
+    rx, ry, rw, rh = fp['x'] * k, fp['y'] * k, fp['w'] * k, fp['h'] * k
     f = min(rw / cell.size[0], rh / cell.size[1])
     sw, sh = max(1, round(cell.size[0] * f)), max(1, round(cell.size[1] * f))
     small = cell.resize((sw, sh), Image.LANCZOS)
@@ -261,19 +274,24 @@ def main():
     if '--report' in sys.argv:
         sys.exit(report(manifest))
     jobs = load_json(JOBS, {'jobs': []})['jobs']
-    furniture_jobs, object_jobs = [], []
+    manifest['scale'] = SCALE; manifest['box'] = {'w': BOX_W, 'h': BOX_H}
+    furniture_jobs, object_jobs, touched = [], [], []
     for job in jobs:
         if args and job['id'] not in args:
             continue
         kind = job.get('kind', 'characters')
         if kind == 'characters':
-            build_characters(job, manifest)
+            if (job['group'], job.get('variant')) not in touched:
+                touched.append((job['group'], job.get('variant')))
         elif kind == 'furniture':
             furniture_jobs.append(job)
         elif kind == 'room':
             build_room(job, manifest)
         elif kind == 'objects':
             object_jobs.append(job)
+    # A character's sheets are always rebuilt together so one image holds every pose.
+    for group, variant in touched:
+        build_character_set(group, variant, [j for j in jobs if j.get('kind', 'characters') == 'characters' and j['group'] == group and j.get('variant') == variant], manifest)
     # Furniture is always rebuilt as a whole so the sheet holds every piece.
     if furniture_jobs:
         build_all_furniture([j for j in jobs if j.get('kind') == 'furniture'], manifest)

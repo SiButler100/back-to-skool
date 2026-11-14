@@ -15,6 +15,10 @@
 export const ART_BASE = (typeof window !== 'undefined' && window.BTS_ART_BASE)
   || (typeof document !== 'undefined' ? new URL('assets/illustrated/', document.baseURI).href : 'assets/illustrated/');
 
+// Canvas pixels per Spectrum pixel in the illustrated view. The artwork in
+// assets/illustrated is built for exactly this (tools/art/artlib.py SCALE).
+export const ART_SCALE = 6;
+
 export class ArtAssets {
   constructor(base = ART_BASE) {
     this.base = base;

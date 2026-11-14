@@ -24,6 +24,7 @@ const PIXEL_SCALE = 2;
 
 export function buildIllustratedBackdrop(theme, S, assets) {
   const C = SKOOL.cell * S, P = PIXEL_SCALE, up = S / P;
+  const u = S / 4;                               // sizes below were first measured at scale 4
   const W = SKOOL.width * C, H = SKOOL.height * C;
   const canvas = makeCanvas(W, H);
   const ctx = canvas.getContext('2d');
@@ -65,7 +66,7 @@ export function buildIllustratedBackdrop(theme, S, assets) {
     const f = assets.furniture('blackboard');
     for (const b of SKOOL.blackboards) {
       const x = b.topLeft[0] * C, y = b.topLeft[1] * C, w = b.size[0] * C, h = b.size[1] * C;
-      stamp(f, x - 12, y - 12, w + 24, h + 32);
+      stamp(f, x - 12 * u, y - 12 * u, w + 24 * u, h + 32 * u);
     }
   }
   if (hasDesks) {
@@ -73,14 +74,14 @@ export function buildIllustratedBackdrop(theme, S, assets) {
     for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
       const room = SKOOL.rooms.find((r) => r.id === roomId);
       const floor = (room.bottomRight[1] + 1) * C;
-      for (const x of xs) stamp(f, x * C - 40, floor - 96, 112, 96);
+      for (const x of xs) stamp(f, x * C - 40 * u, floor - 96 * u, 112 * u, 96 * u);
     }
   }
   if (hasRailings) {
     const f = assets.furniture('railing'), p = DECOR.playground;
     const y = 16 * C, x1 = p.x1 * C;
-    ctx.save(); ctx.beginPath(); ctx.rect(p.gate[1] * C + 32, y, x1 - p.gate[1] * C - 32, f.h); ctx.clip();
-    for (let x = p.gate[1] * C + 32; x < x1; x += f.w) stamp(f, x, y, f.w, f.h);
+    ctx.save(); ctx.beginPath(); ctx.rect(p.gate[1] * C + C, y, x1 - p.gate[1] * C - C, f.h); ctx.clip();
+    for (let x = p.gate[1] * C + C; x < x1; x += f.w) stamp(f, x, y, f.w, f.h);
     ctx.restore();
   }
   if (hasTree) {

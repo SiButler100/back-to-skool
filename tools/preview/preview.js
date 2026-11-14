@@ -34,7 +34,9 @@ const lookFor = (group) => group === 'ERIC' ? ERIC.look : (CHARACTERS.find((c) =
 function section(title) { const h = document.createElement('h2'); h.textContent = title; out.appendChild(h); }
 
 const missing = [];
-for (const [group, states] of Object.entries(SPRITE_GROUPS)) {
+for (const [group, baseStates] of Object.entries(SPRITE_GROUPS)) {
+  // The illustrated painter also has an eight-frame walk cycle per character.
+  const states = painter.hasCycle && painter.hasCycle(group, lookFor(group)) ? [...baseStates, ...Array.from({ length: 8 }, (_, i) => `CYCLE${i}`)] : baseStates;
   section(group);
   const cols = states.length;
   const canvas = document.createElement('canvas');
