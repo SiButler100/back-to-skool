@@ -25,7 +25,7 @@ const expected = {
     'cabinet:shut': { w: 80, h: 72 }, 'cabinet:open': { w: 80, h: 72 },
     safe: { w: 80, h: 56 },
     'cup:EMPTY': { w: 40, h: 32 }, 'cup:WATER': { w: 40, h: 32 }, 'cup:SHERRY': { w: 40, h: 32 }, 'cup:FROG': { w: 40, h: 32 },
-    blackboard: { w: 280, h: 104 }, desk: { w: 112, h: 96 }, tree: { w: 448, h: 640 }, railing: { w: 32, h: 144 },
+    blackboard: { w: 280, h: 104 }, desk: { w: 112, h: 96 }, tree: { w: 448, h: 640 }, railing: { w: 160, h: 144 },
     conker: { w: 16, h: 16 }, bike: { w: 96, h: 64 },
   },
 };

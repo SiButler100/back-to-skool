@@ -81,6 +81,25 @@ section('Objects');
   out.appendChild(canvas);
 }
 
+// Illustrated furniture: every cut-out the manifest holds, at its real size.
+if (art === 'illustrated' && painter.assets?.manifest?.furniture) {
+  section('Furniture (illustrated)');
+  const keys = Object.keys(painter.assets.manifest.furniture);
+  const canvas = document.createElement('canvas');
+  const pad = 8; let x = 0, maxH = 0;
+  const items = keys.map((k) => ({ k, f: painter.assets.furniture(k) })).filter((i) => i.f);
+  for (const i of items) { x += i.f.w + pad; maxH = Math.max(maxH, i.f.h); }
+  canvas.width = x; canvas.height = maxH + 16; canvas.style.maxWidth = '100%';
+  const ctx = canvas.getContext('2d'); x = 0;
+  for (const { k, f } of items) {
+    ctx.fillStyle = '#2f343b'; ctx.fillRect(x, 16, f.w, f.h);
+    ctx.drawImage(f.img, f.x, f.y, f.w, f.h, x, 16, f.w, f.h);
+    ctx.fillStyle = '#cfd6de'; ctx.font = '11px Ubuntu, sans-serif'; ctx.fillText(k, x, 11);
+    x += f.w + pad;
+  }
+  out.appendChild(canvas);
+}
+
 section('Missing HD art');
 const p = document.createElement('p'); p.className = 'note';
 p.textContent = missing.length ? `${missing.length} states still use the painted stand-in: ${missing.join(', ')}` : 'None: every state has HD art.';

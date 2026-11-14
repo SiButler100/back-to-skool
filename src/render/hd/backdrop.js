@@ -22,10 +22,19 @@ const STOREY_TOP = { top: 0, middle: 7, ground: 14 };
 
 export function buildHdBackdrop(theme, S) {
   const C = SKOOL.cell * S;                       // 16
+  const canvas = makeCanvas(SKOOL.width * C, SKOOL.height * C);
+  const ctx = canvas.getContext('2d');
+  paintBase(ctx, theme, S);
+  paintStructure(ctx, theme, S);
+  return canvas;
+}
+
+// Stage one: sky, ground, the brick shells and the rooms' walls and
+// decoration. The illustrated view paints its room pictures over this.
+export function paintBase(ctx, theme, S) {
+  const C = SKOOL.cell * S;
   const W = SKOOL.width * C, H = SKOOL.height * C;
   const hd = theme.hd;
-  const canvas = makeCanvas(W, H);
-  const ctx = canvas.getContext('2d');
   ctx.imageSmoothingEnabled = false;
   const rect = (x, y, w, h, colour) => { ctx.fillStyle = colour; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
   const feet = (row) => (row + 4) * C;            // walking surface for a sprite row
@@ -41,6 +50,18 @@ export function buildHdBackdrop(theme, S) {
   // ---- Buildings: brick shells, then the rooms -----------------------------
   for (const b of DECOR.buildings) paintShell(ctx, hd, b, C, W, H);
   for (const z of DECOR.zones) paintZone(ctx, hd, z, C);
+}
+
+// Stage two: everything built on top of the walls: floors, interior walls and
+// door frames, staircases, blackboards, desks, hooks, the playground and the
+// room plaques. `skip` names parts the illustrated view draws itself
+// ({ boards, desks, tree, railings }). Drawn on a transparent canvas it is an overlay.
+export function paintStructure(ctx, theme, S, skip = {}) {
+  const C = SKOOL.cell * S;
+  const hd = theme.hd;
+  ctx.imageSmoothingEnabled = false;
+  const rect = (x, y, w, h, colour) => { ctx.fillStyle = colour; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+  const feet = (row) => (row + 4) * C;
 
   // ---- Floors: boards with a shadow beneath ---------------------------------
   for (const f of SKOOL.floors) {
@@ -73,16 +94,20 @@ export function buildHdBackdrop(theme, S) {
   for (const s of SKOOL.staircases) paintStaircase(ctx, hd, s, C);
 
   // ---- Blackboards, desks and chairs ------------------------------------------------
-  for (const b of SKOOL.blackboards) {
-    const x = b.topLeft[0] * C, y = b.topLeft[1] * C, w = b.size[0] * C, h = b.size[1] * C;
-    rect(x - 6, y - 6, w + 12, h + 12, hd.boardFrame); rect(x - 6, y - 6, w + 12, 2, hd.boardFrameLight); rect(x - 6, y - 6, 2, h + 12, hd.boardFrameLight);
-    rect(x, y, w, h, theme.blackboard);
-    rect(x - 6, y + h + 6, w + 12, 4, hd.boardFrame); rect(x - 4, y + h + 7, 8, 2, '#f5f5dc');   // tray with a stick of chalk
+  if (!skip.boards) {
+    for (const b of SKOOL.blackboards) {
+      const x = b.topLeft[0] * C, y = b.topLeft[1] * C, w = b.size[0] * C, h = b.size[1] * C;
+      rect(x - 6, y - 6, w + 12, h + 12, hd.boardFrame); rect(x - 6, y - 6, w + 12, 2, hd.boardFrameLight); rect(x - 6, y - 6, 2, h + 12, hd.boardFrameLight);
+      rect(x, y, w, h, theme.blackboard);
+      rect(x - 6, y + h + 6, w + 12, 4, hd.boardFrame); rect(x - 4, y + h + 7, 8, 2, '#f5f5dc');   // tray with a stick of chalk
+    }
   }
-  for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
-    const room = SKOOL.rooms.find((r) => r.id === roomId);
-    const floor = (room.bottomRight[1] + 1) * C;
-    for (const x of xs) paintDesk(ctx, hd, x * C, floor);
+  if (!skip.desks) {
+    for (const [roomId, xs] of Object.entries(SKOOL.desks)) {
+      const room = SKOOL.rooms.find((r) => r.id === roomId);
+      const floor = (room.bottomRight[1] + 1) * C;
+      for (const x of xs) paintDesk(ctx, hd, x * C, floor);
+    }
   }
 
   // ---- Cup hooks and the safe's shelf -------------------------------------------------
@@ -90,7 +115,7 @@ export function buildHdBackdrop(theme, S) {
   rect(SKOOL.safe.x * C - 6, SKOOL.safe.y * C + 20, 44, 4, hd.wall);
 
   // ---- The playground: tree, low wall, posts, gate posts, railings ---------------------
-  paintPlayground(ctx, hd, C, feet(17));
+  paintPlayground(ctx, hd, C, feet(17), skip.tree, skip.railings);
 
   // ---- Room plaques ---------------------------------------------------------------------
   for (const z of DECOR.zones) {
@@ -100,7 +125,12 @@ export function buildHdBackdrop(theme, S) {
     rect(cx - w / 2, y - 4, w, 22, hd.plaque);
     drawHdText(ctx, z.plaque, Math.round(cx - measureHd(z.plaque) / 2), y, hd.plaqueInk);
   }
-  return canvas;
+}
+
+// Where a storey's room pictures go: the wall between the ceiling and the
+// walking surface, in cells. Shared with the illustrated builder.
+export function zoneRect(z) {
+  return { x0: z.x0, x1: z.x1, top: STOREY_TOP[z.storey], floor: FLOOR_Y[z.storey] + 4 };
 }
 
 // The brick outside of a building, visible above the roofline and at the ends.
@@ -284,7 +314,7 @@ const LEAF = layer(0, 0, `
   .......AAAZZA.......
 `, 'leaves');
 
-function paintPlayground(ctx, hd, C, ground) {
+function paintPlayground(ctx, hd, C, ground, skipTree = false, skipRailings = false) {
   const rect = (x, y, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); };
   const p = DECOR.playground;
   // tarmac strip in front of the buildings, grass further off
@@ -295,9 +325,12 @@ function paintPlayground(ctx, hd, C, ground) {
   for (const post of p.posts) { rect(post * C + 6, 4 * C, 6, wallY - 4 * C + 6, hd.iron); rect(post * C + 6, 4 * C, 2, wallY - 4 * C, hd.ironLight); }
   for (const gx of p.gate) { rect(gx * C + 6, 14 * C, 8, 6 * C + 8, hd.iron); rect(gx * C + 6, 14 * C, 2, 6 * C + 8, hd.ironLight); rect(gx * C + 4, 14 * C - 4, 12, 4, hd.iron); }
   // railings from the gate to the girls' school
+  if (!skipRailings) {
   for (let x = p.gate[1] * C + 20; x < p.x1 * C; x += 16) rect(x, 16 * C, 4, 4 * C + 8, hd.iron);
   rect(p.gate[1] * C + 16, 16 * C, (p.x1 - p.gate[1]) * C - 16, 4, hd.iron); rect(p.gate[1] * C + 16, 19 * C, (p.x1 - p.gate[1]) * C - 16, 4, hd.iron);
+  }
   // the tree: trunk, boughs, crown
+  if (skipTree) return;
   const tx = p.treeX * C + 8;
   rect(tx - 8, 2 * C, 16, ground - 2 * C, hd.trunk); rect(tx - 8, 2 * C, 4, ground - 2 * C, hd.trunkLight); rect(tx - 14, ground - 8, 28, 8, hd.trunk);
   rect(tx - 40, 5 * C, 34, 6, hd.trunk); rect(tx + 6, 6 * C, 40, 6, hd.trunk); rect(tx - 24, 3 * C, 20, 6, hd.trunk);

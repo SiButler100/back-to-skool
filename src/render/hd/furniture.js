@@ -111,32 +111,45 @@ function image(key, lay) {
 }
 const DOOR_KIND = { SkoolGate: 'gate', DrinksCabinet: 'cabinet' };
 
-// Draw every piece of live furniture. `S` is the HD scale; positions come in cells.
-export function drawFurniture(ctx, game, S, drawChalk) {
-  const world = game.world;
+// Every piece of live furniture as a list: its state key (the same names the
+// illustrated manifest uses), the pixel picture, and where it goes in HD
+// pixels at scale `S`. The pixel painter draws the pictures as they are; the
+// illustrated painter swaps in a cut-out where it has one. `u` turns this
+// file's pixel offsets (measured at scale 2) into the caller's scale.
+export function furniturePieces(game, S) {
+  const world = game.world, C = 8 * S, u = S / 2;
+  const out = [];
+  const add = (key, img, x, y) => out.push({ key, img, x, y, w: img.width * u, h: img.height * u });
   for (const d of world.doors.values()) {
     const kind = DOOR_KIND[d.id] || 'door';
     const [cx, cy] = d.coords, [w, h] = d.size;
-    if (kind === 'cabinet') { ctx.drawImage(image(`cabinet ${d.shut}`, cabinet(d.shut)), cx * 8 * S - 4, cy * 8 * S - 4); continue; }
+    const state = d.shut ? 'shut' : 'open';
+    if (kind === 'cabinet') { add(`cabinet:${state}`, image(`cabinet ${d.shut}`, cabinet(d.shut)), cx * C - 4 * u, cy * C - 4 * u); continue; }
     const lay = kind === 'gate' ? gate(d.shut) : door(w, h, d.shut);
-    ctx.drawImage(image(`${kind} ${w}x${h} ${d.shut}`, lay), cx * 8 * S, cy * 8 * S);
+    add(`${kind}:${state}`, image(`${kind} ${w}x${h} ${d.shut}`, lay), cx * C, cy * C);
   }
   for (const win of world.windows.values()) {
     const [cx, cy] = win.coords, [w, h] = win.size;
-    ctx.drawImage(image(`window ${w}x${h} ${win.shut}`, windowArt(w, h, win.shut)), cx * 8 * S, cy * 8 * S);
+    add(`window${w}x${h}:${win.shut ? 'shut' : 'open'}`, image(`window ${w}x${h} ${win.shut}`, windowArt(w, h, win.shut)), cx * C, cy * C);
   }
   const s = world.safe;
-  ctx.drawImage(image('safe', SAFE), s.x * 8 * S - 4, s.y * 8 * S - 8);
+  add('safe', image('safe', SAFE), s.x * C - 4 * u, s.y * C - 8 * u);
   for (const c of world.cups.values()) {
     const contents = c.frogs.length ? 'FROG' : c.contents;
-    ctx.drawImage(image(`cup ${contents}`, cup(contents)), c.x * 8 * S - 2, c.y * 8 * S);
+    add(`cup:${contents}`, image(`cup ${contents}`, cup(contents)), c.x * C - 2 * u, c.y * C);
   }
-  if (drawChalk) drawChalk(ctx);
-  if (!game.cast.conker.visible) ctx.drawImage(image('conker tree', CONKER_IN_TREE), 100 * 8 * S + 12, 3 * 8 * S + 4);
+  if (!game.cast.conker.visible) add('conker', image('conker tree', CONKER_IN_TREE), 100 * C + 12 * u, 3 * C + 4 * u);
   if (game.cast.bike.chained) {
-    ctx.drawImage(image('bike', BIKE), 96 * 8 * S + BIKE.x, 17 * 8 * S + BIKE.y);
-    ctx.drawImage(image('chain', CHAIN), 96 * 8 * S + 10, 17 * 8 * S + 30);
+    add('bike', image('bike', BIKE), 96 * C + BIKE.x * u, 17 * C + BIKE.y * u);
+    add('chain', image('chain', CHAIN), 96 * C + 10 * u, 17 * C + 30 * u);
   }
+  return out;
+}
+
+// Draw every piece of live furniture, then the chalk. `S` is the HD scale.
+export function drawFurniture(ctx, game, S, drawChalk) {
+  for (const p of furniturePieces(game, S)) ctx.drawImage(p.img, p.x, p.y, p.w, p.h);
+  if (drawChalk) drawChalk(ctx);
 }
 
 export function clearFurnitureCache() { cache.clear(); }

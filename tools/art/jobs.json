@@ -373,6 +373,324 @@
       ],
       "nudge": {},
       "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 3 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. The same original character in every cell. One full-body pose per cell, feet and shoes visible, standing on the same invisible ground line near the bottom of each cell, side view facing RIGHT, generous margin inside each cell, no text, no labels, no borders, no cast shadows on the ground, no props other than those listed. The character: Albert, the school caretaker, a stocky man in his sixties, grey stubble, grey hair under a brown flat cap, brown overall coat over a checked shirt, dark trousers, heavy black boots, a bunch of keys at his belt. Poses in reading order, left to right then top to bottom: cell 1: standing relaxed, arms at the sides; cell 2: mid-stride walking to the right, left leg forward, arms swinging; cell 3: mid-stride walking to the right, right leg forward; cell 4: standing with the right arm raised straight up, hand open; cell 5: sitting on the floor dazed, legs out in front, little stars circling the head; cell 6: standing with arms folded."
+    },
+    {
+      "id": "furniture-1",
+      "kind": "furniture",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "f825bbe8-c5d5-40d6-b9b6-770b7c1e7f11",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_222326_f825bbe8-c5d5-40d6-b9b6-770b7c1e7f11.png",
+      "source": "art-src/furniture-1.png",
+      "grid": {
+        "rows": 3,
+        "cols": 3
+      },
+      "items": [
+        "door:shut",
+        "window3x3:shut",
+        "window3x3:open",
+        "window2x4:shut",
+        "window2x4:open",
+        "cabinet:shut",
+        "cabinet:open",
+        "safe",
+        "blackboard"
+      ],
+      "notes": "Doors, windows, cabinet, safe, blackboard. door:open and gate:open are derived from the shut pictures by build.py."
+    },
+    {
+      "id": "furniture-2",
+      "kind": "furniture",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "7d9c0cce-7c3f-4c1f-a001-2ff984e38aeb",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_222326_7d9c0cce-7c3f-4c1f-a001-2ff984e38aeb.png",
+      "source": "art-src/furniture-2.png",
+      "grid": {
+        "rows": 3,
+        "cols": 3
+      },
+      "items": [
+        "cup:EMPTY",
+        "cup:WATER",
+        "cup:SHERRY",
+        "cup:FROG",
+        "desk",
+        "bike",
+        "railing",
+        "gate:shut",
+        "conker"
+      ]
+    },
+    {
+      "id": "tree-1",
+      "kind": "furniture",
+      "model": "gpt_image_2_6",
+      "aspect": "2:3",
+      "job_id": "30eb3aae-60f3-4a0a-a020-39e97e7612b0",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261108_222327_30eb3aae-60f3-4a0a-a020-39e97e7612b0.png",
+      "source": "art-src/tree-1.png",
+      "grid": {
+        "rows": 1,
+        "cols": 1
+      },
+      "items": [
+        "tree"
+      ]
+    },
+    {
+      "id": "room-BlueRoom",
+      "kind": "room",
+      "zone": "BlueRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "0fa035a5-0be7-4a44-9d94-a8b0f0b60ee4",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160201_0fa035a5-0be7-4a44-9d94-a8b0f0b60ee4.png",
+      "source": "art-src/room-BlueRoom.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a boys' classroom with pale sky-blue painted plaster walls, three tall white sash windows showing bright daylight, a cork pinboard with children's paintings, a cast-iron radiator, dark wooden skirting, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-Library",
+      "kind": "room",
+      "zone": "Library",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "e39519c8-3a6a-42f2-907c-33c4f1445e6b",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160200_e39519c8-3a6a-42f2-907c-33c4f1445e6b.png",
+      "source": "art-src/room-Library.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school library with sage-green walls completely lined with tall dark oak bookcases full of old hardback books, a rolling ladder, a radiator, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-YellowRoom",
+      "kind": "room",
+      "zone": "YellowRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "3e5997e8-021b-45d5-858d-e08d1362f4f3",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160202_3e5997e8-021b-45d5-858d-e08d1362f4f3.png",
+      "source": "art-src/room-YellowRoom.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a classroom with warm primrose-yellow walls, three tall sash windows with daylight, a large map of the world poster, a round clock, a radiator, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-HeadsCorridor",
+      "kind": "room",
+      "zone": "HeadsCorridor",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "e8f4ce79-45e5-4b35-9ef3-bcf2711dbf28",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160200_e8f4ce79-45e5-4b35-9ef3-bcf2711dbf28.png",
+      "source": "art-src/room-HeadsCorridor.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a short school corridor with cream walls, a wooden noticeboard with pinned papers, a tall bookcase, a fire extinguisher, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-HeadsStudy",
+      "kind": "room",
+      "zone": "HeadsStudy",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "7f34caa2-a5a0-49b7-92bc-327e5c6cff6e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160203_7f34caa2-a5a0-49b7-92bc-327e5c6cff6e.png",
+      "source": "art-src/room-HeadsStudy.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a headmaster's study with dark sage-green walls, framed portraits in gilt frames, a sash window with net curtains, glass-fronted bookshelves with trophies and a globe, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-Landing",
+      "kind": "room",
+      "zone": "Landing",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "a5ee3a6c-c845-4290-be19-d05b3f2acc70",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160200_a5ee3a6c-c845-4290-be19-d05b3f2acc70.png",
+      "source": "art-src/room-Landing.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a top-floor landing with primrose-yellow walls, a tall bookcase, a framed school photograph, a radiator, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-UpperRoom",
+      "kind": "room",
+      "zone": "UpperRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "c4184a5e-b235-48f9-bde4-89214460189e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160201_c4184a5e-b235-48f9-bde4-89214460189e.png",
+      "source": "art-src/room-UpperRoom.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a girls' classroom with pale blue walls, a tall window with flowered curtains, a vase of flowers on the sill, a nature poster, a radiator, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-TakesStudy",
+      "kind": "room",
+      "zone": "TakesStudy",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "20eec8cd-2ea5-483e-bdaf-4dbe3ce4142e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160201_20eec8cd-2ea5-483e-bdaf-4dbe3ce4142e.png",
+      "source": "art-src/room-TakesStudy.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a headmistress's study with pale yellow walls, a sash window with lace curtains, a framed landscape painting, a shelf of china ornaments, a potted fern, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-Toilets",
+      "kind": "room",
+      "zone": "Toilets",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "52912e24-c6d6-40fb-a8cb-076a5b43da04",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160203_52912e24-c6d6-40fb-a8cb-076a5b43da04.png",
+      "source": "art-src/room-Toilets.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school lavatory with white glazed tiled walls, a row of wooden cubicle doors, white porcelain basins with mirrors above, a frosted window, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-Corridor",
+      "kind": "room",
+      "zone": "Corridor",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "4184d96d-7cda-44df-bd4d-3597f5ff5b40",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160201_4184d96d-7cda-44df-bd4d-3597f5ff5b40.png",
+      "source": "art-src/room-Corridor.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school corridor with primrose-yellow walls, framed photographs of sports teams, a cast-iron radiator, a noticeboard, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-ScienceLab",
+      "kind": "room",
+      "zone": "ScienceLab",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "23501bc9-2151-4ea4-986a-61507420ac07",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160201_23501bc9-2151-4ea4-986a-61507420ac07.png",
+      "source": "art-src/room-ScienceLab.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school science laboratory with cream walls, a large periodic table wall chart, shelves of glass bottles and jars, a long dark wooden bench along the back wall with sinks, gas taps and a bunsen burner, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-Storeroom",
+      "kind": "room",
+      "zone": "Storeroom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "ca138034-f479-407f-a851-5bea3fa65e11",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160201_ca138034-f479-407f-a851-5bea3fa65e11.png",
+      "source": "art-src/room-Storeroom.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a cramped school storeroom with pale cyan walls, wooden shelves crowded with jars, boxes, rolled maps and a skeleton model, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-HallUpper",
+      "kind": "room",
+      "zone": "HallUpper",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "065f56f1-e9c3-4ca0-a1b5-2e5f2db69898",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160906_065f56f1-e9c3-4ca0-a1b5-2e5f2db69898.png",
+      "source": "art-src/room-HallUpper.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of the upper part of a school assembly hall wall, warm oatmeal plaster, a row of tall arched windows with daylight, a wooden cornice, no floor visible, the wall continuing down past the bottom edge, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-StageUpper",
+      "kind": "room",
+      "zone": "StageUpper",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "28354f6a-c042-4d2e-971a-d01125a16692",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160906_28354f6a-c042-4d2e-971a-d01125a16692.png",
+      "source": "art-src/room-StageUpper.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of the upper wall above a school stage, primrose-yellow plaster, a painted school crest without lettering, the heavy maroon pelmet of stage curtains along the top, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-MiddleRoom",
+      "kind": "room",
+      "zone": "MiddleRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "66125a88-cee0-4ce6-972b-44ad77b15580",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160907_66125a88-cee0-4ce6-972b-44ad77b15580.png",
+      "source": "art-src/room-MiddleRoom.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a girls' classroom with primrose-yellow walls, a window with gingham curtains, pictures of flowers and birds, a radiator, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-GirlsCorridor",
+      "kind": "room",
+      "zone": "GirlsCorridor",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "b03b7c2e-c2e4-4e0b-bff5-bed6cabf6648",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160907_b03b7c2e-c2e4-4e0b-bff5-bed6cabf6648.png",
+      "source": "art-src/room-GirlsCorridor.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a girls' school corridor with cream walls, a window with net curtains, a framed embroidery sampler, a radiator, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-Cloakroom",
+      "kind": "room",
+      "zone": "Cloakroom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "275271b0-2bb2-4e04-8d7b-17b73b266385",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160908_275271b0-2bb2-4e04-8d7b-17b73b266385.png",
+      "source": "art-src/room-Cloakroom.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school cloakroom with green-painted walls, a long row of brass coat pegs hung with duffel coats, blazers and satchels, a low wooden bench, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-CupCorridor",
+      "kind": "room",
+      "zone": "CupCorridor",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "e20126f1-42db-40ab-b60c-1a24bbc8cd0f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160906_e20126f1-42db-40ab-b60c-1a24bbc8cd0f.png",
+      "source": "art-src/room-CupCorridor.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a long school corridor with cream walls, framed certificates without legible writing, a cast-iron radiator, a red fire bucket, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-DinnerHall",
+      "kind": "room",
+      "zone": "DinnerHall",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "b6b3e3bf-217d-4b22-9a1c-36b54bb91c53",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160907_b6b3e3bf-217d-4b22-9a1c-36b54bb91c53.png",
+      "source": "art-src/room-DinnerHall.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school dinner hall with cream walls, a serving hatch with a stainless steel counter, stacked trays, a long dining table set with plates and cups along the back wall, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-AssemblyHall",
+      "kind": "room",
+      "zone": "AssemblyHall",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "7219c947-56ae-485a-a51e-9ca78ced26c1",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160908_7219c947-56ae-485a-a51e-9ca78ced26c1.png",
+      "source": "art-src/room-AssemblyHall.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of the lower wall of a school assembly hall with dark wood panelling to shoulder height and oatmeal plaster above, a heavy maroon stage curtain at the right-hand edge, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-UnderLanding",
+      "kind": "room",
+      "zone": "UnderLanding",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "ab0f0835-dfb6-44a8-a8b0-f6e7cf901781",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160907_ab0f0835-dfb6-44a8-a8b0-f6e7cf901781.png",
+      "source": "art-src/room-UnderLanding.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a plain school wall under a staircase landing, primrose-yellow plaster, a fire extinguisher, a small noticeboard, a radiator, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-GirlsDinner",
+      "kind": "room",
+      "zone": "GirlsDinner",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "cd620e84-ff41-4649-b159-9a32d5aa5b1f",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160907_cd620e84-ff41-4649-b159-9a32d5aa5b1f.png",
+      "source": "art-src/room-GirlsDinner.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a girls' school dining hall with cream walls, a long dining table set with plates and glasses, a sideboard, a vase of flowers, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
+    },
+    {
+      "id": "room-Kitchen",
+      "kind": "room",
+      "zone": "Kitchen",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "5abb1f1b-d52b-474d-8971-8e2c6b1bca4e",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_160907_5abb1f1b-d52b-474d-8971-8e2c6b1bca4e.png",
+      "source": "art-src/room-Kitchen.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school kitchen with white tiled walls, a big cream enamel cooker, a deep steel sink with taps, wall cupboards, hanging pans, in a 1980s British school. Wide panoramic composition filling the whole frame edge to edge; the windows, furniture and fittings sit in the lower two thirds of the picture and the top third is plain wall. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing; the ceiling is cropped out above. The wall is about one and a half times the height of a person, so windows and furniture are at normal human scale. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers."
     }
   ]
 }

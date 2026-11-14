@@ -12,3 +12,4 @@ assets/original/
 /*.png
 art-src/
 art-work/
+__pycache__/

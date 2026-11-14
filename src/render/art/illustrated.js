@@ -15,6 +15,9 @@
 import { SKOOL } from '../../data/skool.js';
 import { ModernPainter } from '../hd/painter.js';
 import { makeCanvas } from '../hd/pixelart.js';
+import { drawHdText, HD_LINE_HEIGHT } from '../hd/font.js';
+import { buildIllustratedBackdrop } from './backdrop.js';
+import { drawIllustratedFurniture } from './furniture.js';
 
 const PIXEL_SCALE = 2;    // the pixel-art painter's scale; our scale is twice that
 
@@ -78,25 +81,39 @@ export class IllustratedPainter extends ModernPainter {
   }
 
   // ---- The building ----------------------------------------------------------------
-  // Until the illustrated rooms arrive, the pixel-art building enlarged.
+  // Painted rooms over the pixel-art structure (see art/backdrop.js); rebuilt
+  // when the pictures finish loading.
   ensureBackdrop() {
-    if (!this.backdrop) {
-      const s = this.scale; this.scale = PIXEL_SCALE;
-      try { super.ensureBackdrop(); } finally { this.scale = s; }
-    }
+    if (!this.backdrop) this.backdrop = buildIllustratedBackdrop(this.theme, this.scale, this.assets);
     return this.backdrop;
   }
   drawBackdrop(ctx, cam, viewW) {
-    const S = this.scale, P = PIXEL_SCALE, b = this.ensureBackdrop();
-    const h = SKOOL.height * SKOOL.cell;
-    ctx.save(); ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(b, cam * P, 0, viewW * P, h * P, cam * S, 0, viewW * S, h * S);
-    ctx.restore();
+    const S = this.scale, b = this.ensureBackdrop();
+    const h = SKOOL.height * SKOOL.cell * S;
+    ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
   }
 
   // ---- Furniture, chalk, bubbles, boxes --------------------------------------------
-  drawFurniture(ctx, game) { this.atPixelScale(ctx, () => super.drawFurniture(ctx, game)); }
-  drawChalk(ctx, game) { this.atPixelScale(ctx, () => super.drawChalk(ctx, game)); }
+  drawFurniture(ctx, game) {
+    drawIllustratedFurniture(ctx, game, this.scale, this.assets, this.stats);
+    this.drawChalk(ctx, game);
+  }
+
+  // Chalk is the 2x font drawn through the 2x scale; a wiped column is
+  // restored from our own backdrop so the illustrated board comes back.
+  drawChalk(ctx, game) {
+    const S = this.scale, C = SKOOL.cell * S, b = this.ensureBackdrop();
+    for (const room of game.world.rooms.values()) {
+      const board = room.blackboard;
+      if (!board || !board.lines.length) continue;
+      this.atPixelScale(ctx, () => {
+        const x = board.x * SKOOL.cell * PIXEL_SCALE, y = board.y * SKOOL.cell * PIXEL_SCALE;
+        board.lines.forEach((line, i) => drawHdText(ctx, line, x + 4, y + 4 + i * HD_LINE_HEIGHT, this.theme.chalk));
+      });
+      const x = board.x * C, y = board.y * C;
+      for (const col of board.wipedColumns) ctx.drawImage(b, x + col * C, y, C, board.height * C, x + col * C, y, C, board.height * C);
+    }
+  }
   drawBubble(ctx, c) { this.atPixelScale(ctx, () => super.drawBubble(ctx, c)); }
   drawMessageBox(ctx, box, cam, viewW) { this.atPixelScale(ctx, () => super.drawMessageBox(ctx, box, cam, viewW)); }
 }

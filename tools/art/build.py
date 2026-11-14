@@ -12,10 +12,10 @@ results go to assets/illustrated/ and manifest.json is updated in place.
 """
 import os
 import sys
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from artlib import (ASSETS, EXPECTED, JOBS, ROOT, WORK, align, key, load_json, pack, save_json,
+from artlib import (ASSETS, EXPECTED, JOBS, ROOT, WORK, align, bbox, key, load_json, pack, save_json,
                     slice_auto, slice_components, slice_grid)
 
 MANIFEST = os.path.join(ASSETS, 'manifest.json')
@@ -74,6 +74,95 @@ def build_characters(job, manifest):
     return True
 
 
+# How each furniture cut-out fills its rectangle: things that fill an opening
+# are stretched to it; free-standing things keep their shape and sit at the
+# bottom (or hang from the top) of it.
+FIT = {'door:shut': 'stretch', 'window3x3:shut': 'stretch', 'window3x3:open': 'stretch', 'window2x4:shut': 'stretch', 'window2x4:open': 'stretch',
+       'cabinet:shut': 'stretch', 'cabinet:open': 'stretch', 'blackboard': 'stretch', 'gate:shut': 'stretch', 'railing': 'stretch',
+       'safe': 'bottom', 'desk': 'bottom', 'bike': 'bottom', 'tree': 'bottom', 'conker': 'top',
+       'cup:EMPTY': 'top', 'cup:WATER': 'top', 'cup:SHERRY': 'top', 'cup:FROG': 'top'}
+
+
+def fit_into(img, w, h, mode):
+    """Return an RGBA image exactly w x h holding `img` as `mode` says."""
+    if mode == 'stretch':
+        return img.resize((w, h), Image.LANCZOS)
+    f = min(w / img.size[0], h / img.size[1])
+    sw, sh = max(1, round(img.size[0] * f)), max(1, round(img.size[1] * f))
+    small = img.resize((sw, sh), Image.LANCZOS)
+    out = Image.new('RGBA', (w, h), (0, 0, 0, 0))
+    out.paste(small, ((w - sw) // 2, 0 if mode == 'top' else h - sh), small)
+    return out
+
+
+def build_furniture(job, manifest, sizes):
+    """One sheet of cut-outs (or a single picture) -> frames in furniture/items.png."""
+    src = os.path.join(ROOT, job['source'])
+    if not os.path.exists(src):
+        print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
+        return {}
+    img = Image.open(src).convert('RGBA')
+    grid = job['grid']
+    cells = slice_components(img, grid['rows'], grid['cols']) if grid['rows'] * grid['cols'] > 1 else [img.crop(bbox(img))]
+    frames = {}
+    for key, cell in zip(job['items'], cells):
+        if not key or cell is None or key not in sizes:
+            continue
+        d = os.path.join(WORK, 'furniture'); os.makedirs(d, exist_ok=True)
+        cell.save(os.path.join(d, key.replace(':', '_') + '.raw.png'))
+        frames[key] = fit_into(cell, sizes[key]['w'], sizes[key]['h'], FIT.get(key, 'bottom'))
+    return frames
+
+
+def derive_open(frames, sizes):
+    """An open door or gate is the shut one seen edge-on: a narrow, darker slab
+    at the left of the opening, as the pixel art draws it."""
+    for shut, open_, slab in (('door:shut', 'door:open', 24), ('gate:shut', 'gate:open', 16)):
+        if shut in frames and open_ in sizes and open_ not in frames:
+            w, h = sizes[open_]['w'], sizes[open_]['h']
+            edge = ImageEnhance.Brightness(frames[shut].resize((slab, h), Image.LANCZOS)).enhance(0.8)
+            out = Image.new('RGBA', (w, h), (0, 0, 0, 0)); out.paste(edge, (4, 0), edge)
+            frames[open_] = out
+
+
+def build_all_furniture(jobs, manifest):
+    expected = load_json(EXPECTED) or {}
+    sizes = expected.get('furniture', {})
+    frames = {}
+    for job in jobs:
+        frames.update(build_furniture(job, manifest, sizes))
+    if not frames:
+        return
+    derive_open(frames, sizes)
+    sheet, placed = pack({k: (v, 0, 0) for k, v in frames.items()})
+    rel = 'furniture/items.png'
+    os.makedirs(os.path.join(ASSETS, 'furniture'), exist_ok=True)
+    sheet.save(os.path.join(ASSETS, rel), optimize=True)
+    manifest['furniture'] = {k: {'image': rel, 'x': p['x'], 'y': p['y'], 'w': p['w'], 'h': p['h']} for k, p in placed.items()}
+    print(f"  furniture: {len(frames)} pieces, sheet {sheet.size[0]}x{sheet.size[1]} -> {rel}")
+
+
+def build_room(job, manifest):
+    """A room painting, saved as JPEG at a sensible size; the game fits it to
+    the wall (see src/render/art/backdrop.js), so only the floor line matters:
+    it must be the picture's bottom edge. 'cropTop'/'cropBottom' trim a job."""
+    src = os.path.join(ROOT, job['source'])
+    if not os.path.exists(src):
+        print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
+        return
+    img = Image.open(src).convert('RGB')
+    w, h = img.size
+    img = img.crop((0, int(job.get('cropTop', 0) * h), w, h - int(job.get('cropBottom', 0) * h)))
+    # Rooms are 224 HD pixels tall; keep twice that for crispness when scaled.
+    f = 448 / img.size[1]
+    img = img.resize((round(img.size[0] * f), 448), Image.LANCZOS)
+    rel = f"rooms/{job['zone']}.jpg"
+    os.makedirs(os.path.join(ASSETS, 'rooms'), exist_ok=True)
+    img.save(os.path.join(ASSETS, rel), quality=86, optimize=True, progressive=True)
+    manifest.setdefault('rooms', {})[job['zone']] = {'image': rel, 'w': img.size[0], 'h': img.size[1]}
+    print(f"  {job['id']}: {img.size[0]}x{img.size[1]} -> {rel}")
+
+
 def report(manifest):
     expected = load_json(EXPECTED)
     if not expected:
@@ -111,11 +200,20 @@ def main():
     if '--report' in sys.argv:
         sys.exit(report(manifest))
     jobs = load_json(JOBS, {'jobs': []})['jobs']
+    furniture_jobs = []
     for job in jobs:
         if args and job['id'] not in args:
             continue
-        if job.get('kind', 'characters') == 'characters':
+        kind = job.get('kind', 'characters')
+        if kind == 'characters':
             build_characters(job, manifest)
+        elif kind == 'furniture':
+            furniture_jobs.append(job)
+        elif kind == 'room':
+            build_room(job, manifest)
+    # Furniture is always rebuilt as a whole so the sheet holds every piece.
+    if furniture_jobs:
+        build_all_furniture([j for j in jobs if j.get('kind') == 'furniture'], manifest)
     save_json(MANIFEST, manifest)
     report(manifest)
 
