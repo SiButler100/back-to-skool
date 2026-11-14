@@ -26,6 +26,7 @@ export { originalMeasure, originalFontHas };
 
 const C = SKOOL.cell;
 const SPRITE_W = 24, SPRITE_H = 32;   // a sprite frame in game pixels (3 x 4 cells)
+const CLOSE_ROWS = 14;                // rows of cells the close camera shows: two storeys
 const LANE_STEP = 0.75;               // game pixels between depth lanes on a floor
 const FLOOR_ROWS = new Set(SKOOL.floors.map((f) => f.y));
 const laneHash = (id) => { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h; };
@@ -36,11 +37,13 @@ export class Renderer {
     this.game = game;
     this.ctx = canvas.getContext('2d');
     this.ctx.imageSmoothingEnabled = false;
-    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, artwork: 'illustrated', onResize: null, ...options };
+    this.options = { theme: 'modern', smoothMotion: true, retroScroll: false, viewportColumns: 48, retroStatus: false, originalGraphics: false, artwork: 'illustrated', camera: 'whole', onResize: null, ...options };
     this.original = new OriginalPainter();   // the 1985 artwork, used when originalGraphics is on
     this.scale = 1;                          // canvas pixels per game pixel (the HD painter asks for 2)
     this.setTheme(this.options.theme);
     this.cameraX = 0;               // left edge of the view, in pixels
+    this.cameraY = 0;               // top edge of the view, in pixels (only the close camera moves it)
+    this.cameraTargetY = 0;
     this.motion = new Motion();     // where everything appears to be between the engine's steps
     this.positions = this.motion.tracks;   // (older scripts clear this map to snap everything)
     this.lastDraw = 0;              // time of the previous frame, for time-based easing
@@ -72,15 +75,25 @@ export class Renderer {
   // The view's width in game pixels (the canvas may be a multiple of this).
   get viewW() { return this.columns * C; }
 
+  // The world's height in game pixels: 21 rows of cells, plus the strip of
+  // ground an HD painter may show below them.
+  get worldH() { return SKOOL.height * C + (this.margin || 0); }
+
+  // How much of that height the view shows. The close camera shows two
+  // storeys (14 rows) and follows Eric up and down; otherwise everything.
+  get viewH() { return this.closeCamera() ? CLOSE_ROWS * C + (this.margin || 0) : this.worldH; }
+  closeCamera() { return this.options.camera === 'close' && this.useHd(); }
+
   // retroStatus adds the original's three status rows under the play area.
   resize(columns, retroStatus = this.options.retroStatus, scale = this.scale) {
     this.columns = columns;
     this.options.retroStatus = retroStatus;
     this.scale = scale;
-    this.canvas.width = columns * C * scale;
     // An HD painter may show a strip of ground below the last row of cells.
     this.margin = this.useHd() ? (this.painter.marginBottom || 0) : 0;
-    this.canvas.height = ((SKOOL.height + (retroStatus ? 3 : 0)) * C + this.margin) * scale;
+    this.close = this.closeCamera();
+    this.canvas.width = columns * C * scale;
+    this.canvas.height = (this.viewH + (retroStatus ? 3 * C : 0)) * scale;
     this.ctx.imageSmoothingEnabled = false;
     if (this.options.onResize) this.options.onResize();
   }
@@ -91,7 +104,7 @@ export class Renderer {
   ensureScale() {
     const want = this.useOriginal() ? 1 : this.useHd() ? this.painter.scale : 1;
     const margin = this.useHd() ? (this.painter.marginBottom || 0) : 0;
-    if (want !== this.scale || margin !== this.margin) this.resize(this.columns, this.options.retroStatus, want);
+    if (want !== this.scale || margin !== this.margin || this.closeCamera() !== this.close) this.resize(this.columns, this.options.retroStatus, want);
   }
 
   // ---- Camera ----------------------------------------------------------------
@@ -120,6 +133,23 @@ export class Renderer {
     }
     const from = Math.floor(this.cameraX / C), to = from + this.columns;
     this.game.setVisibleColumns(from, to);
+    this.updateCameraY(dt);
+  }
+
+  // The close camera shows two of the three storeys. It only moves when it
+  // has to: on the ground floor it shows the bottom two storeys, on the top
+  // floor the top two, and on the middle floor it stays wherever it was, so
+  // climbing one flight does not always drag the view with it.
+  updateCameraY(dt) {
+    const maxY = this.worldH - this.viewH;
+    if (maxY <= 0) { this.cameraY = this.cameraTargetY = 0; return; }
+    const [, ey] = this.spritePos(this.game.cast.eric);
+    const lowest = ey + SPRITE_H + (this.margin || 0) - this.viewH;    // any higher than this cuts off Eric's feet
+    const highest = ey - 3 * C;                                         // any lower than this cuts off the space above his head
+    this.cameraTargetY = Math.max(0, Math.min(maxY, Math.max(lowest, Math.min(highest, this.cameraTargetY))));
+    if (Math.abs(this.cameraY - this.cameraTargetY) > this.viewH) this.cameraY = this.cameraTargetY;
+    else this.cameraY += (this.cameraTargetY - this.cameraY) * (1 - Math.exp(-dt / 260));
+    if (Math.abs(this.cameraY - this.cameraTargetY) < 0.05) this.cameraY = this.cameraTargetY;
   }
 
   // Depth on a flat floor. Everyone in the game stands on the same line, so a
@@ -200,11 +230,11 @@ export class Renderer {
     const p = this.painter, S = p.scale, { ctx, game } = this, viewW = this.viewW;
     // The camera may sit between game pixels: at scale S there are S canvas
     // pixels to each one, so scrolling is S times finer than the old view.
-    const cam = Math.round(this.cameraX * S) / S;
+    const cam = Math.round(this.cameraX * S) / S, camY = Math.round(this.cameraY * S) / S, viewH = this.viewH;
     ctx.imageSmoothingEnabled = !!p.smooth;     // smooth for illustrations, crisp for pixel art
     ctx.save();
-    ctx.translate(-cam * S, 0);
-    p.drawBackdrop(ctx, cam, viewW);
+    ctx.translate(-cam * S, -camY * S);
+    p.drawBackdrop(ctx, cam, viewW, camY, viewH);
     p.drawFurniture(ctx, game);
     const viewFrom = cam - 48, viewTo = cam + viewW + 48;
     const cycles = !!p.hasCycle;                // only the illustrated painter has walk cycles
@@ -243,7 +273,7 @@ export class Renderer {
     objects.forEach(drawOne);
     for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c, this.spritePos(c));
     ctx.restore();
-    if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW);
+    if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY);
     if (this.options.retroStatus) { ctx.save(); ctx.scale(S, S); this.drawStatus(); ctx.restore(); }
   }
 

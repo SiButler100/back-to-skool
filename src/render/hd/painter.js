@@ -40,10 +40,10 @@ export class ModernPainter {
   ensureBackdrop() { if (!this.backdrop) this.backdrop = buildHdBackdrop(this.theme, this.scale); return this.backdrop; }
 
   // The visible slice of the building. cam/viewW in game pixels.
-  drawBackdrop(ctx, cam, viewW) {
+  drawBackdrop(ctx, cam, viewW, camY = 0, viewH = SKOOL.height * SKOOL.cell) {
     const S = this.scale, b = this.ensureBackdrop();
-    const h = SKOOL.height * SKOOL.cell * S;
-    ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
+    const h = Math.min(viewH * S, b.height - camY * S);
+    ctx.drawImage(b, cam * S, camY * S, viewW * S, h, cam * S, camY * S, viewW * S, h);
   }
 
   // Doors, windows, cups and the rest of the live furniture, then the chalk.
@@ -86,13 +86,13 @@ export class ModernPainter {
 
   // A reprimand or a secret: a rounded box in the colour of its kind, in
   // screen space (cam/viewW in game pixels).
-  drawMessageBox(ctx, box, cam, viewW) {
+  drawMessageBox(ctx, box, cam, viewW, camY = 0) {
     const S = this.scale, C = SKOOL.cell * S, hd = this.hd, theme = this.theme;
     const lines = box.lines;
     const w = Math.max(8 * C, ...lines.map((l) => measureHd(l) + 12 * S));
     const h = lines.length * HD_LINE_HEIGHT + 10 * S;
     let x = (box.x * SKOOL.cell - cam + 4) * S - w / 2;
-    let y = box.y * C - h - 2 * S;
+    let y = box.y * C - camY * S - h - 2 * S;
     x = Math.max(2, Math.min(viewW * S - w - 2, x)); y = Math.max(2, y);
     x = Math.round(x); y = Math.round(y);
     const paper = box.paper === 'eric' ? theme.boxEric : box.paper === 'other' ? theme.boxOther : box.paper === 'alarm' ? theme.boxAlarm : theme.boxSecret;

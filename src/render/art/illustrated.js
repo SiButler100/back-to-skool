@@ -97,11 +97,11 @@ export class IllustratedPainter extends ModernPainter {
     if (!this.backdrop) this.backdrop = buildIllustratedBackdrop(this.theme, this.scale, this.assets);
     return this.backdrop;
   }
-  drawBackdrop(ctx, cam, viewW) {
+  drawBackdrop(ctx, cam, viewW, camY = 0, viewH = SKOOL.height * SKOOL.cell + GROUND_MARGIN) {
     const S = this.scale, b = this.ensureBackdrop();
-    const h = b.height;
-    this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: 0, y1: h };
-    ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
+    const h = Math.min(viewH * S, b.height - camY * S);
+    this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: camY * S, y1: camY * S + h };
+    ctx.drawImage(b, cam * S, camY * S, viewW * S, h, cam * S, camY * S, viewW * S, h);
   }
 
   // Desks are drawn AFTER the people, so a seated pupil's knees go under the
@@ -157,11 +157,11 @@ export class IllustratedPainter extends ModernPainter {
     drawSpeech(ctx, text, mouth, this.view, progress, u);
   }
 
-  drawMessageBox(ctx, box, cam, viewW) {
+  drawMessageBox(ctx, box, cam, viewW, camY = 0) {
     const S = this.scale, C = SKOOL.cell * S, u = S / 6, t = this.theme;
     const paper = box.paper === 'eric' ? t.boxEric : box.paper === 'other' ? t.boxOther : box.paper === 'alarm' ? t.boxAlarm : t.boxSecret;
     const ink = box.paper === 'alarm' ? t.boxInkAlarm : t.boxInk;
     const view = { x0: 0, x1: viewW * S, y0: 0 };
-    drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
+    drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C - camY * S - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
   }
 }

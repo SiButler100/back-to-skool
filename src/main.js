@@ -22,12 +22,15 @@ import { CONFIG } from './config.js';
 // Two presets. "original" is the 1985 screen: 32 columns, Spectrum colours,
 // 8-pixel steps, scrolling in jumps, status rows on the canvas. "modern" is
 // the wide, smooth, HUD-and-sidebar version. The advanced options let you mix.
+// The close camera shows the same width as the 1985 screen (32 columns) and
+// two storeys; the whole-school camera is wider and shows all three.
+const CLOSE_COLUMNS = 32, WHOLE_COLUMNS = CONFIG.viewportColumns;
 export const VIEW_PRESETS = {
-  original: { theme: 'spectrum', columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: 'painted' },
-  modern: { theme: 'modern', columns: CONFIG.viewportColumns, smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: 'illustrated' },
+  original: { theme: 'spectrum', columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: 'painted', camera: 'whole' },
+  modern: { theme: 'modern', columns: CLOSE_COLUMNS, camera: 'close', smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: 'illustrated' },
 };
 
-const SETTINGS_VERSION = 3;
+const SETTINGS_VERSION = 4;
 const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
 
 // Settings saved by an older version of the game get the new keys filled in.
@@ -35,6 +38,7 @@ function migrateSettings(s) {
   const v = s.settingsVersion || 1;
   if (v < 2) s.hdGraphics = s.view !== 'original';      // HD pixel art arrived in version 2
   if (v < 3) { s.artwork = s.hdGraphics === false ? 'painted' : 'illustrated'; delete s.hdGraphics; }   // illustrated artwork in version 3
+  if (v < 4) { s.camera = s.view === 'original' ? 'whole' : 'close'; if (s.camera === 'close') s.columns = CLOSE_COLUMNS; }   // the close camera in version 4
   s.settingsVersion = SETTINGS_VERSION;
   return s;
 }
@@ -49,7 +53,7 @@ export function boot() {
   input.attach(window);
   const game = new Game({ input, measureText, fontHas });
   const canvas = document.getElementById('game');
-  const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, onResize: () => fitCanvas() });
+  const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, camera: settings.camera, onResize: () => fitCanvas() });
   const hud = new HUD(document.getElementById('hud'), game, DEFAULT_BINDINGS);
   const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); });
   const sound = new Sound();
@@ -59,7 +63,11 @@ export function boot() {
   const menu = new Menu(document.getElementById('overlay'), {
     settings,
     bindings: DEFAULT_BINDINGS,
-    onApply: (s, changedKey) => { if (changedKey === 'view') Object.assign(s, VIEW_PRESETS[s.view]); applySettings(s); saveSettings(s); },
+    onApply: (s, changedKey) => {
+      if (changedKey === 'view') Object.assign(s, VIEW_PRESETS[s.view]);
+      if (changedKey === 'camera') s.columns = s.camera === 'close' ? CLOSE_COLUMNS : WHOLE_COLUMNS;   // each camera has its natural width
+      applySettings(s); saveSettings(s);
+    },
     onNewGame: () => { game.start(); paused = false; input.enabled = true; sound.ensure(); },
     onResume: () => { paused = false; input.enabled = true; },
     onQuit: () => { paused = true; menu.show('title'); },
@@ -74,6 +82,7 @@ export function boot() {
     game.config.freezeOnMessages = s.freezeOnMessages;
     renderer.options.originalGraphics = !!s.originalGraphics;
     renderer.options.artwork = s.artwork || 'illustrated';
+    renderer.options.camera = s.camera || 'whole';
     // Blackboard wrapping and bubble timing follow whichever font is on screen.
     game.measureText = s.originalGraphics ? originalMeasure : measureText;
     game.fontHas = s.originalGraphics ? originalFontHas : fontHas;

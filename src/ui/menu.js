@@ -50,7 +50,7 @@ export class Menu {
       this.settings[key] = v;
       this.onApply(this.settings, key);
       if (e.target.type === 'range') this.root.querySelector(`[data-out="${key}"]`).textContent = formatSetting(key, v);
-      if (key === 'view') this.show('options', this.data);   // the preset changed the other controls
+      if (key === 'view' || key === 'camera') this.show('options', this.data);   // the choice changed the other controls
     });
     this.root.addEventListener('input', (e) => {
       const key = e.target.dataset.setting;
@@ -131,6 +131,9 @@ export class Menu {
         <label class="opt"><span>View</span>
           <select data-setting="view"><option value="modern" ${s.view === 'modern' ? 'selected' : ''}>Modern</option><option value="original" ${s.view === 'original' ? 'selected' : ''}>Original (1985)</option></select>
           <small>Press V in the game to switch. Choosing a view resets the advanced options below to that view's defaults.</small></label>
+        <label class="opt"><span>Camera</span>
+          <select data-setting="camera"><option value="close" ${s.camera === 'close' ? 'selected' : ''}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== 'close' ? 'selected' : ''}>Whole school</option></select>
+          <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting('speed', s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
         ${check('sound', 'Sound', 'Synthesised beeps.')}
       </div>
