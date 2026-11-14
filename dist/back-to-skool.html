@@ -148,11 +148,14 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 .event-log li.highlight { color: var(--accent); }
 .minimap { width: 100%; height: auto; image-rendering: pixelated; border-radius: 4px; }
 /* ---- The plan (quest steps, above the key strip, both views) ---------------- */
-.quest-steps { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; max-width: 100%; font-size: 13px; }
+/* Hints hang from the strip as a whole, not from each pip, and take no room
+   until shown: otherwise the hidden ones poke out past the window and make the
+   page scroll sideways. */
+.quest-steps { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; max-width: 100%; font-size: 13px; }
 .quest-steps .title { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
 .quest-steps ol { display: contents; list-style: none; margin: 0; padding: 0; }
 .quest-steps .step {
-  position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 4px; border-radius: 999px;
   border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: help; white-space: nowrap;
 }
 .quest-steps .step .tick {
@@ -167,13 +170,11 @@ html.view-original { background: #202327; --bg: #202327; --ink: #e8ecf1; --muted
 /* The hint: a bubble above the step, shown on hover or keyboard focus. */
 .quest-steps .step::after {
   content: attr(data-hint); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
-  width: min(360px, 80vw); white-space: normal; padding: 10px 12px; border-radius: 8px; line-height: 1.45; font-size: 13px;
+  width: min(420px, 100%); box-sizing: border-box; white-space: normal; padding: 10px 12px; border-radius: 8px; line-height: 1.45; font-size: 13px;
   background: var(--ink); color: var(--bg); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-  opacity: 0; pointer-events: none; transition: opacity 0.12s; z-index: 5;
+  display: none; pointer-events: none; z-index: 5;
 }
-.quest-steps .step:hover::after, .quest-steps .step:focus-visible::after { opacity: 1; }
-.quest-steps .step:first-child::after { left: 0; transform: none; }
-.quest-steps .step:last-child::after { left: auto; right: 0; transform: none; }
+.quest-steps .step:hover::after, .quest-steps .step:focus-visible::after { display: block; }
 .radar { list-style: none; margin: 0; padding: 0; font-size: 13px; }
 .radar li { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; padding: 4px 0; border-top: 1px solid var(--line); }
 .radar li:first-child { border-top: 0; }
@@ -369,6 +370,32 @@ html.view-modern .screen > #sidebar .radar li { border-top-color: rgba(255, 255,
 html.view-modern .screen > #sidebar .radar .where { color: rgba(243, 238, 224, 0.7); }
 html.view-modern .screen > #sidebar .radar .tag { background: rgba(255, 255, 255, 0.14); color: #f3eee0; }
 html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
+
+/* ---- Narrow windows (a phone held upright, a slim browser window) ------------ */
+/* The game needs a keyboard, but the page must still fit: nothing may stick out
+   past the edge of the window, and the picture must not be buried under its own
+   legends. Below 640px the score row wraps, the legends move out of the picture
+   to sit beneath it, and the corner map and log are dropped. */
+@media (max-width: 640px) {
+  .hud-top, html.view-modern .hud-top { grid-template-columns: 1fr; gap: 8px; padding: 8px 10px; }
+  .stats { justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+  .stat { min-width: 0; }
+  .inventory { justify-content: flex-start; min-width: 0; flex-wrap: wrap; }
+  .menu-button { justify-self: start; }
+  html.view-modern .screen > .keys-strip,
+  html.view-modern .screen > .keys-strip.tucked {
+    position: static; transform: none; opacity: 1; pointer-events: auto; width: auto; max-width: 100%;
+    margin-top: 8px; box-sizing: border-box; background: #1f2530; backdrop-filter: none;
+  }
+  /* A hint is as wide as the plan strip and hangs from it, so it cannot poke
+     out past the window (it used to hang from its own pip). */
+  .quest-steps .step::after, html.view-modern .screen > .quest-steps .step::after { left: 0; right: 0; width: auto; transform: none; }
+  html.view-modern .screen > .quest-steps {
+    position: relative; left: auto; top: auto; max-width: 100%; box-sizing: border-box; margin-top: 8px; flex-wrap: wrap; background: #1f2530; backdrop-filter: none;
+  }
+  html.view-modern .screen > #sidebar, .keys-chip { display: none; }
+  html.view-modern .screen { display: flex; flex-direction: column; }
+}
 
 </style>
 </head>
@@ -3895,7 +3922,6 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       { id: "TopFloorPlant", x: 91, y: 3 },
       { id: "MiddleFloorPlant", x: 93, y: 10 },
       { id: "LeftGatePlant", x: 132, y: 17 },
-      { id: "RightGatePlant", x: 135, y: 17 },
       { id: "RightGatePlant", x: 135, y: 17 }
     ],
     // The conker in the tree: a pellet landing in this box knocks it down.
@@ -4471,8 +4497,15 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       if (d) d.move(shut);
       return d;
     }
-    autoShutDoors() {
-      for (const d of this.doors.values()) if (d.autoShut()) d.move(true);
+    // Self-closing doors shut when their time is up and the doorway is clear;
+    // returns the doors that shut this tick.
+    autoShutDoors(isClear = () => true) {
+      const shut = [];
+      for (const d of this.doors.values()) if (d.autoShut() && isClear(d)) {
+        d.move(true);
+        shut.push(d);
+      }
+      return shut;
     }
     // ---- Safe, cabinet, cups, desks -------------------------------------------
     isSafeAt(x, y) {
@@ -5173,7 +5206,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     ready() {
       const c = this.character;
       if (!super.ready()) return false;
-      if (!c.getPunchee(1)) return false;
+      if (!c.getPunchee(3)) return false;
       return c.willHit();
     }
     getCommand() {
@@ -5705,8 +5738,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const c = this.character;
       if (this.kissee) {
         if (this.kissee.isKissingEric()) {
-          c.kiss();
           c.unhide();
+          c.kiss();
           this.kissee.finishKiss();
         } else {
           this.kissee.lowerArm();
@@ -5840,7 +5873,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         this.yInc = 0;
       }
       this.count -= 1;
-      if (this.count === 0 || p.barrier) {
+      if (this.count === 0 || p.barrier || p.x < 0 || p.x >= p.world.width) {
         this.endFlight();
         return;
       }
@@ -6480,6 +6513,13 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.changesSeats = true;
       this.paused = false;
       this.stopEric = false;
+      this.verticalDirection = 0;
+      this.wipingBoard = false;
+      this.action = 0;
+      this.room = null;
+      this.floor = null;
+      this.staircase = null;
+      this.barrier = null;
       this.commandList = new CommandList(this);
     }
     // ---- Flags -----------------------------------------------------------------
@@ -7015,8 +7055,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     changeCommandList(id) {
       this.cast.changeCommandList(this.id, id);
     }
+    // A new script (at every bell) also releases a speed that the old script had
+    // fixed: otherwise a teacher sent running after Eric runs for the rest of the game.
     setCommandListTemplate(template) {
       this.commandList.setTemplate(template);
+      this.lesson = null;
+      this.triggerSpeedChange();
     }
     stalk(characterId) {
       this.commandList.setGoToDestination(this.getDestination(characterId));
@@ -7295,6 +7339,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.reset();
     }
     reset() {
+      if (this.input && this.input.writing) this.input.finishWriting();
       this.inventory = /* @__PURE__ */ new Set();
       this.mice = 0;
       this.controller = null;
@@ -7313,6 +7358,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.lastBikeKey = null;
       this.walkDelay = this.defaultWalkDelay;
       this.floorTimer = 0;
+      this.turnPause = 0;
     }
     reinitialise() {
       super.reinitialise();
@@ -7354,7 +7400,6 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       }
       if (this.midstride()) {
         this.walk();
-        input.flush();
         return;
       }
       if (this.isKnockedOut() || this.isSittingOnFloor() && this.floorTimer > 0) {
@@ -7413,6 +7458,10 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         return;
       }
       this.baseLocation = null;
+      if (this.turnPause > 0) {
+        this.turnPause -= 1;
+        return;
+      }
       const plant = this.cast.plant(this);
       if (input.pressed("left")) {
         if (plant && plant.isFullyGrown()) {
@@ -7441,6 +7490,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         this.right();
       } else if (input.pressed("up") && this.staircase) {
         this.up();
+      } else if (input.pressed("up") && this.atFootOfStairsBehind()) {
+        this.turn();
       } else if (input.pressed("down") && this.staircase) {
         this.down();
       }
@@ -7502,11 +7553,23 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     // The Drop key: a stinkbomb while Eric has any; otherwise let the mice go.
     dropAction() {
       if (this.canDropStinkbomb()) return new DropStinkbomb();
+      if (this.hasStinkbomb()) return null;
       if (this.canReleaseMice()) {
         this.bendOver();
         return new ReleaseMice();
       }
       return null;
+    }
+    // Is Eric standing on the bottom cell of a staircase that rises behind him?
+    atFootOfStairsBehind() {
+      const s = this.world.staircase({ x: this.x, y: this.y, direction: -this.direction });
+      return !!s && s.bottom.x === this.x && s.bottom.y === this.y;
+    }
+    // Turning round costs Eric a beat (see move): longer on a staircase, where
+    // which step he stands on matters.
+    turn() {
+      super.turn();
+      this.turnPause = this.world.staircase(this) ? this.config.turnPauseOnStairs : this.config.turnPause;
     }
     // Eric's left/right never return commands; a shut door just stops him.
     left() {
@@ -7667,15 +7730,16 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       if (desk) this.cast.openDesk(this, desk);
     }
     collectDeskContents(desk) {
-      if (desk.contents) {
-        if (desk.contents === ITEMS.STINKBOMBS3) {
+      const item = desk.contents;
+      if (item) {
+        if (item === ITEMS.STINKBOMBS3) {
           this.inventory.delete(ITEMS.STINKBOMBS2);
           this.inventory.delete(ITEMS.STINKBOMBS1);
         }
-        this.inventory.add(desk.contents);
-        if (desk.contents === ITEMS.WATER_PISTOL) desk.empty();
+        this.inventory.add(item);
+        if (item === ITEMS.WATER_PISTOL) desk.empty();
         this.game.playSound("DESK");
-        this.game.events.emit("found", { item: desk.contents });
+        this.game.events.emit("found", { item });
         this.inventoryChanged();
       }
     }
@@ -8003,10 +8067,18 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.height = 4;
       this.moveDelay = moveDelay;
       this.delay = 0;
+      this.template = commandList;
       this.commandList = new CommandList(this);
       this.commandList.setTemplate(commandList);
       this.barrier = null;
       this.floor = null;
+    }
+    // A new game: forget whatever the old game left half done (a pellet in
+    // mid-flight, a mouse about to come out of hiding, a lid half open).
+    restartScript() {
+      this.commandList = new CommandList(this);
+      this.commandList.setTemplate(this.template);
+      this.delay = 0;
     }
     isEric() {
       return false;
@@ -8040,7 +8112,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.range = 13;
       this.hitZone = 5;
       this.hitXY = [1, 1];
-      this.width = 1;
+      this.width = 3;
       this.height = 1;
       this.animatoryState = "FLY";
     }
@@ -8067,6 +8139,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         this.cast.knockCup(cup2);
         return true;
       }
+      if (cup2) this.game.events.emit("cupEmpty", { cup: cup2 });
       return false;
     }
     hitConker() {
@@ -8152,8 +8225,11 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       super(id, services, [1, 3], "CONKER");
       this.box = box;
     }
+    // The conker's box is measured against the pellet's own position (its top-left
+    // cell), which is how the box was laid out; against the pellet's hit point,
+    // one row lower, no pellet could ever reach it.
     hitBy(pellet2) {
-      const [px2, py] = pellet2.hitCoords();
+      const px2 = pellet2.x, py = pellet2.y;
       return !this.visible && this.box.minX <= px2 && px2 <= this.box.maxX && this.box.minY <= py && py <= this.box.maxY;
     }
     hitVictim() {
@@ -8183,7 +8259,10 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     isBlocked(distance = 0) {
       if (this.world.barrier(this, distance)) return true;
       const s = this.world.staircase(this, distance);
-      return !!(s && s.force);
+      if (s && s.force) return true;
+      const floor = this.world.floor(this);
+      const ahead = this.x + this.direction * Math.max(distance, 1);
+      return !!floor && (ahead < floor.minX || ahead > floor.maxX);
     }
     isCatchableAt(x, y) {
       return this.visible && x === this.x + this.spriteXY[0] && y === this.y + this.spriteXY[1];
@@ -8222,7 +8301,10 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     isBlocked(distance = 0) {
       if (this.world.barrier(this, distance)) return true;
       const s = this.world.staircase(this, distance);
-      return !!(s && s.force);
+      if (s && s.force) return true;
+      const floor = this.world.floor(this);
+      const ahead = this.x + this.direction * Math.max(distance, 1);
+      return !!floor && (ahead < floor.minX || ahead > floor.maxX);
     }
     isCatchableAt(x, y) {
       return this.visible && this.animatoryState === "SIT" && x === this.x + this.sitXY[0] && y === this.y + this.sitXY[1];
@@ -9348,6 +9430,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         p.headHeight = 0;
         p.growing = false;
       }
+      for (const t of this.movables) if (t.restartScript) t.restartScript();
     }
     // Each of the four male teachers knows one digit of the bike combination...
     initialiseBikeCombo() {
@@ -9390,7 +9473,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       return this.characterList.find((c) => c.hasStoreroomSecret() && c.headAt(x, y)) || null;
     }
     getConkerable(x, y) {
-      return this.characterList.find((c) => c.isConkerable() && c.headAt(x, y)) || null;
+      return this.characterList.find((c) => (c.isConkerable() || c.isVeryConkerable()) && c.headAt(x, y)) || null;
     }
     isHome(x) {
       return this.characterList.every((c) => c.isHome(x));
@@ -9510,7 +9593,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     }
     releaseMice(n, x, y) {
       for (let i = 0; i < n; i++) {
-        const m = new Mouse(`MortalMouse${Date.now()}${i}`, this.services, [x, y], false);
+        const m = new Mouse(`MortalMouse${Date.now()}${i}`, this.services, [x - 1, y - 3], false);
         m.direction = this.rng.choice([-1, 1]);
         this.mice.push(m);
       }
@@ -9532,7 +9615,11 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     }
     moveBikeAway(doorId) {
       const door2 = this.world.getDoor(doorId);
-      if (door2 && this.bike.visible && Math.abs(this.bike.x - door2.x) <= 2 && this.bike.y === door2.bottomY - 3) this.bike.x = door2.x - 3;
+      if (door2 && this.bike.visible && Math.abs(this.bike.x - door2.x) <= 2 && this.bike.y === door2.bottomY - 3) this.bike.x = door2.x + 1;
+    }
+    // Is anyone standing in this doorway? (A self-closing door waits for them.)
+    isDoorwayClear(door2) {
+      return ![...this.characters, this.eric].some((c) => c.visible && door2.x - 2 <= c.x && c.x <= door2.x + 1 && c.impeded(door2.bottomY, door2.topY));
     }
     unchainBike() {
       this.bike.unchain();
@@ -9540,11 +9627,17 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     waterPlant(pot, liquid) {
       if (liquid === "WATER" && pot.plant) pot.plant.grow();
     }
+    // A growing plant lifts whoever is standing on it, and drops them when it
+    // dies. Only Eric ever stands on a plant or its pot. Anyone else found at
+    // that spot is in mid-air for another reason (a girl jumping from a mouse),
+    // and lifting her too left her walking about a row above the ground.
     liftAnyoneAt(x, y) {
-      for (const c of this.characterList) if (c.x === x && c.y === y) c.y -= 1;
+      const c = this.eric;
+      if (c.x === x && c.y === y) c.y -= 1;
     }
     dropAnyoneAt(x, y) {
-      for (const c of this.characterList) if (c.x === x && c.y === y) c.fallOffPlant();
+      const c = this.eric;
+      if (c.x === x && c.y === y) c.fallOffPlant();
     }
     plant(c) {
       return this.plants.find((p) => p.supports(c)) || null;
@@ -9711,6 +9804,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     // grace period to leave the previous classroom
     // Movement delays (ticks between steps). Lower = faster.
     ericWalkDelay: 2,
+    // After Eric turns round he stands still for this many of his moves before a
+    // held key walks him on, so that a tap turns him on the spot. With a move
+    // every tenth of a second, 1 means a tap of up to a fifth of a second only
+    // turns him; on a staircase, where the exact step matters, 2 gives three tenths.
+    turnPause: 1,
+    turnPauseOnStairs: 2,
     goSlow: 5,
     // walking characters
     goFast: 3,
@@ -9807,6 +9906,9 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     }
     // ---- Starting and restarting -----------------------------------------------
     start() {
+      clearTimeout(this.upAYearTimer);
+      this.upAYearTimer = null;
+      this.upAYearPending = false;
       this.score = 0;
       this.lines = 0;
       this.gameOver = false;
@@ -9879,7 +9981,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       if (this.upAYearPending) return;
       if (this.timetable.tick()) this.nextLesson(true);
       this.cast.move();
-      this.world.autoShutDoors();
+      for (const door2 of this.world.autoShutDoors((d) => this.cast.isDoorwayClear(d))) this.events.emit("door", { id: door2.id, shut: true });
       this.events.emit("tick", { tick: this.tickCount });
     }
     // ---- Score and lines -------------------------------------------------------
@@ -9899,6 +10001,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.events.emit("linesTotal", { lines: this.lines });
       if (this.lines >= this.config.maxLines && !this.cast.eric.expelled) {
         this.cast.eric.expelled = true;
+        this.stopClock();
         this.expelEric("ExpelEric:TooManyLines");
       }
     }
@@ -9917,7 +10020,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.upAYearPending = true;
       this.events.emit("upAYear", { score: this.score });
       this.events.emit("quest", { step: "safeOpened" });
-      setTimeout(() => {
+      this.upAYearTimer = setTimeout(() => {
+        this.upAYearTimer = null;
         this.upAYearPending = false;
         this.endGame(true);
       }, 2500);
@@ -12082,7 +12186,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       rect(w.x * C5 + 4, w.topY * C5, 2, (w.bottomY - w.topY + 1) * C5, hd.wallLight);
     }
     for (const d of SKOOL.doors) {
-      if (d.id === "DrinksCabinet") continue;
+      if (d.id === "DrinksCabinet" || d.id === "SkoolGate") continue;
       const [cx, cy] = d.coords, [w, h] = d.size;
       const x = cx * C5 - 4, y = cy * C5 - 4, ww = w * C5 + 8, hh = h * C5 + 12;
       rect(x, y, ww, hh, hd.doorFrame);
@@ -12533,8 +12637,11 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
 `, "conker in tree");
   var CHAIN = layer(0, 0, new Grid(14, 28).rect(0, 0, 14, 28, ".").rect(6, 0, 2, 28, "M").rect(4, 4, 6, 2, "D").rect(4, 12, 6, 2, "D").rect(4, 20, 6, 2, "D").rows(), "chain");
   var cache3 = /* @__PURE__ */ new Map();
-  function image(key, lay) {
-    if (!cache3.has(key)) cache3.set(key, compose([[lay, -lay.x, -lay.y]], {}, lay.w, lay.h));
+  function image(key, make) {
+    if (!cache3.has(key)) {
+      const lay = typeof make === "function" ? make() : make;
+      cache3.set(key, compose([[lay, -lay.x, -lay.y]], {}, lay.w, lay.h));
+    }
     return cache3.get(key);
   }
   var DOOR_KIND = { SkoolGate: "gate", DrinksCabinet: "cabinet" };
@@ -12547,21 +12654,20 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const [cx, cy] = d.coords, [w, h] = d.size;
       const state = d.shut ? "shut" : "open";
       if (kind === "cabinet") {
-        add(`cabinet:${state}`, image(`cabinet ${d.shut}`, cabinet(d.shut)), cx * C5 - 4 * u, cy * C5 - 4 * u);
+        add(`cabinet:${state}`, image(`cabinet ${d.shut}`, () => cabinet(d.shut)), cx * C5 - 4 * u, cy * C5 - 4 * u);
         continue;
       }
-      const lay = kind === "gate" ? gate(d.shut) : door(w, h, d.shut);
-      add(`${kind}:${state}`, image(`${kind} ${w}x${h} ${d.shut}`, lay), cx * C5, cy * C5);
+      add(`${kind}:${state}`, image(`${kind} ${w}x${h} ${d.shut}`, () => kind === "gate" ? gate(d.shut) : door(w, h, d.shut)), cx * C5, cy * C5);
     }
     for (const win of world.windows.values()) {
       const [cx, cy] = win.coords, [w, h] = win.size;
-      add(`window${w}x${h}:${win.shut ? "shut" : "open"}`, image(`window ${w}x${h} ${win.shut}`, windowArt(w, h, win.shut)), cx * C5, cy * C5);
+      add(`window${w}x${h}:${win.shut ? "shut" : "open"}`, image(`window ${w}x${h} ${win.shut}`, () => windowArt(w, h, win.shut)), cx * C5, cy * C5);
     }
     const s = world.safe;
     add("safe", image("safe", SAFE), s.x * C5 - 4 * u, s.y * C5 - 8 * u);
     for (const c of world.cups.values()) {
       const contents = c.frogs.length ? "FROG" : c.contents;
-      add(`cup:${contents || "EMPTY"}`, image(`cup ${contents}`, cup(contents)), c.x * C5 - 2 * u, c.y * C5);
+      add(`cup:${contents || "EMPTY"}`, image(`cup ${contents}`, () => cup(contents)), c.x * C5 - 2 * u, c.y * C5);
     }
     if (!game.cast.conker.visible) add("conker", image("conker tree", CONKER_IN_TREE), 100 * C5 + 12 * u, 3 * C5 + 4 * u);
     if (game.cast.bike.chained) {
@@ -12630,7 +12736,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         const board = room.blackboard;
         if (!board || !board.lines.length) continue;
         const x = board.x * C5, y = board.y * C5;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, y, board.width * C5, board.height * C5);
+        ctx.clip();
         board.lines.forEach((line, i) => drawHdText(ctx, line, x + 4, y + 4 + i * HD_LINE_HEIGHT, this.theme.chalk));
+        ctx.restore();
         for (const col of board.wipedColumns) ctx.drawImage(b, x + col * C5, y, C5, board.height * C5, x + col * C5, y, C5, board.height * C5);
       }
     }
@@ -12678,7 +12789,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     }
     // A reprimand or a secret: a rounded box in the colour of its kind, in
     // screen space (cam/viewW in game pixels).
-    drawMessageBox(ctx, box, cam, viewW, camY = 0) {
+    drawMessageBox(ctx, box, cam, viewW, camY = 0, viewH = null) {
       const S = this.scale, C5 = SKOOL.cell * S, hd = this.hd, theme = this.theme;
       const lines = box.lines;
       const w = Math.max(8 * C5, ...lines.map((l) => measureHd(l) + 12 * S));
@@ -12686,7 +12797,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       let x = (box.x * SKOOL.cell - cam + 4) * S - w / 2;
       let y = box.y * C5 - camY * S - h - 2 * S;
       x = Math.max(2, Math.min(viewW * S - w - 2, x));
-      y = Math.max(2, y);
+      y = Math.max(2, viewH === null ? y : Math.min(viewH * S - h - 6, y));
       x = Math.round(x);
       y = Math.round(y);
       const paper = box.paper === "eric" ? theme.boxEric : box.paper === "other" ? theme.boxOther : box.paper === "alarm" ? theme.boxAlarm : theme.boxSecret;
@@ -12834,7 +12945,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     const w = Math.max(...lines.map((l) => ctx.measureText(l).width), 120 * u) + padX * 2;
     const h = lines.length * lh + padY * 2 - Math.round(5 * u);
     const x = Math.round(Math.max(view.x0 + 8 * u, Math.min(view.x1 - w - 8 * u, centre.x - w / 2)));
-    const y = Math.round(Math.max(view.y0 + 8 * u, centre.y - h));
+    const y = Math.round(Math.max(view.y0 + 8 * u, Math.min((view.y1 ?? Infinity) - h - 12 * u, centre.y - h)));
     ctx.fillStyle = "rgba(20,24,34,0.35)";
     roundedRect(ctx, x + 3 * u, y + 5 * u, w, h, 12 * u);
     ctx.fill();
@@ -13435,7 +13546,9 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     }
     // ---- Sprites --------------------------------------------------------------------
     drawSprite(ctx, group, state, direction, look, x, y) {
-      const S = this.scale, bx = Math.round(x * S), by = Math.round(y * S);
+      const S = this.scale, by = Math.round(y * S);
+      let bx = Math.round(x * S);
+      if (group === "OBJ" && state.startsWith("DESK_")) bx -= direction * SKOOL.cell * S;
       const f = group === "OBJ" ? this.assets.object(state) : this.assets.frame(group, state, look?.variant);
       if (f) {
         if (direction < 0) {
@@ -13454,6 +13567,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       ctx.drawImage(s, bx, by, 24 * S, 32 * S);
       ctx.restore();
       this.stats.fallback++;
+      (this.stats.missing = this.stats.missing || /* @__PURE__ */ new Set()).add(`${group}:${state}`);
       return true;
     }
     flipped(f) {
@@ -13567,11 +13681,11 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const mouth = { x: (px2 + 12 + 5 * c.direction) * S, y: py * S + (headTop - 6) * u };
       drawSpeech(ctx, text, mouth, this.view, progress, u);
     }
-    drawMessageBox(ctx, box, cam, viewW, camY = 0) {
+    drawMessageBox(ctx, box, cam, viewW, camY = 0, viewH = null) {
       const S = this.scale, C5 = SKOOL.cell * S, u = S / 6, t = this.theme;
       const paper = box.paper === "eric" ? t.boxEric : box.paper === "other" ? t.boxOther : box.paper === "alarm" ? t.boxAlarm : t.boxSecret;
       const ink = box.paper === "alarm" ? t.boxInkAlarm : t.boxInk;
-      const view = { x0: 0, x1: viewW * S, y0: 0 };
+      const view = { x0: 0, x1: viewW * S, y0: 0, y1: viewH === null ? Infinity : viewH * S };
       drawCard(ctx, box.lines, { x: (box.x * SKOOL.cell - cam + 4) * S, y: box.y * C5 - camY * S - 10 * u }, view, { paper, ink, edge: this.hd.boxEdge }, u);
     }
   };
@@ -13682,26 +13796,39 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         this.tracks.set(thing.id, tr);
       }
       if (tr.frame === now && tr.out) return tr.out;
-      let tx = thing.x, ty = thing.y;
+      const stale = now - tr.seen > 500;
+      if (stale) {
+        tr.strideX = thing.x;
+        tr.strideY = thing.y;
+        tr.state = state;
+        tr.seq = null;
+        tr.stateT = -1e9;
+        tr.prevState = null;
+        tr.lastY = thing.y;
+        tr.dir = thing.direction;
+      }
       const midstride = walkState && (state === "WALK1" || state === "WALK3");
-      if (midstride && smooth) {
+      const target = () => {
+        if (!(midstride && smooth)) return [thing.x, thing.y];
         const endX = thing.x + thing.direction, endY = thing.y + (thing.verticalDirection || 0);
-        tx = (tr.strideX + endX) / 2;
-        ty = (tr.strideY + endY) / 2;
-      } else {
+        return [(tr.strideX + endX) / 2, (tr.strideY + endY) / 2];
+      };
+      if (!(midstride && smooth)) {
         tr.strideX = thing.x;
         tr.strideY = thing.y;
       }
+      let [tx, ty] = target();
       const far = Math.abs(tr.x - tx) > SNAP_CELLS || Math.abs(tr.y - ty) > SNAP_CELLS;
-      if (!smooth || !thing.visible || far || now - tr.seen > 500) {
+      if (!smooth || !thing.visible || far || stale) {
+        if (far) {
+          tr.strideX = thing.x;
+          tr.strideY = thing.y;
+          [tx, ty] = target();
+        }
         tr.x = tr.fromX = tr.toX = tx;
         tr.y = tr.fromY = tr.toY = ty;
         tr.t0 = now;
         tr.dur = 1;
-        if (far || now - tr.seen > 500) {
-          tr.strideX = thing.x;
-          tr.strideY = thing.y;
-        }
       } else {
         if (tx !== tr.toX || ty !== tr.toY) {
           const start = Math.max(tr.seen, now - 34);
@@ -13798,6 +13925,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       on("cup", ({ cup: cup2, contents }) => {
         if (cup2 && contents) this.splash([cup2.x * 8 + 4, cup2.y * 8 + 6], contents === "SHERRY" ? "#d98a2b" : "#7fc4ff", 8);
       });
+      on("cupEmpty", ({ cup: cup2 }) => {
+        if (cup2) {
+          this.ring([cup2.x * 8 + 4, cup2.y * 8 + 4]);
+          this.text([cup2.x * 8 + 4, cup2.y * 8 + 4], "EMPTY", "#59606e", 6);
+        }
+      });
       on("decked", ({ character }) => {
         if (character) {
           this.stars(this.head(character), 7);
@@ -13830,6 +13963,13 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         this.lastScore = score;
         if (gain > 0 && gain < 5e3) this.text(this.head(game.cast.eric), `+${gain}`, "#c98a12", 8);
       });
+    }
+    // Drop everything in the air (the view has changed, or effects were switched).
+    reset() {
+      this.parts.length = 0;
+      this.shake = 0;
+      this.flash = null;
+      this.lastScore = this.game.score || 0;
     }
     // Where to aim an effect on a character, in game pixels.
     head(c) {
@@ -13902,6 +14042,13 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         p.rot += p.spin * s;
       }
       this.parts = this.parts.filter((p) => p.age < p.life);
+      this.dripClock = (this.dripClock || 0) + dt;
+      if (this.dripClock > 1300) {
+        this.dripClock = 0;
+        for (const cup2 of this.game.world.cups.values()) {
+          if (cup2.contents) this.add({ kind: "drop", x: cup2.x * 8 + 6.5, y: cup2.y * 8 + 5, vy: 4, g: 120, life: 520, size: 0.9, colour: cup2.contents === "SHERRY" ? "#d98a2b" : "#7fc4ff" });
+        }
+      }
     }
     // A small random offset for the whole view while a shake plays out.
     shakeOffset() {
@@ -14025,6 +14172,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.lastDraw = 0;
       this.fx = new Effects(game, (thing) => this.spritePos(thing));
       this.onFootstep = null;
+      this.guide = [];
       this.lastStepFrame = -1;
       this.tint = document.createElement("canvas");
       this.tint.width = 24;
@@ -14090,22 +14238,29 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     // ---- Camera ----------------------------------------------------------------
     // `dt` is the time since the last frame in milliseconds, so the camera
     // moves at the same speed whatever the screen's refresh rate.
-    updateCamera(dt) {
+    // Where the camera should look: at Eric, or, for the moment he is hidden
+    // inside a kiss (the engine parks him off the map), at where he was standing.
+    ericAnchor(smooth = true) {
       const eric = this.game.cast.eric;
+      if (!eric.visible && eric.hideCoords) return [eric.hideCoords[0] * C4, eric.hideCoords[1] * C4];
+      return smooth ? this.spritePos(eric) : [eric.x * C4, eric.y * C4];
+    }
+    updateCamera(dt) {
       const viewW = this.viewW;
       const maxX = SKOOL.width * C4 - viewW;
       const clamp = (v) => Math.max(0, Math.min(maxX, v));
       if (this.options.retroScroll) {
-        const target = clamp(eric.x * C4 + 12 - viewW / 2);
+        const ericX = Math.round(this.ericAnchor(false)[0] / C4);
+        const target = clamp(ericX * C4 + 12 - viewW / 2);
         const col = Math.floor(this.cameraX / C4);
-        const offset = eric.x - col;
+        const offset = ericX - col;
         if (offset >= this.columns - 10) this.cameraX = Math.min(maxX, (col + 8) * C4);
         else if (offset <= 9 && col > 0) this.cameraX = Math.max(0, (col - 8) * C4);
         if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;
       } else if (this.options.attract) {
         this.cameraX = maxX * (0.5 - 0.5 * Math.cos(performance.now() / 9e4 * Math.PI * 2 + 2.2));
       } else {
-        const [ex] = this.spritePos(eric);
+        const [ex] = this.ericAnchor();
         const target = clamp(ex + 12 - viewW / 2);
         if (Math.abs(this.cameraX - target) > viewW) this.cameraX = target;
         else this.cameraX += (target - this.cameraX) * (1 - Math.exp(-dt / 150));
@@ -14129,7 +14284,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         this.cameraY = this.cameraTargetY = maxY;
         return;
       }
-      const [, ey] = this.spritePos(this.game.cast.eric);
+      const [, ey] = this.ericAnchor();
       const lowest = ey + SPRITE_H + (this.margin || 0) - this.viewH;
       const highest = ey - 3 * C4;
       this.cameraTargetY = Math.max(0, Math.min(maxY, Math.max(lowest, Math.min(highest, this.cameraTargetY))));
@@ -14174,9 +14329,14 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const dt = Math.max(0, Math.min(100, now - this.lastDraw));
       this.lastDraw = now;
       this.frameDt = dt;
-      this.motion.begin(now, 1e3 / (game.config.ticksPerSecond * (this.options.gameSpeed || 1)));
+      this.motion.begin(now, 1e3 / (game.config.ticksPerSecond * (this.options.attract ? 1 : this.options.gameSpeed || 1)));
       this.updateCamera(dt);
       this.ensureScale();
+      const wantFx = !this.useOriginal() && this.useHd();
+      if (this.fx.enabled !== wantFx) {
+        this.fx.enabled = wantFx;
+        this.fx.reset();
+      }
       const cam = Math.round(this.cameraX);
       if (this.useOriginal()) return this.drawOriginal(cam);
       if (this.useHd()) return this.drawHd();
@@ -14186,6 +14346,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const playH = SKOOL.height * C4;
       ctx.drawImage(this.backdrop, cam, 0, this.canvas.width, playH, cam, 0, this.canvas.width, playH);
       this.drawFurniture(viewFrom, viewTo);
+      if (this.options.guides) this.drawGuideSpots(ctx, 1);
       const drawables = game.cast.drawables.filter((d) => d.visible && d.x * C4 + 24 >= viewFrom && d.x * C4 <= viewTo);
       for (const d of drawables) {
         const [x, y] = this.spritePos(d);
@@ -14197,6 +14358,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         if (theme.monoSprites && d.group !== "OBJ") sprite = this.tinted(sprite, theme.monoSprites);
         ctx.drawImage(sprite, Math.round(x), Math.round(y));
       }
+      if (this.options.guides) this.drawGuideTargets(ctx, 1);
       for (const c of game.cast.characterList) if (c.bubble) this.drawBubble(c);
       ctx.restore();
       if (game.messageBox) this.drawMessageBox(game.messageBox, cam);
@@ -14212,17 +14374,26 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       ctx.imageSmoothingEnabled = !!p.smooth;
       this.fx.update(dt0);
       const [shakeX, shakeY] = this.options.smoothMotion ? this.fx.shakeOffset() : [0, 0];
+      if (shakeX || shakeY) {
+        ctx.save();
+        ctx.translate(Math.round(-cam * S), Math.round(-camY * S));
+        if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);
+        p.drawBackdrop(ctx, cam, viewW, camY, viewH);
+        ctx.restore();
+      }
       ctx.save();
       ctx.translate(Math.round((-cam + shakeX) * S), Math.round((-camY + shakeY) * S));
       if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);
       p.drawBackdrop(ctx, cam, viewW, camY, viewH);
       p.drawFurniture(ctx, game);
+      if (this.options.guides) this.drawGuideSpots(ctx, S);
       const viewFrom = cam - 48, viewTo = cam + viewW + 48;
       const cycles = !!p.hasCycle;
       const dt = dt0;
       const people = [], objects = [];
       for (const d of game.cast.drawables) {
         if (!d.visible || d.x * C4 + SPRITE_W < viewFrom || d.x * C4 > viewTo) continue;
+        if (d.trapped) continue;
         const m = this.motion.sample(d, this.options.smoothMotion);
         if (d.group === "OBJ") objects.push({ d, m, lane: 0 });
         else people.push({ d, m, lane: p.smooth ? this.laneOf(d, m, dt) : 0 });
@@ -14256,8 +14427,14 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       people.forEach(drawOne);
       if (p.drawForeground) p.drawForeground(ctx, game);
       objects.forEach(drawOne);
+      if (this.options.guides) this.drawGuideTargets(ctx, S);
       this.fx.draw(ctx, S);
-      for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c, this.spritePos(c));
+      for (const c of game.cast.characterList) {
+        if (!c.bubble) continue;
+        const [bx, by] = this.spritePos(c);
+        if (bx + SPRITE_W < cam || bx > cam + viewW || by + SPRITE_H < camY || by > camY + viewH) continue;
+        p.drawBubble(ctx, c, [bx, by]);
+      }
       const em = this.motion.sample(game.cast.eric, this.options.smoothMotion);
       const stepFrame = em.walking && (em.cycle === 3 || em.cycle === 7) ? em.cycle : -1;
       if (stepFrame !== this.lastStepFrame) {
@@ -14266,11 +14443,66 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       }
       ctx.restore();
       this.fx.drawFlash(ctx, this.canvas.width, this.canvas.height);
-      if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY);
+      if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY, viewH);
       if (this.options.retroStatus) {
         ctx.save();
         ctx.scale(S, S);
         this.drawStatus();
+        ctx.restore();
+      }
+    }
+    // ---- Aiming help (modern view) ----------------------------------------------
+    // features/aim-guide.js works out where Eric must stand to fill a cup with
+    // the pistol (blue) or knock it with the catapult (amber). Each spot gets a
+    // soft pool of light where his feet go and a small arrow for the way to
+    // face. Sizes are in game pixels, multiplied by S like everything else.
+    drawGuideSpots(ctx, S) {
+      if (!this.guide || !this.guide.length) return;
+      const pulse = 0.5 + 0.5 * Math.sin(this.lastDraw / 320);
+      ctx.save();
+      for (const g of this.guide) {
+        const rgb = g.kind === "pistol" ? "74,163,255" : "255,183,3";
+        const cx = (g.x * C4 + 12) * S, cy = ((g.y + 4) * C4 - 1) * S;
+        const strength = g.lit ? 0.9 : 0.35 + 0.25 * pulse;
+        const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 12 * S);
+        glow.addColorStop(0, `rgba(${rgb},${strength})`);
+        glow.addColorStop(1, `rgba(${rgb},0)`);
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.scale(1, 0.3);
+        ctx.translate(-cx, -cy);
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 12 * S, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        const ax = cx + g.d * 13 * S, ay = cy - 1.5 * S, w = 3 * S, h = 2.6 * S;
+        ctx.strokeStyle = `rgba(${rgb},${g.lit ? 1 : 0.55 + 0.3 * pulse})`;
+        ctx.lineWidth = Math.max(1, 1.1 * S);
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        ctx.moveTo(ax - g.d * w, ay - h);
+        ctx.lineTo(ax, ay);
+        ctx.lineTo(ax - g.d * w, ay + h);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    // Once Eric is on a spot and facing the right way, ring what his shot will hit.
+    drawGuideTargets(ctx, S) {
+      if (!this.guide) return;
+      const pulse = 0.5 + 0.5 * Math.sin(this.lastDraw / 160);
+      for (const g of this.guide) {
+        if (!g.lit || !g.target) continue;
+        const rgb = g.kind === "pistol" ? "74,163,255" : "255,183,3";
+        const [tx, ty] = g.target;
+        ctx.save();
+        ctx.strokeStyle = `rgba(${rgb},${0.65 + 0.35 * pulse})`;
+        ctx.lineWidth = Math.max(1, 1.2 * S);
+        ctx.beginPath();
+        ctx.arc(tx * S, ty * S, (7 + 1.5 * pulse) * S, 0, Math.PI * 2);
+        ctx.stroke();
         ctx.restore();
       }
     }
@@ -14312,7 +14544,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     // The original's bottom three rows: score box, mice, inventory, lesson box, logo.
     drawStatus() {
       const { ctx, game, theme } = this;
-      const top = SKOOL.height * C4;
+      const top = this.viewH;
       const w = this.viewW;
       const rect = (x, y, ww, hh, col) => {
         ctx.fillStyle = col;
@@ -14427,7 +14659,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         const b = room.blackboard;
         if (!b || !b.lines.length) continue;
         const x = b.x * C4, y = b.y * C4;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(x, y, b.width * C4, b.height * C4);
+        ctx.clip();
         b.lines.forEach((line, i) => drawText(ctx, line, x + 2, y + 2 + i * LINE_HEIGHT, theme.chalk));
+        ctx.restore();
         ctx.fillStyle = theme.blackboard;
         for (const col of b.wipedColumns) ctx.fillRect(x + col * C4, y, C4, b.height * C4);
       }
@@ -14572,10 +14809,19 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       return null;
     }
     onKeyDown(e) {
-      if (e.repeat) return;
-      if (e.target && ["INPUT", "SELECT", "TEXTAREA", "BUTTON"].includes(e.target.tagName) && e.code !== "Escape") return;
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const tag = e.target && e.target.tagName;
+      if (["INPUT", "SELECT", "TEXTAREA"].includes(tag) && e.code !== "Escape") return;
       const action = this.actionFor(e.code);
-      if (action === "pause" && !this.writing || action === "view" && !this.writing) {
+      if (tag === "BUTTON") {
+        if (!this.enabled && e.code !== "Escape") return;
+        if (action) e.target.blur();
+      }
+      if (e.repeat) {
+        if (action && this.enabled) e.preventDefault();
+        return;
+      }
+      if ((action === "pause" || action === "view") && (!this.writing || !this.enabled)) {
         this.uiHandlers[action].forEach((h) => h());
         e.preventDefault();
         return;
@@ -14604,8 +14850,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     onView(handler) {
       this.uiHandlers.view.push(handler);
     }
+    // Down right now (isDown), or tapped since the last flush (pressed).
+    isDown(action) {
+      return this.bindings[action].some((code) => this.held.has(code)) || this.held.has(`virtual:${action}`);
+    }
     pressed(action) {
-      return this.bindings[action].some((code) => this.held.has(code));
+      return this.isDown(action) || this.edges.has(action);
     }
     wasPressed(action) {
       return this.edges.has(action);
@@ -14620,6 +14870,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     finishWriting() {
       this.writing = false;
       this.typed = [];
+    }
+    // A new game: nothing held, nothing pending, nobody writing.
+    reset() {
+      this.held.clear();
+      this.edges.clear();
+      this.finishWriting();
     }
     takeTyped() {
       const t = this.typed;
@@ -14949,7 +15205,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       g.events.on("lesson", ({ teacher, room }) => {
         this.el.teacher.textContent = teacher || "\xA0";
         this.el.room.textContent = room;
-        this.log(`Bell: ${teacher ? teacher + " in the " : ""}${room.toLowerCase()}`);
+        this.log(`Bell: ${teacher ? title(teacher) + " in the " : ""}${room.toLowerCase()}`);
       });
       g.events.on("inventory", ({ items, mice }) => this.renderInventory(items, mice));
       g.events.on("lines", ({ giver, recipient, amount, text }) => this.log(`${title(giver.name)} gave ${title(recipient.name)} ${amount} lines: "${sentence(text)}"`));
@@ -15008,7 +15264,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
   };
   function describeItem(item) {
     const map = { WATER_PISTOL: "a water pistol", SHERRY_PISTOL: "a pistol full of sherry", STINKBOMBS3: "three stinkbombs", FROG: "a frog", MOUSE: "a mouse", SAFE_KEY: "the safe key", STOREROOM_KEY: "the storeroom key" };
-    return map[item] || item.toLowerCase();
+    return map[item] || String(item || "something").toLowerCase();
   }
   function title(name) {
     return name.split(" ").map((w) => w[0] + w.slice(1).toLowerCase()).join(" ");
@@ -15081,7 +15337,10 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.root.hidden = false;
       this.root.dataset.screen = screen;
       this.root.innerHTML = `<div class="menu-card">${this[`render_${screen}`](data)}</div>`;
-      this.root.querySelector("button")?.focus();
+      this.root.querySelector("button")?.focus({ preventScroll: true });
+      const card = this.root.querySelector(".menu-card");
+      if (card) card.scrollTop = 0;
+      this.root.scrollTop = 0;
     }
     hide() {
       this.screen = null;
@@ -15164,7 +15423,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       <div class="options">
         <label class="opt"><span>View</span>
           <select data-setting="view"><option value="modern" ${s.view === "modern" ? "selected" : ""}>Modern</option><option value="original" ${s.view === "original" ? "selected" : ""}>Original (1985)</option></select>
-          <small>Press V in the game to switch. Choosing a view resets the advanced options below to that view's defaults.</small></label>
+          <small>Press Tab in the game to switch. Choosing a view resets the advanced options below to that view's defaults.</small></label>
         <label class="opt"><span>Camera</span>
           <select data-setting="camera"><option value="close" ${s.camera === "close" ? "selected" : ""}>Close: follows Eric's floor</option><option value="whole" ${s.camera !== "close" ? "selected" : ""}>Whole school</option></select>
           <small>Close shows two storeys at a time, as wide as the 1985 screen. Modern view only.</small></label>
@@ -15172,6 +15431,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         ${check("sound", "Sound effects", "Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.")}
         ${check("music", "Music", "A quiet tune while you play.")}
         ${check("minimap", "Map", "A small map of the whole school in the corner of the picture, with a dot for everyone.")}
+        ${check("guides", "Aiming help", "Marks where to stand to fill a cup with the pistol or knock it with the catapult, and rings the cup when your aim is true. Modern view only.")}
         ${check("radar", "Teacher radar", "Lists the staff, how far away they are and whether they can see Eric. An aid the original never had.")}
       </div>
       <h2>Advanced</h2>
@@ -15195,7 +15455,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       return `
       <h1>Controls</h1>
       <p class="lede">The cursor keys to move and four action keys in a row under your left hand. The game works out which tool fits what is in front of Eric.</p>
-      <table class="keys"><tbody>${rows2}</tbody></table>
+      <table class="keys"><tbody>${rows2}<tr><td>H</td><td>Show or hide the key strip (modern view)</td></tr></tbody></table>
+      <p class="small">A tap of \u2190 or \u2192 turns Eric round on the spot; hold the key to walk. At the foot of a staircase, \u2191 turns him to face it and then climbs.</p>
       <p class="small">Writing on a blackboard: stand beside it, press the act key, type, then press Enter or simply walk off with a cursor key. Eric gets up by himself after being knocked down (or press up). Riding the bike: alternate left and right to pedal, up to stand on the saddle, down to dismount, jump from the saddle to reach a high cup. When Mr Wacker has something to tell you, press the act key to show you understood.</p>
       <div class="menu-actions"><button type="button" data-action="back" class="primary">Back</button></div>`;
     }
@@ -15249,6 +15510,10 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     CATAPULT: (s, t) => {
       s.tone(t, 760, 0.14, { vol: 0.4, slide: 190 });
       s.noise(t, 0.03, { vol: 0.25, band: 3e3 });
+    },
+    CUP_EMPTY: (s, t) => {
+      s.tone(t, 2400, 0.05, { type: "sine", vol: 0.22 });
+      s.tone(t + 0.05, 1800, 0.09, { type: "sine", vol: 0.16 });
     },
     WATER_PISTOL: (s, t) => {
       s.noise(t, 0.16, { vol: 0.32, band: 2200, bandTo: 4200, q: 3 });
@@ -15744,6 +16009,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const m = this.m;
       const coords = [];
       for (; ; ) {
+        if (address + 3 >= m.length || coords.length > 2048) throw new Error("this does not look like Back to Skool");
         const y = m[address];
         if (y === 255) break;
         const x = m[address + 1];
@@ -16124,7 +16390,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     [
       "bikeDigits",
       "Four bike digits",
-      "Fill a cup by the toilets with the pistol (X from the ground floor), then knock the cup with the catapult (X from the stairs beside it) as a master walks under it. Each master you soak mutters a digit. Known so far: {digits}"
+      "First fill the middle or the right-hand cup by the toilets: carry the pistol to the ground floor below the cups, stand six steps back from under the cup, facing it, and press X (in the modern view a blue glow marks each spot; from anywhere else X fires the catapult instead). Then go up four steps of the stairs beside the cups (\u2191), turn to face them (\u2192) and press X as a master walks underneath (an amber glow marks the step, and the cup is ringed when your aim is true). A pellet does nothing to an empty cup, and only that one step works. Each master you soak mutters a digit. Known so far: {digits}"
     ],
     [
       "bikeUnchained",
@@ -16139,7 +16405,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     [
       "storeroomLetters",
       "Four storeroom letters",
-      "The same trick as the digits, with sherry in the cup. Known so far: {letters}"
+      "The same trick as the digits, with sherry in the cup: refill the cups from the same spots, then fire the catapult from the fourth step of the stairs. Known so far: {letters}"
     ],
     [
       "storeroomKey",
@@ -16296,8 +16562,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
           const sameFloor = dy === 0;
           const facingEric = t.direction * (eric.x - t.x) >= 0;
           const watching = sameFloor && dist <= 10 && facingEric && t.canGiveLines();
-          const where = sameFloor ? `${dist} cells ${dx < 0 ? "left" : "right"}` : `${dy < 0 ? "upstairs" : "downstairs"}`;
-          return `<li class="${watching ? "watching" : ""} ${t.id === teacherId ? "mine" : ""}">
+          const where = !sameFloor ? dy < 0 ? "upstairs" : "downstairs" : dist === 0 ? "right beside you" : `${dist} ${dist === 1 ? "cell" : "cells"} ${dx < 0 ? "left" : "right"}`;
+          return `<li class="${watching ? "watching" : ""}">
           <span class="name">${t.name.split(" ").map((w) => w[0] + w.slice(1).toLowerCase()).join(" ")}</span>
           <span class="where">${where}, facing ${t.direction < 0 ? "left" : "right"}</span>
           ${t.id === teacherId ? '<span class="tag">your teacher</span>' : ""}
@@ -16314,8 +16580,105 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     }
   };
 
+  // src/features/aim-guide.js
+  function standingPlaces(world) {
+    const places = [];
+    const seen = /* @__PURE__ */ new Set();
+    const add = (x, y) => {
+      const k = `${x},${y}`;
+      if (!seen.has(k)) {
+        seen.add(k);
+        places.push([x, y]);
+      }
+    };
+    for (const f of world.floors) for (let x = f.minX; x <= Math.min(f.maxX, world.width - 3); x++) add(x, f.y);
+    for (const s of new Set(world.staircases.values())) {
+      for (let i = 0; i <= s.bottom.y - s.top.y; i++) add(s.bottom.x + i * s.direction, s.bottom.y - i);
+    }
+    return places;
+  }
+  function pelletCups(world, pellet2, x, y, d) {
+    const cups = [];
+    const probe = { x: x + d, y, direction: d, width: pellet2.width, impeded: (bottomY, topY) => topY <= y + 1 && y + 1 <= bottomY };
+    for (let count = pellet2.range - 1; count > 0; count--) {
+      if (world.barrier(probe)) break;
+      if (count <= pellet2.hitZone) {
+        const cup2 = world.cup(probe.x + pellet2.hitXY[0], probe.y + pellet2.hitXY[1]);
+        if (cup2) cups.push(cup2);
+      }
+      probe.x += d;
+    }
+    return cups;
+  }
+  function waterTarget(world, x, y, d) {
+    const phases = world.animationPhases.Water;
+    let wx = x + 2 * d, wy = y - 2;
+    for (let i = 0; i < 12; i++) {
+      const [, xInc, yInc, hit] = phases[Math.min(i, phases.length - 1)];
+      if (hit === 1) {
+        const cup2 = world.cup(wx - (d < 0 ? 1 : -3), wy);
+        if (cup2) return { cup: cup2 };
+      }
+      if (hit === 2) {
+        const pot = world.plantPot(wx, wy);
+        if (pot) return { pot };
+      }
+      if (world.floorAt(wx, wy)) return null;
+      wx += d * xInc;
+      wy += yInc;
+    }
+    return null;
+  }
+  function findSpots(world, pellet2) {
+    const catapult = [], pistol = [];
+    for (const [x, y] of standingPlaces(world)) {
+      for (const d of [-1, 1]) {
+        const cups = pelletCups(world, pellet2, x, y, d);
+        if (cups.length) catapult.push({ x, y, d, cups });
+        const target = waterTarget(world, x, y, d);
+        if (target) pistol.push({ x, y, d, ...target });
+      }
+    }
+    return { catapult, pistol };
+  }
+  var aim_guide_default = {
+    id: "aim-guide",
+    name: "Aiming help",
+    description: "Marks where to stand to fill a cup or knock it down, and rings the cup when the aim is true.",
+    defaultOn: true,
+    setup({ game, renderer }) {
+      const world = game.world;
+      let spots = null;
+      game.events.on("tick", () => {
+        const eric = game.cast.eric;
+        if (!spots) spots = findSpots(world, eric.pellet);
+        const marks = [];
+        const still = eric.isStanding() && !eric.midstride() && !eric.controller;
+        const here = (s) => still && eric.x === s.x && eric.y === s.y && eric.direction === s.d;
+        for (const s of spots.catapult) {
+          const cup2 = s.cups.find((c) => !c.isEmpty());
+          if (!cup2) continue;
+          marks.push({ x: s.x, y: s.y, d: s.d, kind: "catapult", lit: here(s), target: [cup2.x * 8 + 4, cup2.y * 8 + 4] });
+        }
+        if (eric.hasWaterPistol()) {
+          const liquid = eric.inventory.has("SHERRY_PISTOL") ? "SHERRY" : "WATER";
+          for (const s of spots.pistol) {
+            let target = null;
+            if (s.cup && s.cup.contents !== liquid) target = [s.cup.x * 8 + 4, s.cup.y * 8 + 4];
+            if (s.pot && liquid === "WATER" && s.pot.plant && !s.pot.plant.growing && s.pot.plant.headHeight === 0) target = [s.pot.x * 8 + 12, s.pot.plantY * 8 + 26];
+            if (target) marks.push({ x: s.x, y: s.y, d: s.d, kind: "pistol", lit: here(s), target });
+          }
+        }
+        renderer.guide = marks;
+      });
+      game.events.on("start", () => {
+        renderer.guide = [];
+      });
+    }
+  };
+
   // src/features/index.js
-  var FEATURES = [quest_tracker_default, minimap_default, teacher_radar_default];
+  var FEATURES = [quest_tracker_default, minimap_default, teacher_radar_default, aim_guide_default];
   function setupFeatures(ctx, enabled = {}) {
     for (const f of FEATURES) {
       const on = enabled[f.id] ?? f.defaultOn ?? true;
@@ -16335,8 +16698,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: "painted", camera: "whole" },
     modern: { theme: "modern", columns: CLOSE_COLUMNS, camera: "close", smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: "illustrated" }
   };
-  var SETTINGS_VERSION = 5;
-  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, minimap: true, radar: false, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+  var SETTINGS_VERSION = 6;
+  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
   function migrateSettings(s) {
     const v = s.settingsVersion || 1;
     if (v < 2) s.hdGraphics = s.view !== "original";
@@ -16353,7 +16716,9 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
   }
   function loadSettings() {
     try {
-      return migrateSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(localStorage.getItem("bts.settings") || "{}") });
+      const saved = JSON.parse(localStorage.getItem("bts.settings") || "null");
+      if (!saved || typeof saved !== "object") return { ...DEFAULT_SETTINGS };
+      return migrateSettings({ ...DEFAULT_SETTINGS, ...saved, settingsVersion: saved.settingsVersion || 1 });
     } catch (e) {
       return { ...DEFAULT_SETTINGS };
     }
@@ -16372,12 +16737,13 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     const canvas = document.getElementById("game");
     const renderer = new Renderer(canvas, game, { theme: settings.theme, smoothMotion: settings.smoothMotion, retroScroll: settings.retroScroll, viewportColumns: settings.columns, retroStatus: settings.retroStatus, originalGraphics: settings.originalGraphics, artwork: settings.artwork, camera: settings.camera, onResize: () => fitCanvas() });
     const hud = new HUD(document.getElementById("hud"), game, DEFAULT_BINDINGS);
-    const tapeLoader = new TapeLoader(document.getElementById("tape"), renderer, () => {
-      tapeLoader.update(settings.view);
-      hud.setGraphicsStatus(settings.view, renderer.original.ready);
+    const tapeLoader = new TapeLoader(document.getElementById("tape"), renderer, (loaded) => {
+      applySettings(settings);
+      hud.log(loaded ? "The 1985 graphics are loaded." : "The 1985 graphics have been put away.", true);
     });
     const sound = new Sound();
     game.events.on("sound", (id) => sound.play(id));
+    game.events.on("cupEmpty", () => sound.play("CUP_EMPTY"));
     renderer.onFootstep = () => sound.step();
     hud.setIconSource((id) => settings.view !== "original" && settings.artwork === "illustrated" ? renderer.assets.iconUrl(id) : null);
     renderer.assets.onReady(() => hud.setIconSource(hud.iconSource));
@@ -16389,6 +16755,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       sound.setCrowd(near / 6);
     });
     let paused = true;
+    let gameOverShown = 0;
     let attract = false;
     const setAttract = (on) => {
       attract = on;
@@ -16408,7 +16775,9 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         saveSettings(s);
       },
       onNewGame: () => {
+        gameOverShown += 1;
         setAttract(false);
+        input.reset();
         game.start();
         paused = false;
         input.enabled = true;
@@ -16419,6 +16788,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         input.enabled = true;
       },
       onQuit: () => {
+        gameOverShown += 1;
         paused = true;
         menu.show("title");
         setAttract(true);
@@ -16434,8 +16804,10 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       renderer.options.originalGraphics = !!s.originalGraphics;
       renderer.options.artwork = s.artwork || "illustrated";
       renderer.options.camera = s.camera || "whole";
-      game.measureText = s.originalGraphics ? originalMeasure : measureText;
-      game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
+      renderer.options.guides = s.view !== "original" && s.guides !== false;
+      const spectrumFont = s.originalGraphics && renderer.original.ready;
+      game.measureText = spectrumFont ? originalMeasure : measureText;
+      game.fontHas = spectrumFont ? originalFontHas : fontHas;
       sound.enabled = s.sound;
       sound.musicEnabled = s.music !== false;
       document.documentElement.classList.toggle("view-original", s.view === "original");
@@ -16490,6 +16862,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       if (attract) return;
       if (game.started && !game.gameOver) togglePause();
       else {
+        gameOverShown += 1;
         menu.show("title");
         setAttract(true);
       }
@@ -16499,9 +16872,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         game.start();
         return;
       }
+      const mine = gameOverShown;
       paused = true;
       input.enabled = false;
-      setTimeout(() => menu.show("gameover", data), 600);
+      setTimeout(() => {
+        if (mine === gameOverShown && game.gameOver) menu.show("gameover", data);
+      }, 600);
     });
     setupFeatures({ game, renderer, hud, input, settings });
     applySettings(settings);
@@ -16513,6 +16889,12 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       hud.setGraphicsStatus(settings.view, renderer.original.ready);
       if (++polls > 10) clearInterval(poll);
     }, 500);
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        sound.setActive(false);
+        input.held.clear();
+      }
+    });
     let last = performance.now(), acc = 0;
     function frame(now) {
       const dt = Math.min(0.25, (now - last) / 1e3);

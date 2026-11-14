@@ -26,7 +26,9 @@ The cursor keys to move and four action keys in a row under the left hand. The g
 | Esc | Pause / menu |
 | Tab | Switch between the original (1985) and modern views |
 
-Eric gets up by himself after being knocked down. Writing on a blackboard: stand beside it, press C, type, then press Enter (or just walk off with a cursor key). Bike: alternate ← and → to pedal, ↑ to stand on the saddle, ↓ to dismount. The plan under the game lists the eleven steps of the caper, ticks them off as you go, and gives a hint when you hover over one.
+A tap of ← or → turns Eric round on the spot; hold the key to walk. At the foot of a staircase ↑ turns him to face it, then climbs. Eric gets up by himself after being knocked down. Writing on a blackboard: stand beside it, press C, type, then press Enter (or just walk off with a cursor key). Bike: alternate ← and → to pedal, ↑ to stand on the saddle, ↓ to dismount. The plan under the game lists the eleven steps of the caper, ticks them off as you go, and gives a hint when you hover over one.
+
+Some things in the 1985 game only work from one exact spot: a cup is filled with the pistol from six steps back, and knocked with the catapult from the fourth step of the stairs beside it. The rules are unchanged, but the modern view marks those spots with a glow on the floor (blue for the pistol, amber for the catapult) and rings the cup when your aim is true. *Aiming help* in Options switches it off.
 
 The *How to play* screen inside the game has the School Rules and your brother's invisible-ink notes, which explain the whole caper.
 
@@ -79,6 +81,8 @@ The engine runs without a browser, so the rules can be checked automatically:
 ```
 node tools/playthrough.mjs   # plays the whole game by simulated key presses, start to safe, and checks every step
 node tools/scenarios.mjs     # checks each quest mechanic in isolation
+node tools/soak.mjs          # runs millions of ticks under many random seeds with a player who presses anything, checking nothing impossible happens
+node tools/browser-checks.mjs   # opens the real page in a headless browser and presses real keys: every control, every menu and switch, and the whole quest in three views (needs Playwright)
 node tools/headless.mjs      # runs the whole school for a few thousand ticks and prints what happened
 node tools/build-single-file.mjs   # rebuilds dist/back-to-skool.html
 node tools/check-extraction.mjs game.z80 [reference-png-dir]   # checks the in-browser graphics extractor

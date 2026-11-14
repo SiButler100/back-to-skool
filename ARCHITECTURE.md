@@ -88,6 +88,14 @@ flowchart TD
     quest[quest-tracker.js]
     mini[minimap.js]
     radar[teacher-radar.js]
+    aim[aim-guide.js where to stand to fill or hit a cup]
+  end
+
+  subgraph Tests["tools — the tests"]
+    scen[scenarios.mjs each rule, without a screen]
+    play[playthrough.mjs the whole quest by key presses]
+    soak[soak.mjs many school days, random player]
+    bchk[browser-checks.mjs the real page, real keys]
   end
 
   main[src/main.js<br/>boot + fixed-step loop]
@@ -159,6 +167,12 @@ flowchart TD
   fidx --> quest
   fidx --> mini
   fidx --> radar
+  fidx --> aim
+  aim --> renderer
+  scen --> game
+  play --> game
+  soak --> game
+  bchk --> main
 ```
 
 ## Between ticks: why the modern view moves smoothly
@@ -175,6 +189,21 @@ The engine only knows whole cells: a walker is at column 40, then 41. Twenty tim
 4. Eric's version of a command list is the keyboard. `Eric.move()` reads it, works out whether a nearby teacher should be giving him lines, and either walks or hands control to a short controller command (jump, fire, write) until it finishes.
 5. Doors with timers shut themselves. The engine emits a `tick` event for features.
 
+## How the game is tested
+
+Four test programs, from the fastest and narrowest to the slowest and broadest. Each prints PASS or FAIL lines and exits with a failure code if anything failed.
+
+| Test | What it drives | What it catches |
+| --- | --- | --- |
+| `node tools/scenarios.mjs` | The engine alone, one rule at a time, with a fake keyboard | A rule that has stopped working: a cup that will not fill, a door that shuts on Eric, a pellet through a wall. Every bug fixed gets a check here so it cannot return |
+| `node tools/playthrough.mjs [seed]` | The engine alone, the whole quest from the first playtime to the safe, by key presses along the real routes | A step of the quest that has become impossible |
+| `node tools/soak.mjs [seeds] [ticks]` | The engine alone for millions of ticks under many random seeds, with a player who presses anything | Things that only go wrong rarely: someone stranded in mid-air, a game that cannot end, an error thrown once in a million ticks |
+| `node tools/browser-checks.mjs [controls] [screens] [quest]` | The real page in a headless browser (it needs Playwright), with real key presses of realistic lengths | Everything the others cannot see: a tap too short to register, a menu that takes the keyboard away, a page that scrolls, a missing picture, an error in the picture or the HUD at any point in the quest |
+
+Why four: the first three know nothing of the page, so they are fast and exact, but they press keys perfectly. The fault that started this (the cups could not be hit because a tap of a key was either lost or walked Eric off the step) was invisible to them. `browser-checks.mjs` exists to press keys the way a hand does.
+
+Two rules of thumb. A check should say in plain words what the player would see (`A 90 ms tap of ← turns Eric round on the spot`). And a fix is not finished until a check fails without it.
+
 ## Where to change things
 
 | I want to… | Edit |
@@ -188,6 +217,8 @@ The engine only knows whole cells: a walker is at column 40, then 41. Twenty tim
 | Change how a character looks in the illustrated view | regenerate their sheet: the prompt is in `tools/art/characters.json`, the generation record in `tools/art/jobs.json`; drop the new picture in `art-src/` and run `python3 tools/art/build.py <job>` (see `tools/art/prompts.md`) |
 | Change how people look in pixel art | `src/render/hd/palette.js` (each group's colours) and `src/render/hd/people.js` (the body parts, drawn as text bitmaps); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
 | Draw a new object or icon | `src/render/hd/objects.js`, `src/render/hd/icons.js`; the bitmap alphabet is explained at the top of `src/render/hd/pixelart.js` |
+| Change how the keys feel (how long Eric pauses after turning round) | `turnPause` and `turnPauseOnStairs` in `src/config.js`; a tap is recorded in `src/ui/input.js` and acted on in `Eric.move` in `src/engine/eric.js` |
+| Change the aiming help (the glowing spots and the ring round a cup) | `src/features/aim-guide.js` finds the spots by tracing the engine's own flights; `drawGuideSpots` and `drawGuideTargets` in `src/render/renderer.js` draw them |
 | Change how movement feels (glide, walk cycle, pose blend, jump) | `src/render/motion.js`; the camera is in `src/render/renderer.js` (`updateCamera`, `updateCameraY`) |
 | Add or change a visual effect | `src/render/fx.js`: listen for an engine event and add particles |
 | Change floors, stairs, walls, the playground or room signs in the illustrated view | `src/render/art/structure.js` (drawn by code from the swatches in `assets/illustrated/textures/`) |

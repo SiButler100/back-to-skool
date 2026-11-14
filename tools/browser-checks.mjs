@@ -10,7 +10,7 @@
 //   node tools/browser-checks.mjs            run everything
 //   node tools/browser-checks.mjs controls   run only the sections named
 //
-// Sections: controls, screens, quest.
+// Sections: controls, screens, quest, builds.
 // It needs Playwright (not a dependency of the game itself). Exit code 0 means
 // every check passed.
 // ============================================================================
@@ -32,7 +32,11 @@ const wanted = (name) => !only.length || only.includes(name);
 // ---- A tiny web server for the game's own folder -----------------------------
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
 const server = http.createServer((req, res) => {
-  const file = path.join(ROOT, decodeURIComponent(req.url.split('?')[0]).replace(/\/$/, '/index.html'));
+  let url = decodeURIComponent(req.url.split('?')[0]).replace(/\/$/, '/index.html');
+  // The artifact build is published as one page with the artwork beside it:
+  // /__artifact/ serves it laid out that way.
+  if (url.startsWith('/__artifact/')) url = url === '/__artifact/index.html' ? '/dist/artifact.html' : url.replace('/__artifact/', '/');
+  const file = path.join(ROOT, url);
   if (!file.startsWith(ROOT) || !fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); res.end('not found'); return; }
   res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream' });
   fs.createReadStream(file).pipe(res);
@@ -476,6 +480,27 @@ if (wanted('quest')) {
     await page.waitForTimeout(3200);
     check(`${label}: the "up a year" card follows`, (await page.evaluate(() => window.bts.menu.screen)) === 'gameover', String(await page.evaluate(() => window.bts.menu.screen)));
     check(`${label}: no errors on the page from start to finish`, errors.length === 0, errors.slice(0, 3).join(' | '));
+    await page.close();
+  }
+}
+
+// =============================================================================
+// BUILDS: the single-file copies made by tools/build-single-file.mjs
+// =============================================================================
+if (wanted('builds')) {
+  console.log('\n-- The single-file builds --');
+  for (const [label, url, wantArt] of [['dist/artifact.html (artwork beside it, as published)', '/__artifact/index.html', true], ['dist/back-to-skool.html (the download)', '/dist/back-to-skool.html', false]]) {
+    const page = await browser.newPage({ viewport: { width: 1500, height: 900 } });
+    const errors = []; page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto(`${BASE}${url}`);
+    const booted = await page.waitForFunction(() => window.bts && document.querySelector('.overlay'), null, { timeout: 15000 }).then(() => true, () => false);
+    if (!booted) { check(`${label} starts`, false, errors.join(' | ')); await page.close(); continue; }
+    await page.waitForFunction(() => window.bts.renderer.assets.ready || window.bts.renderer.assets.failed, null, { timeout: 30000 }).catch(() => {});
+    await page.click('text=New game'); await page.waitForTimeout(3000);
+    const state = await page.evaluate(() => ({ ticks: window.bts.game.tickCount, art: window.bts.renderer.assets.ready, v: window.bts.settings.settingsVersion, guides: window.bts.settings.guides, hasGuide: Array.isArray(window.bts.renderer.guide) }));
+    check(`${label} starts and runs`, state.ticks > 30 && errors.length === 0, `${state.ticks} ticks ${errors.slice(0, 2).join(' | ')}`);
+    check(`${label} is built from the current source`, state.v === 6 && state.guides === true && state.hasGuide, JSON.stringify(state));
+    if (wantArt) check(`${label} loads the illustrated artwork`, state.art === true);
     await page.close();
   }
 }
