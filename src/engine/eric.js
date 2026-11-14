@@ -120,6 +120,8 @@ export class Eric extends Character {
       this.right();
     } else if (input.pressed('up') && this.staircase) {
       this.up();
+    } else if (input.pressed('up') && this.atFootOfStairsBehind()) {
+      this.turn();           // standing at the foot of a staircase with his back to it: Up turns him to face it
     } else if (input.pressed('down') && this.staircase) {
       this.down();
     }
@@ -174,6 +176,12 @@ export class Eric extends Character {
     if (this.canDropStinkbomb()) return new cmd.DropStinkbomb();
     if (this.canReleaseMice()) { this.bendOver(); return new cmd.ReleaseMice(); }
     return null;
+  }
+
+  // Is Eric standing on the bottom cell of a staircase that rises behind him?
+  atFootOfStairsBehind() {
+    const s = this.world.staircase({ x: this.x, y: this.y, direction: -this.direction });
+    return !!s && s.bottom.x === this.x && s.bottom.y === this.y;
   }
 
   // Turning round costs Eric a beat (see move): longer on a staircase, where
@@ -291,12 +299,13 @@ export class Eric extends Character {
   // ---- Desks -----------------------------------------------------------------
   openDesk(desk) { if (desk) this.cast.openDesk(this, desk); }
   collectDeskContents(desk) {
-    if (desk.contents) {
-      if (desk.contents === ITEMS.STINKBOMBS3) { this.inventory.delete(ITEMS.STINKBOMBS2); this.inventory.delete(ITEMS.STINKBOMBS1); }
-      this.inventory.add(desk.contents);
-      if (desk.contents === ITEMS.WATER_PISTOL) desk.empty();
+    const item = desk.contents;        // remembered now: taking the pistol empties the desk
+    if (item) {
+      if (item === ITEMS.STINKBOMBS3) { this.inventory.delete(ITEMS.STINKBOMBS2); this.inventory.delete(ITEMS.STINKBOMBS1); }
+      this.inventory.add(item);
+      if (item === ITEMS.WATER_PISTOL) desk.empty();
       this.game.playSound('DESK');
-      this.game.events.emit('found', { item: desk.contents });
+      this.game.events.emit('found', { item });
       this.inventoryChanged();
     }
   }

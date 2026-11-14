@@ -219,7 +219,7 @@ const QUEST_TEXT = {
 
 function describeItem(item) {
   const map = { WATER_PISTOL: 'a water pistol', SHERRY_PISTOL: 'a pistol full of sherry', STINKBOMBS3: 'three stinkbombs', FROG: 'a frog', MOUSE: 'a mouse', SAFE_KEY: 'the safe key', STOREROOM_KEY: 'the storeroom key' };
-  return map[item] || item.toLowerCase();
+  return map[item] || String(item || 'something').toLowerCase();
 }
 function title(name) { return name.split(' ').map((w) => w[0] + w.slice(1).toLowerCase()).join(' '); }
 function sentence(text) { return text[0] + text.slice(1).toLowerCase(); }

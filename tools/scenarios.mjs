@@ -41,11 +41,13 @@ function freezeCast(game) {
   const room = game.world.getRoom('BlueRoom');
   const desk = room.desks.find((d) => d.x === 21);
   desk.insert('WATER_PISTOL');
+  const finds = []; game.events.on('found', (f) => finds.push(f.item));
   place(eric, 21, 3, -1);
   input.tap('down'); run(game, 4);
   check('Eric sits on the chair', eric.isSittingOnChair(), eric.animatoryState);
   input.tap('down'); run(game, 6);
   check('Desk lid delivers the water pistol', eric.inventory.has('WATER_PISTOL'), [...eric.inventory].join(','));
+  check('Finding the pistol is announced by name (it ticks step 1 of the plan)', finds.join(',') === 'WATER_PISTOL', JSON.stringify(finds));
   input.tap('up'); run(game, 4);
   check('Eric stands up again', eric.isStanding());
 
