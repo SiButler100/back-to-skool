@@ -2311,8 +2311,8 @@
   "rooms": {
     "BlueRoom": {
       "image": "rooms/BlueRoom.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "Library": {
       "image": "rooms/Library.jpg",
@@ -2321,8 +2321,8 @@
     },
     "YellowRoom": {
       "image": "rooms/YellowRoom.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "HeadsCorridor": {
       "image": "rooms/HeadsCorridor.jpg",
@@ -2341,8 +2341,8 @@
     },
     "UpperRoom": {
       "image": "rooms/UpperRoom.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "TakesStudy": {
       "image": "rooms/TakesStudy.jpg",
@@ -2361,8 +2361,8 @@
     },
     "ScienceLab": {
       "image": "rooms/ScienceLab.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "Storeroom": {
       "image": "rooms/Storeroom.jpg",
@@ -2381,8 +2381,8 @@
     },
     "MiddleRoom": {
       "image": "rooms/MiddleRoom.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "GirlsCorridor": {
       "image": "rooms/GirlsCorridor.jpg",
@@ -2391,8 +2391,8 @@
     },
     "Cloakroom": {
       "image": "rooms/Cloakroom.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "CupCorridor": {
       "image": "rooms/CupCorridor.jpg",
@@ -2401,8 +2401,8 @@
     },
     "DinnerHall": {
       "image": "rooms/DinnerHall.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "AssemblyHall": {
       "image": "rooms/AssemblyHall.jpg",
@@ -2416,11 +2416,16 @@
     },
     "GirlsDinner": {
       "image": "rooms/GirlsDinner.jpg",
-      "w": 1045,
-      "h": 448
+      "w": 1344,
+      "h": 576
     },
     "Kitchen": {
       "image": "rooms/Kitchen.jpg",
+      "w": 1045,
+      "h": 448
+    },
+    "Stage": {
+      "image": "rooms/Stage.jpg",
       "w": 1045,
       "h": 448
     }
@@ -2433,153 +2438,191 @@
       "w": 672,
       "h": 960
     },
-    "door:shut": {
+    "lamp": {
       "image": "furniture/items.png",
       "x": 676,
       "y": 2,
-      "w": 144,
-      "h": 264
+      "w": 108,
+      "h": 450
+    },
+    "pier": {
+      "image": "furniture/items.png",
+      "x": 786,
+      "y": 2,
+      "w": 78,
+      "h": 300
     },
     "door:open": {
       "image": "furniture/items.png",
-      "x": 822,
+      "x": 866,
+      "y": 2,
+      "w": 206,
+      "h": 278,
+      "place": true,
+      "right": 14,
+      "bottom": 0
+    },
+    "door:shut": {
+      "image": "furniture/items.png",
+      "x": 1074,
       "y": 2,
       "w": 144,
       "h": 264
     },
     "railing": {
       "image": "furniture/items.png",
-      "x": 968,
+      "x": 1220,
       "y": 2,
       "w": 240,
       "h": 216
     },
     "gate:shut": {
       "image": "furniture/items.png",
-      "x": 1210,
+      "x": 1462,
       "y": 2,
       "w": 192,
       "h": 216
     },
     "gate:open": {
       "image": "furniture/items.png",
-      "x": 1404,
+      "x": 1656,
       "y": 2,
       "w": 192,
       "h": 216
     },
     "window2x4:shut": {
       "image": "furniture/items.png",
-      "x": 1598,
+      "x": 1850,
       "y": 2,
       "w": 96,
       "h": 192
     },
     "window2x4:open": {
       "image": "furniture/items.png",
-      "x": 1696,
+      "x": 1948,
       "y": 2,
       "w": 96,
       "h": 192
     },
+    "stage": {
+      "image": "furniture/items.png",
+      "x": 2046,
+      "y": 2,
+      "w": 288,
+      "h": 174
+    },
     "blackboard": {
       "image": "furniture/items.png",
-      "x": 1794,
+      "x": 2336,
       "y": 2,
       "w": 420,
       "h": 156
     },
     "window3x3:shut": {
       "image": "furniture/items.png",
-      "x": 2216,
+      "x": 2758,
       "y": 2,
       "w": 144,
       "h": 144
     },
     "window3x3:open": {
       "image": "furniture/items.png",
-      "x": 2362,
+      "x": 2904,
       "y": 2,
       "w": 144,
       "h": 144
     },
     "cabinet:shut": {
       "image": "furniture/items.png",
-      "x": 2508,
+      "x": 3050,
       "y": 2,
       "w": 120,
       "h": 108
     },
     "cabinet:open": {
       "image": "furniture/items.png",
-      "x": 2630,
+      "x": 3172,
       "y": 2,
       "w": 120,
       "h": 108
     },
     "bike": {
       "image": "furniture/items.png",
-      "x": 2752,
+      "x": 3294,
       "y": 2,
       "w": 144,
       "h": 96
     },
     "safe": {
       "image": "furniture/items.png",
-      "x": 2898,
+      "x": 3440,
       "y": 2,
       "w": 120,
       "h": 84
     },
     "desk": {
       "image": "furniture/items.png",
-      "x": 3020,
+      "x": 3562,
       "y": 2,
       "w": 93,
       "h": 75
     },
     "chair": {
       "image": "furniture/items.png",
-      "x": 3115,
+      "x": 3657,
       "y": 2,
       "w": 93,
       "h": 75
     },
     "cup:EMPTY": {
       "image": "furniture/items.png",
-      "x": 3210,
+      "x": 3752,
       "y": 2,
       "w": 60,
       "h": 48
     },
     "cup:WATER": {
       "image": "furniture/items.png",
-      "x": 3272,
+      "x": 3814,
       "y": 2,
       "w": 60,
       "h": 48
     },
     "cup:SHERRY": {
       "image": "furniture/items.png",
-      "x": 3334,
+      "x": 3876,
       "y": 2,
       "w": 60,
       "h": 48
     },
     "cup:FROG": {
       "image": "furniture/items.png",
-      "x": 3396,
+      "x": 3938,
       "y": 2,
       "w": 60,
       "h": 48
     },
     "conker": {
       "image": "furniture/items.png",
-      "x": 3458,
+      "x": 4000,
       "y": 2,
       "w": 24,
       "h": 24
     }
   },
-  "textures": {}
+  "textures": {
+    "floorboards": "textures/floorboards.jpg",
+    "darkwood": "textures/darkwood.jpg",
+    "brickRed": "textures/brickRed.jpg",
+    "brickBuff": "textures/brickBuff.jpg",
+    "tarmac": "textures/tarmac.jpg",
+    "stone": "textures/stone.jpg"
+  },
+  "scenes": {
+    "playground": {
+      "image": "scenes/playground.jpg",
+      "w": 2688,
+      "h": 1152
+    }
+  }
 }

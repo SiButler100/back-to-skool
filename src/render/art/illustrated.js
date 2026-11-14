@@ -19,6 +19,7 @@ import { drawHdText, HD_LINE_HEIGHT } from '../hd/font.js';
 import { buildIllustratedBackdrop } from './backdrop.js';
 import { ART_SCALE } from './assets.js';
 import { DESK_UNIT } from './backdrop.js';
+import { GROUND_MARGIN } from './structure.js';
 import { loadFonts, drawSpeech, drawCard, drawChalkLines } from './text.js';
 import { drawIllustratedFurniture } from './furniture.js';
 
@@ -29,6 +30,7 @@ export class IllustratedPainter extends ModernPainter {
     super(theme);
     this.scale = ART_SCALE;
     this.smooth = true;             // the renderer turns image smoothing on for us
+    this.marginBottom = GROUND_MARGIN;   // game pixels of ground shown below the last row
     this.assets = assets;
     this.flips = new Map();         // frame key -> flipped copy
     this.stats = { drawn: 0, fallback: 0 };
@@ -97,7 +99,7 @@ export class IllustratedPainter extends ModernPainter {
   }
   drawBackdrop(ctx, cam, viewW) {
     const S = this.scale, b = this.ensureBackdrop();
-    const h = SKOOL.height * SKOOL.cell * S;
+    const h = b.height;
     this.view = { x0: cam * S, x1: (cam + viewW) * S, y0: 0, y1: h };
     ctx.drawImage(b, cam * S, 0, viewW * S, h, cam * S, 0, viewW * S, h);
   }

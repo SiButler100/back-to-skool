@@ -78,7 +78,9 @@ export class Renderer {
     this.options.retroStatus = retroStatus;
     this.scale = scale;
     this.canvas.width = columns * C * scale;
-    this.canvas.height = (SKOOL.height + (retroStatus ? 3 : 0)) * C * scale;
+    // An HD painter may show a strip of ground below the last row of cells.
+    this.margin = this.useHd() ? (this.painter.marginBottom || 0) : 0;
+    this.canvas.height = ((SKOOL.height + (retroStatus ? 3 : 0)) * C + this.margin) * scale;
     this.ctx.imageSmoothingEnabled = false;
     if (this.options.onResize) this.options.onResize();
   }
@@ -88,7 +90,8 @@ export class Renderer {
   // checked every frame.
   ensureScale() {
     const want = this.useOriginal() ? 1 : this.useHd() ? this.painter.scale : 1;
-    if (want !== this.scale) this.resize(this.columns, this.options.retroStatus, want);
+    const margin = this.useHd() ? (this.painter.marginBottom || 0) : 0;
+    if (want !== this.scale || margin !== this.margin) this.resize(this.columns, this.options.retroStatus, want);
   }
 
   // ---- Camera ----------------------------------------------------------------
@@ -121,14 +124,15 @@ export class Renderer {
 
   // Depth on a flat floor. Everyone in the game stands on the same line, so a
   // crowd used to pile into one blob. Walkers are given one of three lanes a
-  // little apart (the further lanes drawn first), which separates feet and
-  // shadows; Eric takes the front lane so he is never hidden. Anyone sitting,
-  // lying or on the stairs moves to the back line, where chairs and steps are.
+  // little apart (-1 back, 0 middle, 1 front; the further lanes drawn first),
+  // which separates feet and shadows; Eric takes the front lane so he is never
+  // hidden. Anyone sitting, lying or on the stairs keeps to the middle line,
+  // where chairs and steps are.
   laneOf(d, m, dt) {
     const onFloor = Number.isInteger(d.y) && FLOOR_ROWS.has(d.y);
     let want = 0;
     if (m.walkState && onFloor && !d.staircase) {
-      want = d === this.game.cast.eric ? 2 : (d.isAdult?.() ? 1 : laneHash(d.id) % 3);
+      want = d === this.game.cast.eric ? 1 : (d.isAdult?.() ? 0 : (laneHash(d.id) % 3) - 1);
     }
     const tr = this.motion.tracks.get(d.id);
     if (tr.lane === undefined) tr.lane = want;

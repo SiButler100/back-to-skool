@@ -91,8 +91,15 @@ def build_character_set(group, variant, jobs, manifest):
 # bottom (or hang from the top) of it.
 FIT = {'door:shut': 'stretch', 'window3x3:shut': 'stretch', 'window3x3:open': 'stretch', 'window2x4:shut': 'stretch', 'window2x4:open': 'stretch',
        'cabinet:shut': 'stretch', 'cabinet:open': 'stretch', 'blackboard': 'stretch', 'gate:shut': 'stretch', 'railing': 'stretch',
+       'door:open': 'stretch', 'pier': 'stretch', 'stage': 'stretch', 'lamp': 'bottom',
        'safe': 'bottom', 'desk': 'bottom', 'bike': 'bottom', 'tree': 'bottom', 'conker': 'top',
        'cup:EMPTY': 'top', 'cup:WATER': 'top', 'cup:SHERRY': 'top', 'cup:FROG': 'top'}
+
+
+# The open door is a whole doorway (frame, dark corridor, the door swung to
+# the left): it lines up with the opening by its right and bottom edges
+# (offsets at scale 4, see art/furniture.js).
+PLACE = {'door:open': (9, 0)}
 
 
 def fit_into(img, w, h, mode):
@@ -170,6 +177,11 @@ def build_all_furniture(jobs, manifest):
     os.makedirs(os.path.join(ASSETS, 'furniture'), exist_ok=True)
     sheet.save(os.path.join(ASSETS, rel), optimize=True)
     manifest['furniture'] = {k: {'image': rel, 'x': p['x'], 'y': p['y'], 'w': p['w'], 'h': p['h']} for k, p in placed.items()}
+    # A picture that is not simply stretched over its piece's rectangle says
+    # where it goes instead: its bottom-right corner relative to the rectangle's.
+    for k, (dr, db) in PLACE.items():
+        if k in manifest['furniture']:
+            manifest['furniture'][k].update({'place': True, 'right': round(dr * U), 'bottom': round(db * U)})
     print(f"  furniture: {len(frames)} pieces, sheet {sheet.size[0]}x{sheet.size[1]} -> {rel}")
 
 
@@ -184,9 +196,12 @@ def build_room(job, manifest):
     img = Image.open(src).convert('RGB')
     w, h = img.size
     img = img.crop((0, int(job.get('cropTop', 0) * h), w, h - int(job.get('cropBottom', 0) * h)))
-    # Rooms are 224 HD pixels tall; keep twice that for crispness when scaled.
-    f = 448 / img.size[1]
-    img = img.resize((round(img.size[0] * f), 448), Image.LANCZOS)
+    # A storey is 7 cells tall; keep about a third more for crispness. The wide
+    # pictures (a long wall with plain wall above a picture rail) are cropped
+    # from the top by the game, so they keep their full height.
+    if not job.get('fullHeight'):
+        f = 448 / img.size[1]
+        img = img.resize((round(img.size[0] * f), 448), Image.LANCZOS)
     rel = f"rooms/{job['zone']}.jpg"
     os.makedirs(os.path.join(ASSETS, 'rooms'), exist_ok=True)
     img.save(os.path.join(ASSETS, rel), quality=86, optimize=True, progressive=True)
@@ -264,6 +279,47 @@ def build_all_objects(jobs, manifest):
     print(f"  objects: {len(frames)} frames, sheet {sheet.size[0]}x{sheet.size[1]} -> {rel}")
 
 
+def build_scene(job, manifest):
+    """A big backdrop painting (the playground), kept at full size as a JPEG."""
+    src = os.path.join(ROOT, job['source'])
+    if not os.path.exists(src):
+        print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
+        return
+    img = Image.open(src).convert('RGB')
+    rel = f"scenes/{job['name']}.jpg"
+    os.makedirs(os.path.join(ASSETS, 'scenes'), exist_ok=True)
+    img.save(os.path.join(ASSETS, rel), quality=86, optimize=True, progressive=True)
+    manifest.setdefault('scenes', {})[job['name']] = {'image': rel, 'w': img.size[0], 'h': img.size[1]}
+    print(f"  {job['id']}: {img.size[0]}x{img.size[1]} -> {rel}")
+
+
+def build_textures(job, manifest):
+    """A sheet of square material swatches -> one tile each. Each swatch is
+    mirrored into a 2 x 2 block so it repeats without a visible seam."""
+    src = os.path.join(ROOT, job['source'])
+    if not os.path.exists(src):
+        print(f"  {job['id']}: source missing ({job['source']}); run fetch first")
+        return
+    img = Image.open(src).convert('RGB')
+    rows, cols = job['grid']['rows'], job['grid']['cols']
+    cw, ch = img.size[0] / cols, img.size[1] / rows
+    os.makedirs(os.path.join(ASSETS, 'textures'), exist_ok=True)
+    for i, name in enumerate(job['items']):
+        if not name:
+            continue
+        r, c = divmod(i, cols)
+        inset = 0.05                                    # skip the white gaps between swatches
+        tile = img.crop((int((c + inset) * cw), int((r + inset) * ch), int((c + 1 - inset) * cw), int((r + 1 - inset) * ch)))
+        side = min(tile.size); tile = tile.crop((0, 0, side, side)).resize((256, 256), Image.LANCZOS)
+        block = Image.new('RGB', (512, 512))
+        block.paste(tile, (0, 0)); block.paste(tile.transpose(Image.FLIP_LEFT_RIGHT), (256, 0))
+        block.paste(tile.transpose(Image.FLIP_TOP_BOTTOM), (0, 256)); block.paste(tile.transpose(Image.ROTATE_180), (256, 256))
+        rel = f'textures/{name}.jpg'
+        block.save(os.path.join(ASSETS, rel), quality=88, optimize=True)
+        manifest.setdefault('textures', {})[name] = rel
+    print(f"  {job['id']}: {len([n for n in job['items'] if n])} textures")
+
+
 def report(manifest):
     expected = load_json(EXPECTED)
     if not expected:
@@ -316,6 +372,10 @@ def main():
             build_room(job, manifest)
         elif kind == 'objects':
             object_jobs.append(job)
+        elif kind == 'scene':
+            build_scene(job, manifest)
+        elif kind == 'textures':
+            build_textures(job, manifest)
     # A character's sheets are always rebuilt together so one image holds every pose.
     for group, variant in touched:
         build_character_set(group, variant, [j for j in jobs if j.get('kind', 'characters') == 'characters' and j['group'] == group and j.get('variant') == variant], manifest)

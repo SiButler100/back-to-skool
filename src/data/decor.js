@@ -48,5 +48,5 @@ export const DECOR = {
     { id: 'Kitchen', storey: 'ground', x0: 181, x1: 192, wall: 'tiles', props: [['cooker', 182, 2], ['sink', 184, 2], ['cupboards', 188, 3]] },
   ],
   // Outside: the tree, the low wall with its posts, the gate and the railings.
-  playground: { x0: 96, x1: 159, treeX: 100, wallTopRow: 17, posts: [111, 131], gate: [133, 138] },
+  playground: { x0: 96, x1: 159, treeX: 100, wallTopRow: 17, posts: [111, 131], gate: [133, 138], lamps: [114, 150] },
 };

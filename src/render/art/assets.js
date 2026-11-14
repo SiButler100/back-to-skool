@@ -55,6 +55,7 @@ export class ArtAssets {
     }
     if (m.objects?.image) out.add(m.objects.image);
     for (const r of Object.values(m.rooms || {})) if (r.image) out.add(r.image);
+    for (const r of Object.values(m.scenes || {})) if (r.image) out.add(r.image);
     for (const f of Object.values(m.furniture || {})) if (f.image) out.add(f.image);
     for (const t of Object.values(m.textures || {})) if (typeof t === 'string') out.add(t); else if (t?.image) out.add(t.image);
     return out;
@@ -101,6 +102,13 @@ export class ArtAssets {
 
   room(zoneId) {
     const r = this.manifest?.rooms?.[zoneId];
+    const img = this.image(r?.image);
+    return r && img ? { img, ...r } : null;
+  }
+
+  // A big backdrop painting (the playground).
+  scene(name) {
+    const r = this.manifest?.scenes?.[name];
     const img = this.image(r?.image);
     return r && img ? { img, ...r } : null;
   }

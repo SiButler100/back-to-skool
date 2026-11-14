@@ -1366,6 +1366,175 @@
       "nudge": {},
       "prompt": "Hand-painted 2D adventure-game character art, realistic human proportions (adults about seven heads tall, children about five and a half), soft painterly shading with clean readable silhouettes, warm afternoon light from the upper left, muted 1980s British colour palette, slightly stylised expressive faces, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 4 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders, no text, no labels, no cast shadows. The character is exactly the person in the reference image: a young English schoolgirl pupil in a 1985 school uniform, royal-blue pinafore dress over a white blouse, white knee socks, black buckled shoes, short blonde bob with a fringe, round glasses, friendly face. The same face, hair, clothes and proportions, drawn at exactly the same size in every cell. The eight cells are eight consecutive frames of one smooth looping walk cycle for animation, full body, strict side view walking to the RIGHT, feet on the same invisible ground line near the bottom of each cell, head and torso the same size in every frame with only a gentle bob. In reading order, left to right then top to bottom: frame 1: passing position, body upright, weight on the straight near leg directly under the body, the far knee lifted and passing forward, arms hanging by the sides; frame 2: the far leg swinging forward, rising slightly on the ball of the near foot, arms beginning to swing; frame 3: contact, the far heel striking the ground well in front, the near leg stretched out behind, arms at full opposite swing, the widest stride; frame 4: weight sinking onto the bent far leg, the near foot peeling off the ground behind; frame 5: passing position, body upright, weight on the straight far leg directly under the body, the near knee lifted and passing forward, arms hanging by the sides; frame 6: the near leg swinging forward, rising slightly on the ball of the far foot, arms beginning to swing the other way; frame 7: contact, the near heel striking the ground well in front, the far leg stretched out behind, arms at full opposite swing, the widest stride; frame 8: weight sinking onto the bent near leg, the far foot peeling off the ground behind.",
       "variant": "C"
+    },
+    {
+      "id": "room-BlueRoom-wide",
+      "kind": "room",
+      "zone": "BlueRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "d0110f40-7549-4e96-b1de-9717b8bbf283",
+      "reference": "room-BlueRoom",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170224_d0110f40-7549-4e96-b1de-9717b8bbf283.png",
+      "source": "art-src/room-BlueRoom-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a boys' classroom with pale sky-blue painted plaster walls, three tall white sash windows showing bright daylight, a cork pinboard with children's paintings, a cast-iron radiator, dark wooden skirting, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-YellowRoom-wide",
+      "kind": "room",
+      "zone": "YellowRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "5dce940b-4d63-473d-a02a-bcca7c1a80af",
+      "reference": "room-YellowRoom",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170224_5dce940b-4d63-473d-a02a-bcca7c1a80af.png",
+      "source": "art-src/room-YellowRoom-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a classroom with warm primrose-yellow walls, three tall sash windows with daylight, a large map of the world poster, a round clock, a radiator, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-ScienceLab-wide",
+      "kind": "room",
+      "zone": "ScienceLab",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "ca5282f2-1ae8-4911-9ca3-1c843c3da01a",
+      "reference": "room-ScienceLab",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170224_ca5282f2-1ae8-4911-9ca3-1c843c3da01a.png",
+      "source": "art-src/room-ScienceLab-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a school science laboratory with cream walls, a large periodic table wall chart, shelves of glass bottles and jars, a long dark wooden bench along the back wall with sinks, gas taps and a bunsen burner, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-Cloakroom-wide",
+      "kind": "room",
+      "zone": "Cloakroom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "8b88ff9d-ff2b-4ecf-b760-265cceb0b4df",
+      "reference": "room-Cloakroom",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170225_8b88ff9d-ff2b-4ecf-b760-265cceb0b4df.png",
+      "source": "art-src/room-Cloakroom-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a school cloakroom with green-painted walls, a long row of brass coat pegs hung with duffel coats, blazers and satchels, a low wooden bench, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-UpperRoom-wide",
+      "kind": "room",
+      "zone": "UpperRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "69b00a7b-763b-473a-a12e-79dbb600bc8a",
+      "reference": "room-UpperRoom",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170223_69b00a7b-763b-473a-a12e-79dbb600bc8a.png",
+      "source": "art-src/room-UpperRoom-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a girls' classroom with pale blue walls, a tall window with flowered curtains, a vase of flowers on the sill, a nature poster, a radiator, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-MiddleRoom-wide",
+      "kind": "room",
+      "zone": "MiddleRoom",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "b7f98caa-56ff-4857-99fd-48852d9fd75c",
+      "reference": "room-MiddleRoom",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170224_b7f98caa-56ff-4857-99fd-48852d9fd75c.png",
+      "source": "art-src/room-MiddleRoom-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a girls' classroom with primrose-yellow walls, a window with gingham curtains, pictures of flowers and birds, a radiator, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-DinnerHall-wide",
+      "kind": "room",
+      "zone": "DinnerHall",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "10ab6abd-a027-42b1-8e7a-ab04fe10035c",
+      "reference": "room-DinnerHall",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170225_10ab6abd-a027-42b1-8e7a-ab04fe10035c.png",
+      "source": "art-src/room-DinnerHall-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a school dinner hall with cream walls, a serving hatch with a stainless steel counter, stacked trays, a long dining table set with plates and cups along the back wall, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-GirlsDinner-wide",
+      "kind": "room",
+      "zone": "GirlsDinner",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "175f004f-49a7-4976-87af-8a985a522fdd",
+      "reference": "room-GirlsDinner",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170223_175f004f-49a7-4976-87af-8a985a522fdd.png",
+      "source": "art-src/room-GirlsDinner-wide.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of one very long wall of a girls' school dining hall with cream walls, a long dining table set with plates and glasses, a sideboard, a vase of flowers, in a 1980s British school with high ceilings. Match the colours, painting style and fittings of the reference image, but show a much longer stretch of the same wall, seen from further back. A wooden picture rail runs dead level across the whole width at exactly one third of the way down from the top edge. ABOVE the picture rail there is only plain flat painted wall, completely empty. BELOW the picture rail are all the windows, furniture and fittings, small and evenly spread along the whole length, at least eight separate items across the width. The floor line runs exactly along the bottom edge of the image with only a very narrow strip of floor showing. Flat even lighting, no cast shadows, no people, no doors, no staircases, no blackboard, no school desks, no text, no lettering, no numbers.",
+      "fullHeight": true
+    },
+    {
+      "id": "room-Stage",
+      "kind": "room",
+      "zone": "Stage",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "job_id": "653cff07-bd57-4bde-b44e-d2d8d6464ff8",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170224_653cff07-bd57-4bde-b44e-d2d8d6464ff8.png",
+      "source": "art-src/room-Stage.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. Straight-on elevation view of the back wall of a school assembly-hall stage in a 1980s British school: heavy maroon velvet stage curtains hanging in deep folds across the whole width, a gold fringed pelmet along the top, a plain painted backdrop of sky glimpsed in the centre. Wide panoramic composition filling the whole frame edge to edge. The floor line runs exactly along the bottom edge of the image. Flat even lighting, no cast shadows, no people, no text."
+    },
+    {
+      "id": "playground-1",
+      "kind": "scene",
+      "name": "playground",
+      "model": "gpt_image_2_6",
+      "aspect": "21:9",
+      "resolution": "2k",
+      "job_id": "44f2c6d9-9d65-40b2-9120-918fd1160215",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170223_44f2c6d9-9d65-40b2-9120-918fd1160215.png",
+      "source": "art-src/playground-1.png",
+      "prompt": "Hand-painted 2D adventure-game background art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. A very wide straight-on panoramic view across an empty 1980s British school playground towards its boundary on a summer afternoon. Along the very bottom edge, a thin strip of grey tarmac. Along the back of the playground a long, low, old red-brick wall with a stone coping runs dead level across the entire width, occupying only the bottom tenth of the picture. Behind the wall, the slate rooftops and chimney pots of terraced houses, a distant church spire, and leafy green trees, all in the lower third of the picture. Above them a big pale-blue sky with soft white clouds fills the upper two thirds. Flat horizon, no perspective convergence, no people, no gate, no playground equipment, no lamp posts, no text."
+    },
+    {
+      "id": "textures-1",
+      "kind": "textures",
+      "model": "gpt_image_2_6",
+      "aspect": "3:2",
+      "job_id": "d97ef835-7d8d-468d-9ab2-3c28353e1417",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170224_d97ef835-7d8d-468d-9ab2-3c28353e1417.png",
+      "source": "art-src/textures-1.png",
+      "grid": {
+        "rows": 2,
+        "cols": 3
+      },
+      "items": [
+        "floorboards",
+        "darkwood",
+        "brickRed",
+        "brickBuff",
+        "tarmac",
+        "stone"
+      ],
+      "prompt": "Hand-painted game texture swatches, soft painterly shading, muted 1980s British colour palette, flat even lighting, no shadows, no perspective. A sheet of six square material swatches in a grid of 2 rows by 3 columns, each swatch filling its cell edge to edge with a seamless flat front-on surface texture, separated by thin white gaps, no labels, no text. In reading order: swatch 1: warm honey-coloured polished wooden floorboards, long narrow planks running horizontally; swatch 2: dark stained mahogany wood with horizontal grain; swatch 3: old red brick wall in stretcher bond with pale mortar, many small bricks, about twenty courses; swatch 4: buff yellow London stock brick wall in stretcher bond, many small bricks, about twenty courses; swatch 5: grey playground tarmac with fine gravel speckle; swatch 6: pale grey dressed stone blocks."
+    },
+    {
+      "id": "furniture-3",
+      "kind": "furniture",
+      "model": "gpt_image_2_6",
+      "aspect": "1:1",
+      "job_id": "7ca213ed-cd86-4cad-90b7-186347eefa60",
+      "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261114_170225_7ca213ed-cd86-4cad-90b7-186347eefa60.png",
+      "source": "art-src/furniture-3.png",
+      "grid": {
+        "rows": 2,
+        "cols": 2
+      },
+      "items": [
+        "door:open",
+        "pier",
+        "lamp",
+        "stage"
+      ],
+      "prompt": "Hand-painted 2D adventure-game prop art, soft painterly shading with clean readable shapes, warm afternoon light from the upper left, muted 1980s British colour palette, fine pencil-weight outlines, consistent style in every panel. A sprite sheet: a grid of 2 rows by 2 columns of equal cells, isolated on a plain transparent background with no backdrop, no gradient, no cell borders. One object alone in each cell, straight-on front view, generous margin inside each cell, no text, no labels, no cast shadows. In reading order: cell 1: an open doorway in a dark oak frame, the tall panelled dark oak door swung wide open inwards against the left side and seen edge-on in perspective, the rest of the doorway a dark shadowy corridor; cell 2: a tall square red-brick gate pier with a pale stone cap and a stone ball on top; cell 3: an old black cast-iron Victorian street lamp post with a glass lantern; cell 4: the front of a low wooden school stage platform, panelled in honey-coloured wood with a darker top edge, wide and low."
     }
   ]
 }
