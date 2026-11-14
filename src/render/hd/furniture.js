@@ -135,8 +135,8 @@ export function furniturePieces(game, S) {
   const s = world.safe;
   add('safe', image('safe', SAFE), s.x * C - 4 * u, s.y * C - 8 * u);
   for (const c of world.cups.values()) {
-    const contents = c.frogs.length ? 'FROG' : c.contents;
-    add(`cup:${contents}`, image(`cup ${contents}`, cup(contents)), c.x * C - 2 * u, c.y * C);
+    const contents = c.frogs.length ? 'FROG' : c.contents;          // null when empty
+    add(`cup:${contents || 'EMPTY'}`, image(`cup ${contents}`, cup(contents)), c.x * C - 2 * u, c.y * C);
   }
   if (!game.cast.conker.visible) add('conker', image('conker tree', CONKER_IN_TREE), 100 * C + 12 * u, 3 * C + 4 * u);
   if (game.cast.bike.chained) {
