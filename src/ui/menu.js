@@ -141,6 +141,7 @@ export class Menu {
         ${check('sound', 'Sound effects', 'Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.')}
         ${check('music', 'Music', 'A quiet tune while you play.')}
         ${check('minimap', 'Map', 'A small map of the whole school in the corner of the picture, with a dot for everyone.')}
+        ${check('guides', 'Aiming help', 'Marks where to stand to fill a cup with the pistol or knock it with the catapult, and rings the cup when your aim is true. Modern view only.')}
         ${check('radar', 'Teacher radar', 'Lists the staff, how far away they are and whether they can see Eric. An aid the original never had.')}
       </div>
       <h2>Advanced</h2>

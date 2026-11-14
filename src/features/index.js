@@ -15,7 +15,7 @@
 // `ctx` gives you: game (state + events), renderer, hud (addPanel), input,
 // settings. Subscribe to events with ctx.game.events.on(name, fn):
 //   'tick' 'lesson' 'lines' 'linesTotal' 'score' 'decked' 'secret' 'found'
-//   'quest' 'cup' 'door' 'inventory' 'start' 'gameOver' 'messageBox' 'sound'
+//   'quest' 'cup' 'cupEmpty' 'door' 'inventory' 'start' 'gameOver' 'messageBox' 'sound'
 //
 // Register new features by importing them and adding to the list below.
 // ============================================================================
@@ -23,10 +23,11 @@
 import questTracker from './quest-tracker.js';
 import minimap from './minimap.js';
 import teacherRadar from './teacher-radar.js';
+import aimGuide from './aim-guide.js';
 
-// All three are set up at boot. The map and the radar are shown or hidden by
-// their switches in Options (the radar starts hidden).
-export const FEATURES = [questTracker, minimap, teacherRadar];
+// All are set up at boot. The map, the radar and the aiming help are shown or
+// hidden by their switches in Options (the radar starts hidden).
+export const FEATURES = [questTracker, minimap, teacherRadar, aimGuide];
 
 export function setupFeatures(ctx, enabled = {}) {
   for (const f of FEATURES) {

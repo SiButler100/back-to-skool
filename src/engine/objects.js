@@ -59,6 +59,9 @@ export class Pellet extends Thing {
     const [hx, hy] = this.hitCoords();
     const cup = this.world.cup(hx, hy);
     if (cup && !cup.isEmpty()) { this.cast.knockCup(cup); return true; }
+    // An empty cup: the pellet flies on through it, as in 1985. The event lets
+    // the modern view show that the aim was good and the cup simply had nothing in it.
+    if (cup) this.game.events.emit('cupEmpty', { cup });
     return false;
   }
   hitConker() { return this.cast.hitConker(this); }

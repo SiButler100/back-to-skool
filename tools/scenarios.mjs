@@ -10,6 +10,7 @@
 import { Game } from '../src/engine/game.js';
 import { FakeInput } from '../src/ui/input.js';
 import { measureText, fontHas } from './node-font.mjs';
+import { findSpots } from '../src/features/aim-guide.js';
 
 let failures = 0;
 function check(label, ok, detail = '') {
@@ -143,6 +144,106 @@ function freezeCast(game) {
   check('30,000 ticks without anyone leaving the floors/stairs', lost.length === 0, lost.map((c) => `${c.name}@(${c.x},${c.y})`).join(' '));
   check('No routing warnings during the long run', errors === 0, `${errors} warnings`);
   check('Lessons advanced', game.timetable.index >= 10, `index ${game.timetable.index}`);
+}
+
+// ---- Keys as a person presses them --------------------------------------------
+// A real key press has a length. Eric looks at the keyboard every other tick,
+// so a press can start and end between two looks, or last across several.
+// `press` plays one: `ticks` is how long the key stays down (0 = a tap shorter
+// than a tick), `phase` shifts it against Eric's own rhythm.
+function press(game, input, action, ticks, settle = 12) {
+  input.tap(action);                              // the key goes down: recorded at once
+  if (ticks > 0) { input.hold(action); run(game, ticks); input.unhold(action); }
+  run(game, settle);
+}
+{
+  // Turning round on the stairs: a tap of any ordinary length turns Eric on
+  // the spot; only a held key walks him off the step.
+  let lost = 0, walked = 0, tried = 0;
+  for (const ticks of [0, 1, 2, 3, 4, 5]) for (const phase of [0, 1]) {
+    const { game, input, eric } = freshGame(); freezeCast(game);
+    place(eric, 18, 13, -1); run(game, 4 + phase);
+    press(game, input, 'right', ticks);
+    tried++;
+    if (eric.direction !== 1) lost++;
+    else if (eric.x !== 18 || eric.y !== 13) walked++;
+  }
+  check('A tap of up to a quarter of a second turns Eric round on the stairs without moving him', lost === 0 && walked === 0, `${tried} taps: ${lost} lost, ${walked} walked off the step`);
+
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  place(eric, 18, 13, -1); run(game, 4);
+  press(game, input, 'right', 12);
+  check('Holding the key still walks him down the stairs', eric.direction === 1 && eric.y > 13, `(${eric.x},${eric.y})`);
+}
+{
+  // On the flat: one tap, one step, however short the tap.
+  let wrong = [];
+  for (const ticks of [0, 1, 2]) for (const phase of [0, 1]) {
+    const { game, input, eric } = freshGame(); freezeCast(game);
+    place(eric, 40, 17, 1); run(game, 4 + phase);
+    press(game, input, 'right', ticks);
+    if (eric.x !== 41 || eric.midstride()) wrong.push(`${ticks}t/${phase}: x=${eric.x} ${eric.animatoryState}`);
+  }
+  check('One tap of an arrow key walks Eric exactly one step', wrong.length === 0, wrong.join('; '));
+
+  // Three quick taps in a row are three steps: none is swallowed mid-step.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  place(eric, 40, 17, 1); run(game, 4);
+  for (let i = 0; i < 3; i++) press(game, input, 'right', 1, 2);
+  run(game, 12);
+  check('Three quick taps are three steps', eric.x === 43, `x=${eric.x}`);
+}
+{
+  // The whole cup shot, from the foot of the stairs, with nothing but key taps.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  game.world.fillCup('MiddleCup', 'WATER');
+  place(eric, 22, 17, -1); run(game, 4);
+  for (let i = 0; i < 4; i++) press(game, input, 'up', 2);
+  check('Four taps of Up climb four steps', eric.x === 18 && eric.y === 13, `(${eric.x},${eric.y})`);
+  press(game, input, 'right', 2);
+  press(game, input, 'fire', 1, 60);
+  check('Tap right, tap fire: the pellet empties the cup', game.world.cups.get('MiddleCup').contents === null, String(game.world.cups.get('MiddleCup').contents));
+}
+{
+  // The aiming help must tell the truth: fire from every spot it marks and see
+  // that the engine does what the marker promised; and that nowhere else on
+  // the toilets staircase works.
+  const probe = freshGame();
+  const spots = findSpots(probe.game.world, probe.eric.pellet);
+  const bad = [];
+  for (const s of spots.catapult) {
+    const { game, input, eric } = freshGame(); freezeCast(game);
+    for (const cup of game.world.cups.values()) game.world.fillCup(cup.id, 'WATER');
+    place(eric, s.x, s.y, s.d); input.tap('fire'); run(game, 60);
+    if (game.world.cups.get(s.cups[0].id).contents !== null) bad.push(`catapult (${s.x},${s.y}) did not knock ${s.cups[0].id}`);
+  }
+  for (const s of spots.pistol) {
+    const { game, input, eric } = freshGame(); freezeCast(game);
+    eric.inventory.add('WATER_PISTOL');
+    place(eric, s.x, s.y, s.d); input.tap('fire'); run(game, 60);
+    if (s.cup && game.world.cups.get(s.cup.id).contents !== 'WATER') bad.push(`pistol (${s.x},${s.y}) did not fill ${s.cup.id}`);
+    if (s.pot && !game.cast.plants.find((p) => p.pot.id === s.pot.id && (p.growing || p.headHeight > 0))) bad.push(`pistol (${s.x},${s.y}) did not water ${s.pot.id}`);
+  }
+  check('Every spot the aiming help marks really works', bad.length === 0 && spots.catapult.length > 0 && spots.pistol.length > 0, bad.join('; ') || `${spots.catapult.length} catapult, ${spots.pistol.length} pistol`);
+
+  const marked = new Set(spots.catapult.map((s) => `${s.x},${s.y},${s.d}`));
+  const strays = [];
+  for (let i = 0; i <= 7; i++) for (const d of [-1, 1]) {
+    const x = 22 - i, y = 17 - i;
+    if (marked.has(`${x},${y},${d}`)) continue;
+    const { game, input, eric } = freshGame(); freezeCast(game);
+    for (const cup of game.world.cups.values()) game.world.fillCup(cup.id, 'WATER');
+    place(eric, x, y, d); input.tap('fire'); run(game, 60);
+    if ([...game.world.cups.values()].some((c) => c.contents === null)) strays.push(`(${x},${y}) facing ${d}`);
+  }
+  check('No unmarked step of the toilets staircase knocks a cup', strays.length === 0, strays.join('; '));
+}
+{
+  // An empty cup lets the pellet through, and says so.
+  const { game, input, eric } = freshGame(); freezeCast(game);
+  const empties = []; game.events.on('cupEmpty', ({ cup }) => empties.push(cup.id));
+  place(eric, 18, 13, 1); input.tap('fire'); run(game, 60);
+  check('A pellet through empty cups reports each one', empties.join(',') === 'MiddleCup,RightCup', empties.join(','));
 }
 
 console.log(failures ? `\n${failures} check(s) failed` : '\nAll checks passed');

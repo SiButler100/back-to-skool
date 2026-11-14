@@ -29,6 +29,7 @@ export class Effects {
     on('start', () => { this.parts.length = 0; this.shake = 0; this.flash = null; this.lastScore = 0; });
     on('splash', ({ victim, liquid }) => victim && this.splash(this.head(victim), liquid === 'SHERRY' ? '#d98a2b' : '#7fc4ff', 16));
     on('cup', ({ cup, contents }) => { if (cup && contents) this.splash([cup.x * 8 + 4, cup.y * 8 + 6], contents === 'SHERRY' ? '#d98a2b' : '#7fc4ff', 8); });
+    on('cupEmpty', ({ cup }) => { if (cup) { this.ring([cup.x * 8 + 4, cup.y * 8 + 4]); this.text([cup.x * 8 + 4, cup.y * 8 + 4], 'EMPTY', '#59606e', 6); } });
     on('decked', ({ character }) => { if (character) { this.stars(this.head(character), 7); this.ring(this.head(character)); this.shake = Math.max(this.shake, character === game.cast.eric ? 2.2 : 1.2); } });
     on('conked', ({ victim }) => { if (victim) { this.stars(this.head(victim), 9); this.ring(this.head(victim)); this.shake = Math.max(this.shake, 1.6); } });
     on('stinkbomb', ({ x, y }) => this.stink([x * 8 + 12, y * 8 + 26]));
@@ -83,6 +84,14 @@ export class Effects {
       p.x += p.vx * s; p.y += p.vy * s; p.rot += p.spin * s;
     }
     this.parts = this.parts.filter((p) => p.age < p.life);
+    // A full cup drips now and then, so it can be told from an empty one at a glance.
+    this.dripClock = (this.dripClock || 0) + dt;
+    if (this.dripClock > 1300) {
+      this.dripClock = 0;
+      for (const cup of this.game.world.cups.values()) {
+        if (cup.contents) this.add({ kind: 'drop', x: cup.x * 8 + 6.5, y: cup.y * 8 + 5, vy: 4, g: 120, life: 520, size: 0.9, colour: cup.contents === 'SHERRY' ? '#d98a2b' : '#7fc4ff' });
+      }
+    }
   }
 
   // A small random offset for the whole view while a shake plays out.

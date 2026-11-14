@@ -2,8 +2,13 @@
 // INPUT (keyboard, and a fake keyboard for tests)
 // ----------------------------------------------------------------------------
 // Maps physical keys to game actions. Eric asks two kinds of question:
-//   pressed(action)     is the key held down right now? (walking)
+//   pressed(action)     is the key down, or was it tapped since I last looked?
+//                       (walking and turning)
 //   wasPressed(action)  was it pressed since I last looked? (jump, fire, act)
+// Eric only looks at the keyboard about ten times a second, so a quick tap can
+// begin and end between two looks. pressed() therefore also counts a tap that
+// has been recorded but not yet acted on; without that, short taps of the
+// arrow keys were simply lost.
 // While Eric is writing on a blackboard, typed characters are collected in a
 // queue instead of being treated as actions.
 //
@@ -95,7 +100,9 @@ export class Input {
   onMenu(handler) { this.uiHandlers.pause.push(handler); }
   onView(handler) { this.uiHandlers.view.push(handler); }
 
-  pressed(action) { return this.bindings[action].some((code) => this.held.has(code)); }
+  // Down right now (isDown), or tapped since the last flush (pressed).
+  isDown(action) { return this.bindings[action].some((code) => this.held.has(code)) || this.held.has(`virtual:${action}`); }
+  pressed(action) { return this.isDown(action) || this.edges.has(action); }
   wasPressed(action) { return this.edges.has(action); }
   flush() { this.edges.clear(); }
   startWriting() { this.writing = true; this.typed = []; }
@@ -111,7 +118,7 @@ export class Input {
 // A scriptable keyboard for headless tests: hold or tap actions directly.
 export class FakeInput extends Input {
   constructor() { super(); this.heldActions = new Set(); }
-  pressed(action) { return this.heldActions.has(action) || super.pressed(action); }
+  isDown(action) { return this.heldActions.has(action) || super.isDown(action); }
   hold(action) { this.heldActions.add(action); }
   unhold(action) { this.heldActions.delete(action); }
   tap(action) { this.edges.add(action); }

@@ -50,6 +50,7 @@ export class Renderer {
     this.lastDraw = 0;              // time of the previous frame, for time-based easing
     this.fx = new Effects(game, (thing) => this.spritePos(thing));   // splashes, stars, floating numbers (HD views only)
     this.onFootstep = null;         // called when Eric's foot lands, for the sound of it
+    this.guide = [];                // aiming help: spots to stand on, set each tick by features/aim-guide.js
     this.lastStepFrame = -1;
     this.tint = document.createElement('canvas'); this.tint.width = 24; this.tint.height = 32;
     this.resize(this.options.viewportColumns);
@@ -208,6 +209,7 @@ export class Renderer {
     const playH = SKOOL.height * C;
     ctx.drawImage(this.backdrop, cam, 0, this.canvas.width, playH, cam, 0, this.canvas.width, playH);
     this.drawFurniture(viewFrom, viewTo);
+    if (this.options.guides) this.drawGuideSpots(ctx, 1);
 
     // Characters and things
     const drawables = game.cast.drawables.filter((d) => d.visible && d.x * C + 24 >= viewFrom && d.x * C <= viewTo);
@@ -221,6 +223,7 @@ export class Renderer {
       ctx.drawImage(sprite, Math.round(x), Math.round(y));
     }
 
+    if (this.options.guides) this.drawGuideTargets(ctx, 1);
     // Speech bubbles
     for (const c of game.cast.characterList) if (c.bubble) this.drawBubble(c);
 
@@ -248,6 +251,7 @@ export class Renderer {
     if (p.drawParallax) p.drawParallax(ctx, cam, viewW, camY, viewH, this.lastDraw);   // far scenery, behind the backdrop
     p.drawBackdrop(ctx, cam, viewW, camY, viewH);
     p.drawFurniture(ctx, game);
+    if (this.options.guides) this.drawGuideSpots(ctx, S);     // on the floor, under everybody's feet
     const viewFrom = cam - 48, viewTo = cam + viewW + 48;
     const cycles = !!p.hasCycle;                // only the illustrated painter has walk cycles
     const dt = dt0;
@@ -296,6 +300,7 @@ export class Renderer {
     people.forEach(drawOne);
     if (p.drawForeground) p.drawForeground(ctx, game);
     objects.forEach(drawOne);
+    if (this.options.guides) this.drawGuideTargets(ctx, S);   // the ring round the cup, over everything
     this.fx.draw(ctx, S);
     for (const c of game.cast.characterList) if (c.bubble) p.drawBubble(ctx, c, this.spritePos(c));
     // A footstep sounds when Eric's walk cycle reaches a frame where a foot lands.
@@ -306,6 +311,50 @@ export class Renderer {
     this.fx.drawFlash(ctx, this.canvas.width, this.canvas.height);
     if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY);
     if (this.options.retroStatus) { ctx.save(); ctx.scale(S, S); this.drawStatus(); ctx.restore(); }
+  }
+
+  // ---- Aiming help (modern view) ----------------------------------------------
+  // features/aim-guide.js works out where Eric must stand to fill a cup with
+  // the pistol (blue) or knock it with the catapult (amber). Each spot gets a
+  // soft pool of light where his feet go and a small arrow for the way to
+  // face. Sizes are in game pixels, multiplied by S like everything else.
+  drawGuideSpots(ctx, S) {
+    if (!this.guide || !this.guide.length) return;
+    const pulse = 0.5 + 0.5 * Math.sin(this.lastDraw / 320);
+    ctx.save();
+    for (const g of this.guide) {
+      const rgb = g.kind === 'pistol' ? '74,163,255' : '255,183,3';
+      const cx = (g.x * C + 12) * S, cy = ((g.y + 4) * C - 1) * S;      // middle of his feet, on the floor line
+      const strength = g.lit ? 0.9 : 0.35 + 0.25 * pulse;
+      const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 12 * S);
+      glow.addColorStop(0, `rgba(${rgb},${strength})`);
+      glow.addColorStop(1, `rgba(${rgb},0)`);
+      ctx.save();
+      ctx.translate(cx, cy); ctx.scale(1, 0.3); ctx.translate(-cx, -cy);   // squash the circle into a pool on the floor
+      ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(cx, cy, 12 * S, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      // The arrow: a chevron just beyond his toes, pointing the way to face.
+      const ax = cx + g.d * 13 * S, ay = cy - 1.5 * S, w = 3 * S, h = 2.6 * S;
+      ctx.strokeStyle = `rgba(${rgb},${g.lit ? 1 : 0.55 + 0.3 * pulse})`;
+      ctx.lineWidth = Math.max(1, 1.1 * S); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.beginPath(); ctx.moveTo(ax - g.d * w, ay - h); ctx.lineTo(ax, ay); ctx.lineTo(ax - g.d * w, ay + h); ctx.stroke();
+    }
+    ctx.restore();
+  }
+  // Once Eric is on a spot and facing the right way, ring what his shot will hit.
+  drawGuideTargets(ctx, S) {
+    if (!this.guide) return;
+    const pulse = 0.5 + 0.5 * Math.sin(this.lastDraw / 160);
+    for (const g of this.guide) {
+      if (!g.lit || !g.target) continue;
+      const rgb = g.kind === 'pistol' ? '74,163,255' : '255,183,3';
+      const [tx, ty] = g.target;
+      ctx.save();
+      ctx.strokeStyle = `rgba(${rgb},${0.65 + 0.35 * pulse})`;
+      ctx.lineWidth = Math.max(1, 1.2 * S);
+      ctx.beginPath(); ctx.arc(tx * S, ty * S, (7 + 1.5 * pulse) * S, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
   }
 
   // The same frame, drawn entirely with the original artwork.

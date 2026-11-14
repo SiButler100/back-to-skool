@@ -37,6 +37,7 @@ export class Eric extends Character {
     this.bike = null; this.sittingOnSaddle = false; this.bikeKey = null; this.lastBikeKey = null;
     this.walkDelay = this.defaultWalkDelay;
     this.floorTimer = 0;     // moves left before Eric gets up from the floor by himself
+    this.turnPause = 0;      // moves left to stand still after turning round
   }
 
   reinitialise() { super.reinitialise(); this.reset(); }
@@ -68,7 +69,9 @@ export class Eric extends Character {
       return;
     }
     if (this.paralysed) { input.flush(); return; }
-    if (this.midstride()) { this.walk(); input.flush(); return; }
+    // The second half of a step. The keyboard is not cleared here, so a key
+    // tapped mid-step is still acted on when the step is finished.
+    if (this.midstride()) { this.walk(); return; }
 
     // On the floor (knocked out, or pushed off a chair): get up automatically
     // after a moment, or straight away if 'up' is pressed.
@@ -94,6 +97,10 @@ export class Eric extends Character {
 
     if (!this.isSupported()) { this.y += 1; input.flush(); return; }
     this.baseLocation = null;
+    // Just turned round: stand for a beat before walking on, so a tap of the
+    // key turns Eric on the spot and only a held key walks him away. Taps
+    // made during the beat are kept (no flush) and acted on after it.
+    if (this.turnPause > 0) { this.turnPause -= 1; return; }
     const plant = this.cast.plant(this);
     if (input.pressed('left')) {
       if (plant && plant.isFullyGrown()) {
@@ -168,6 +175,10 @@ export class Eric extends Character {
     if (this.canReleaseMice()) { this.bendOver(); return new cmd.ReleaseMice(); }
     return null;
   }
+
+  // Turning round costs Eric a beat (see move): longer on a staircase, where
+  // which step he stands on matters.
+  turn() { super.turn(); this.turnPause = this.world.staircase(this) ? this.config.turnPauseOnStairs : this.config.turnPause; }
 
   // Eric's left/right never return commands; a shut door just stops him.
   left() { const r = super.left(); if (r instanceof cmd.OpenDoor) this.openDoorNow(); }

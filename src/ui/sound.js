@@ -25,6 +25,7 @@ const RECIPES = {
   LINES2: (s, t) => { s.tone(t, 330, 0.12, { type: 'sawtooth', vol: 0.26, slide: 262, lowpass: 1400 }); s.tone(t + 0.13, 262, 0.22, { type: 'sawtooth', vol: 0.26, slide: 196, lowpass: 1200 }); },
   ALARM: (s, t) => { for (let i = 0; i < 4; i++) s.tone(t + i * 0.11, i % 2 ? 660 : 880, 0.1, { type: 'sawtooth', vol: 0.3, lowpass: 2400 }); },
   CATAPULT: (s, t) => { s.tone(t, 760, 0.14, { vol: 0.4, slide: 190 }); s.noise(t, 0.03, { vol: 0.25, band: 3000 }); },
+  CUP_EMPTY: (s, t) => { s.tone(t, 2400, 0.05, { type: 'sine', vol: 0.22 }); s.tone(t + 0.05, 1800, 0.09, { type: 'sine', vol: 0.16 }); },
   WATER_PISTOL: (s, t) => { s.noise(t, 0.16, { vol: 0.32, band: 2200, bandTo: 4200, q: 3 }); },
   KNOCKED_OUT: (s, t) => { s.tone(t, 150, 0.24, { type: 'sine', vol: 0.7, slide: 48 }); s.noise(t, 0.09, { vol: 0.4, lowpass: 500 }); },
   HIT: (s, t) => { s.noise(t, 0.06, { vol: 0.5, band: 900, q: 1 }); s.tone(t, 210, 0.1, { type: 'sine', vol: 0.5, slide: 90 }); },

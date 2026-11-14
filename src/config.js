@@ -17,6 +17,12 @@ export const CONFIG = {
 
   // Movement delays (ticks between steps). Lower = faster.
   ericWalkDelay: 2,
+  // After Eric turns round he stands still for this many of his moves before a
+  // held key walks him on, so that a tap turns him on the spot. With a move
+  // every tenth of a second, 1 means a tap of up to a fifth of a second only
+  // turns him; on a staircase, where the exact step matters, 2 gives three tenths.
+  turnPause: 1,
+  turnPauseOnStairs: 2,
   goSlow: 5,                   // walking characters
   goFast: 3,                   // running characters
   goFaster: 2,                 // hitting / firing animations

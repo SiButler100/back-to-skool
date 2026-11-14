@@ -31,8 +31,8 @@ export const VIEW_PRESETS = {
   modern: { theme: 'modern', columns: CLOSE_COLUMNS, camera: 'close', smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: 'illustrated' },
 };
 
-const SETTINGS_VERSION = 5;      // 5: the map and radar switches (their defaults are filled in from DEFAULT_SETTINGS)
-const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, minimap: true, radar: false, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+const SETTINGS_VERSION = 6;      // 5: the map and radar switches; 6: aiming help (defaults are filled in from DEFAULT_SETTINGS)
+const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
 
 // Settings saved by an older version of the game get the new keys filled in.
 function migrateSettings(s) {
@@ -59,6 +59,7 @@ export function boot() {
   const tapeLoader = new TapeLoader(document.getElementById('tape'), renderer, () => { tapeLoader.update(settings.view); hud.setGraphicsStatus(settings.view, renderer.original.ready); });
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
+  game.events.on('cupEmpty', () => sound.play('CUP_EMPTY'));   // a pellet rattling through a cup with nothing in it
   renderer.onFootstep = () => sound.step();
   // Pocket icons: the illustrated ones when that artwork is showing, pixel art otherwise.
   hud.setIconSource((id) => (settings.view !== 'original' && settings.artwork === 'illustrated' ? renderer.assets.iconUrl(id) : null));
@@ -101,6 +102,7 @@ export function boot() {
     renderer.options.originalGraphics = !!s.originalGraphics;
     renderer.options.artwork = s.artwork || 'illustrated';
     renderer.options.camera = s.camera || 'whole';
+    renderer.options.guides = s.view !== 'original' && s.guides !== false;   // aiming help belongs to the modern view only
     // Blackboard wrapping and bubble timing follow whichever font is on screen.
     game.measureText = s.originalGraphics ? originalMeasure : measureText;
     game.fontHas = s.originalGraphics ? originalFontHas : fontHas;
