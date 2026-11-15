@@ -1,0 +1,229 @@
+{
+  "note": "Every Higgsfield generation made for the voice audition: the voice's name, its Higgsfield voice id, and the job that produced its clip. Kept so that no clip is ever generated (and paid for) twice.",
+  "line": "Don't keep me waiting! Sit down, you little anarchists.",
+  "model": "seed_audio",
+  "male": {
+    "Arthur": [
+      "30fc8796-ceb6-4a66-b3a7-4a145ef7f346",
+      "a50b2dc9-f058-43d7-8280-ce78b430ae71"
+    ],
+    "Alistair": [
+      "d9d5c263-f84e-4752-97b5-3750fcc6fd2f",
+      "6437818b-55f8-41ca-a08c-33ba7725c672"
+    ],
+    "Harrison": [
+      "573e5163-59b3-4926-aab1-951ef2985f81",
+      "34811992-c843-4c6a-ae83-f0d16c1f64dd"
+    ],
+    "Fraser": [
+      "6705e465-7b52-5915-a1d8-b1222885e01d",
+      "c62f1fc5-d886-476a-a57d-25318f727fa4"
+    ],
+    "Callum": [
+      "858499d9-fef5-40e1-bc29-b4dc661dc283",
+      "e6fa4fd5-fe08-4dc7-b4ed-172635a71ed8"
+    ],
+    "Archie": [
+      "bd072316-f77c-588b-b6e5-e46b9b03d008",
+      "ac981631-c0af-4628-af79-de02ff8ac13b"
+    ],
+    "Desmond": [
+      "563f728c-e249-5a85-97ab-8461e8c09da6",
+      "fbf0b9d6-81e3-42d9-949b-dcd4a0844291"
+    ],
+    "Jasper": [
+      "a7b8abe9-47f1-553e-a9df-87945a7e5bc8",
+      "c6257ef3-3563-4dbe-a33a-787399ed31c7"
+    ],
+    "Caspian": [
+      "ef70cc83-3015-4bad-9359-0ea968c43ec0",
+      "268c078f-32ef-46ae-8796-8f92073d8b75"
+    ],
+    "Bram": [
+      "549ff70a-3ee7-4f04-a4d9-89a24fab7709",
+      "254d1c5c-db1e-4efb-b1c6-729aee7da76f"
+    ],
+    "Sterling": [
+      "dc382508-c8bd-443c-8cb2-46e57b8d2e6f",
+      "ace9a2f6-67f8-40a4-91ad-fc5445ef7bd7"
+    ],
+    "Gideon": [
+      "1ad38ba4-9cc4-4f2f-9fde-b0fefdf67ae5",
+      "066b8e9d-2dee-4181-8da3-2b7d3c25216c"
+    ],
+    "Julian": [
+      "95429266-c0ac-4137-a209-63b8812b0f23",
+      "acb3be35-dbbe-41c6-bedd-e34435a446f0"
+    ],
+    "Grady": [
+      "e2a2d2e6-9ed2-59cd-82af-feaa27f8a678",
+      "39118cb8-4702-4b16-9b91-540de2ade248"
+    ],
+    "Holden": [
+      "3c9d6053-6334-592c-8997-4e325286af3f",
+      "bc841811-982c-41f4-adc7-9f4717acd5a6"
+    ],
+    "Benji": [
+      "e6f9b893-51b1-51d3-afe9-9e0482cb7ac1",
+      "6ad77bad-b322-4382-83fc-bcdbf1f5ce44"
+    ],
+    "Dylan": [
+      "b847bc29-f184-583a-8ad9-d1f1e16d1a60",
+      "2ad66f1b-1cf2-4c00-8db0-ac233f1706c6"
+    ],
+    "Cillian": [
+      "d8ba9f14-8a24-44db-932b-99e16c45bd32",
+      "6e9b172e-b936-4f7b-9e5b-e8d8287ad12e"
+    ],
+    "Reid": [
+      "66469f5a-10db-586a-bab1-72f6ee66ba69",
+      "2fab21d2-1041-47af-a3e1-71d4b237bf0e"
+    ],
+    "Emmett": [
+      "3c7d32be-0182-5c5e-aa6a-663409bfbb26",
+      "290c288d-47c1-40bc-9678-3595bd6e198f"
+    ],
+    "Cody": [
+      "1ffcdbb3-078b-5491-959d-359e3021e917",
+      "8c4ca16d-e4f9-4843-a57e-a8704811d7f3"
+    ],
+    "Ian": [
+      "472a562a-4c33-5114-8210-d6ffa1e4e2c5",
+      "2d1c63ae-4d84-45d1-92af-edcb5f092fc2"
+    ],
+    "Evan": [
+      "f7a46aa0-183a-5327-b554-e71d8c0071bb",
+      "a72be1e9-4fee-4214-ba35-451db9cec3aa"
+    ],
+    "Alden": [
+      "fec5acae-d801-5761-8d2c-4c2c75db3e2a",
+      "82e6a105-070b-42f4-8749-22de95fa7449"
+    ],
+    "Barrett": [
+      "d603a8cd-3fe1-55e0-9245-617a2589131e",
+      "5cc9d95c-b562-4064-898d-65045a289c3e"
+    ],
+    "Landon": [
+      "dc1c0a41-53cd-53af-aec5-ab637840505f",
+      "98e4d39d-0299-4f54-a45e-7294693910d9"
+    ],
+    "Miles": [
+      "e18664a7-ee4f-5273-acf8-533eb24cd366",
+      "5728ee4d-33b7-45ac-9989-aaabb98647af"
+    ],
+    "Knox": [
+      "195e386a-cb61-5c1b-a53b-0e2f0669c408",
+      "7eefbe7d-72ff-4a4b-89ce-31760df1f5a9"
+    ],
+    "Callan": [
+      "d8061b90-ff25-5882-8384-7a6a28806f30",
+      "a8dd98a6-e244-4875-93bd-6b7ddd337544"
+    ],
+    "John": [
+      "6b528d43-c056-4a2f-9d82-1591a7ba13b0",
+      "14f13d60-d58a-4e25-9173-6056b12acaa8"
+    ],
+    "Marcus": [
+      "6f98d3dd-324f-4845-8c28-c1d1647a06cd",
+      "a16df77f-b880-455a-a5e5-a2a2993e6903"
+    ],
+    "Kevin": [
+      "f1373f24-3b96-433f-9a68-e595810ef608",
+      "0ac28965-ca5b-4f7d-ba10-768a043e3c1f"
+    ],
+    "Mark": [
+      "27c04473-84a9-4b60-a41f-c8e8458bd4f1",
+      "f6865a9d-c79c-4636-914c-1568f75e63f5"
+    ],
+    "Orion": [
+      "ed69c516-92d2-4b30-a967-617737a342e5",
+      "0dd20146-cfae-45f0-a97a-a8612265d75c"
+    ],
+    "Brooks": [
+      "c2acff45-84b2-4974-892d-89fa2d4e5598",
+      "1048baf6-bf74-4bbc-a1c5-d1d8cb2fe084"
+    ],
+    "Andre": [
+      "f1e8226e-2248-4d5f-b43c-0a79e9949dbf",
+      "ff30839c-ed89-49a2-a816-d91ce2053547"
+    ],
+    "Xavier": [
+      "43173c95-3ec8-446a-a162-6504332c578b",
+      "62893934-2215-40c8-82e6-a4a4f56fa79b"
+    ],
+    "Vlad": [
+      "e5666b9c-99a2-4fac-8b4e-abee078b186d",
+      "4da44e01-1320-4292-bc7b-999d3a776002"
+    ],
+    "Alexey": [
+      "7c2133e5-68ab-511f-9aed-9a67664382b1",
+      "70e4ea1a-e522-4ce9-8060-2a9b781e406b"
+    ],
+    "Jasper Quill": [
+      "e459d6b2-7abd-44a4-abfe-177f7154a773",
+      "f6bfe0f4-7f87-4a16-be9b-b2c8f7bf7c7a"
+    ]
+  },
+  "female": {
+    "Imogen": [
+      "3811e986-0891-47cf-a1f5-78a1d62a547a",
+      "35c7a09b-3ffa-4918-adde-30bfe746ad6c"
+    ],
+    "Tamsin": [
+      "9eb5a147-c322-4f8a-8bc5-a30679dfaf5c",
+      "1b7f8ed2-aa71-46d9-b0d4-0a1a1692ef21"
+    ],
+    "Helena": [
+      "3c2b83c0-2e0a-5ae8-998a-a5fe71b7eccd",
+      "c9badf74-45bc-4396-9d33-ed3dd48b713d"
+    ],
+    "Maeve": [
+      "64cf4f1a-61c8-5938-9aea-83d12b2e1d13",
+      "c44971e4-d4c2-4e55-9534-afc57c5acbc9"
+    ],
+    "Isla": [
+      "7367e919-3069-5a0b-939e-dfb1c0fd91b4",
+      "96134aa7-131c-40af-a264-6c07b98240d0"
+    ],
+    "Mabel": [
+      "fa64fba4-ad02-405e-99d0-1f085d87c706",
+      "d05b5780-0654-433a-9511-4117efa5e8db"
+    ]
+  },
+  "stamps": {
+    "a50b2dc9": "103437",
+    "ac981631": "104508",
+    "6437818b": "104509",
+    "34811992": "104509",
+    "c62f1fc5": "104509",
+    "e6fa4fd5": "104509",
+    "fbf0b9d6": "104509",
+    "c6257ef3": "104509",
+    "268c078f": "104509",
+    "254d1c5c": "104509",
+    "ace9a2f6": "131506",
+    "acb3be35": "131506",
+    "6ad77bad": "131506",
+    "2ad66f1b": "131506",
+    "066b8e9d": "131507",
+    "39118cb8": "131507",
+    "bc841811": "131507",
+    "6e9b172e": "131607",
+    "2fab21d2": "131607",
+    "290c288d": "131607",
+    "8c4ca16d": "131607",
+    "2d1c63ae": "131607",
+    "a72be1e9": "131607",
+    "82e6a105": "131640",
+    "5cc9d95c": "131640",
+    "98e4d39d": "131640",
+    "5728ee4d": "131640",
+    "7eefbe7d": "131712",
+    "a8dd98a6": "131712",
+    "14f13d60": "131712",
+    "a16df77f": "131712",
+    "0ac28965": "131724",
+    "f6865a9d": "131724",
+    "0dd20146": "131724"
+  }
+}
