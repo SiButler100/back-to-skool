@@ -1,0 +1,221 @@
+<title>Skool Voice Audition</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap">
+<style>
+/* Capgemini Invent Visual Identity 2026. A working page: a cast strip to fill in, then the voices in the
+   order they are used. Light ground throughout; navy only in the header and footer. */
+:root{
+  --navy:#121A38; --blue:#0058AB; --light-blue:#1DB8F2; --white:#FFFFFF;
+  --turquoise:#00D5D0; --yellow:#FEB100; --orange:#FF816E;
+  --g1:#F3F4F7; --g2:#E4E8EC; --g3:#CAD1D8; --g4:#ADB8C2; --g5:#738597; --g6:#47556B;
+  --font:'Ubuntu',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:22px;
+  --fs-lead:20px; --fs-body:17px; --fs-sm:15px; --fs-caption:13px; --fs-micro:11px;
+  --measure:66ch; --page:1120px;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--white); color:var(--g6); font-family:var(--font); font-weight:300; font-size:var(--fs-body); line-height:1.6; -webkit-font-smoothing:antialiased}
+.gutter{max-width:var(--page); margin:0 auto; padding-left:max(24px, env(safe-area-inset-left, 0px)); padding-right:max(24px, env(safe-area-inset-right, 0px))}
+header.shell, footer.shell{background:var(--navy)}
+header.shell .gutter, footer.shell .gutter{display:flex; align-items:center; justify-content:space-between; gap:24px; padding-block:22px; flex-wrap:wrap}
+.wordmark{font-size:var(--fs-h4); font-weight:300; color:var(--white)}
+.classification{font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--g4)}
+footer.shell .gutter{font-size:var(--fs-caption); font-weight:400; color:var(--g4)}
+.scene{padding-block:64px 0}
+.scene:last-of-type{padding-bottom:72px}
+h1,h2,h3{margin:0; font-weight:300; text-wrap:balance}
+h1{font-size:var(--fs-h1); line-height:1.08; letter-spacing:-0.01em; color:var(--blue); margin-bottom:20px}
+h2{font-size:var(--fs-h2); line-height:1.12; color:var(--blue); margin-bottom:12px}
+.kicker{font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); margin-bottom:14px}
+p{margin:0 0 18px; max-width:var(--measure)}
+.standfirst{font-size:var(--fs-lead); line-height:1.55; max-width:60ch; margin-bottom:28px}
+.caption{font-size:var(--fs-caption); font-weight:400; color:var(--g5); max-width:70ch; margin:0}
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:32px; margin:8px 0 0}
+.step .rule{width:34px; height:2px; background:var(--light-blue); margin-bottom:14px}
+.step-n{font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--g5)}
+.step-t{font-size:var(--fs-h4); line-height:1.2; color:var(--blue); margin:4px 0 6px}
+.step p{margin:0; font-size:var(--fs-sm)}
+
+/* The cast: one row per part, the pick on the right. */
+.cast{border-top:1px solid var(--g2); margin-top:20px}
+.part{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,1fr); gap:12px 28px; align-items:center; padding:14px 0; border-bottom:1px solid var(--g2)}
+.part-name{font-size:var(--fs-h4); color:var(--navy); line-height:1.2}
+.part-note{font-size:var(--fs-sm); min-width:0}
+select{font:inherit; font-weight:400; font-size:var(--fs-sm); color:var(--navy); background:var(--white); border:1px solid var(--g3); border-radius:2px; padding:9px 10px; width:100%; min-width:0}
+select:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--light-blue); outline-offset:2px}
+.part.unset select{border-color:var(--yellow)}
+.out{margin-top:24px; background:var(--g1); border-left:2px solid var(--light-blue); padding:18px 20px}
+.out pre{margin:0 0 14px; font-family:var(--font); font-weight:400; font-size:var(--fs-sm); white-space:pre-wrap; color:var(--navy)}
+.btn{font:inherit; font-weight:400; font-size:var(--fs-sm); color:var(--white); background:var(--blue); border:0; border-radius:2px; padding:10px 18px; cursor:pointer}
+.btn:hover{background:var(--navy)}
+.btn.quiet{color:var(--blue); background:var(--white); border:1px solid var(--g3)}
+.btn.quiet:hover{border-color:var(--blue); background:var(--white)}
+.said{font-size:var(--fs-sm); font-weight:400; color:var(--blue); margin-left:14px}
+
+/* The voices: a grid of small cells with hairline seams. */
+.count{font-size:var(--fs-sm); font-weight:400; color:var(--g5); font-variant-numeric:tabular-nums}
+.voices{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1px; padding:1px; margin-top:20px}
+.voice{background:var(--white); box-shadow:0 0 0 1px var(--g2); display:flex; align-items:center; gap:12px; padding:12px 14px; min-width:0}
+.voice.british{background:var(--g1)}
+.play{flex:none; width:38px; height:38px; border-radius:50%; border:1px solid var(--blue); background:var(--white); color:var(--blue); cursor:pointer; display:grid; place-items:center; padding:0}
+.play svg{width:14px; height:14px; fill:currentColor}
+.voice.playing .play{background:var(--blue); color:var(--white)}
+.vname{flex:1; min-width:0; font-size:var(--fs-body); font-weight:400; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.vname small{display:block; font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--g5)}
+.tick{flex:none; display:flex; align-items:center; gap:7px; font-size:var(--fs-caption); font-weight:400; color:var(--g6); cursor:pointer}
+.tick input{width:17px; height:17px; accent-color:var(--blue); margin:0}
+.sounds{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px}
+@media (max-width:720px){
+  h1{font-size:var(--fs-h2)} h2{font-size:var(--fs-h3)}
+  .part{grid-template-columns:1fr}
+  .scene{padding-block:44px 0}
+}
+</style>
+
+<header class="shell"><div class="gutter"><div class="wordmark">Back to Skool</div><div class="classification">Voice audition · Higgsfield voices</div></div></header>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">Stage 2 of 4</div>
+  <h1>Cast the school</h1>
+  <p class="standfirst">Forty-six Higgsfield voices, each saying the same line: “Don’t keep me waiting! Sit down, you little anarchists.” Every voice in the game must be British, and only your ear can tell which of these are.</p>
+  <div class="steps">
+    <div class="step"><div class="rule"></div><div class="step-n">First</div><div class="step-t">Listen and tick</div><p>Play each voice. Tick “British” on the ones that are.</p></div>
+    <div class="step"><div class="rule"></div><div class="step-n">Then</div><div class="step-t">Cast the seven parts</div><p>Each part offers only the voices you ticked. A voice can be made older, deeper or slower afterwards, so pick the nearest.</p></div>
+    <div class="step"><div class="rule"></div><div class="step-n">Last</div><div class="step-t">Send me the list</div><p>Copy your choices and paste them into our chat. Nothing more is generated until you do.</p></div>
+  </div>
+</div></section>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">The cast</div>
+  <h2>Seven parts</h2>
+  <p class="caption">Your ticks and picks are remembered on this device while you work.</p>
+  <div class="cast" id="cast"></div>
+  <div class="out">
+    <pre id="summary"></pre>
+    <button class="btn" id="copy" type="button">Copy my choices</button><span class="said" id="copied" role="status"></span>
+  </div>
+</div></section>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">Men and boys</div>
+  <h2>Forty male voices <span class="count" id="count-male"></span></h2>
+  <p class="caption">For Mr Wacker, Mr Withit, Mr Rockitt, Mr Creak, Einstein and Albert. Jasper Quill is your own Higgsfield voice.</p>
+  <div class="voices" id="male"></div>
+</div></section>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">Women</div>
+  <h2>Six female voices <span class="count" id="count-female"></span></h2>
+  <p class="caption">For Miss Take. If none of the six is British, say so and I will make more.</p>
+  <div class="voices" id="female"></div>
+</div></section>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">While you are here</div>
+  <h2>The game’s own sounds</h2>
+  <p>These are made by the game itself, not recorded, and I have never heard them. Tell me if any is wrong, harsh or too loud.</p>
+  <div class="sounds" id="sounds"></div>
+</div></section>
+
+<footer class="shell"><div class="gutter"><span>Back to Skool remake · voice audition</span><span>Clips generated with Higgsfield Seed Audio</span></div></footer>
+
+<script type="module">
+import { Sound } from './sound.js';
+
+const MALE = ['Alden','Alexey','Alistair','Andre','Archie','Arthur','Barrett','Benji','Bram','Brooks','Callan','Callum','Caspian','Cillian','Cody','Desmond','Dylan','Emmett','Evan','Fraser','Gideon','Grady','Harrison','Holden','Ian','Jasper','Jasper Quill','John','Julian','Kevin','Knox','Landon','Marcus','Mark','Miles','Orion','Reid','Sterling','Vlad','Xavier'];
+const FEMALE = ['Helena','Imogen','Isla','Mabel','Maeve','Tamsin'];
+const PARTS = [
+  ['Mr Wacker', 'The headmaster. Sixties, severe, a voice that fills the hall.', 'm'],
+  ['Mr Withit', 'Geography. Forties, brisk and a little pleased with himself.', 'm'],
+  ['Mr Rockitt', 'Science. Fifties, mild, absent-minded.', 'm'],
+  ['Mr Creak', 'History. Very old, thin and quavering.', 'm'],
+  ['Miss Take', 'Headmistress of the girls’ school. Fifties, stern.', 'f'],
+  ['Einstein', 'The swot. Fourteen, earnest, always telling tales.', 'm'],
+  ['Albert', 'The caretaker. Sixties, gruff.', 'm'],
+];
+
+// What has been ticked and picked, remembered on this device (the page works without it).
+const KEY = 'bts-audition';
+let state = { british: {}, cast: {} };
+try { state = { ...state, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) { /* no storage: start fresh */ }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ } };
+
+const audio = new Audio();
+let playingCell = null;
+const stop = () => { audio.pause(); if (playingCell) playingCell.classList.remove('playing'); playingCell = null; };
+audio.addEventListener('ended', stop);
+const PLAY = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z"/></svg>', STOP = '<svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="2.5" width="9" height="9"/></svg>';
+
+function voiceCell(name, mine) {
+  const cell = document.createElement('div');
+  cell.className = 'voice' + (state.british[name] ? ' british' : '');
+  const id = 'b-' + name.replace(/\s+/g, '-');
+  cell.innerHTML = `<button class="play" type="button" aria-label="Play ${name}">${PLAY}</button>
+    <div class="vname">${name}${mine ? '<small>Your own voice</small>' : ''}</div>
+    <label class="tick" for="${id}"><input type="checkbox" id="${id}" ${state.british[name] ? 'checked' : ''}>British</label>`;
+  const button = cell.querySelector('.play');
+  button.addEventListener('click', () => {
+    const was = playingCell === cell;
+    if (playingCell) playingCell.querySelector('.play').innerHTML = PLAY;
+    stop();
+    if (was) return;
+    audio.src = `voices/${name.replace(/\s+/g, '-')}.mp3`;
+    audio.play().catch(() => {});
+    playingCell = cell; cell.classList.add('playing'); button.innerHTML = STOP;
+  });
+  audio.addEventListener('ended', () => { button.innerHTML = PLAY; });
+  cell.querySelector('input').addEventListener('change', (e) => {
+    state.british[name] = e.target.checked; if (!e.target.checked) delete state.british[name];
+    cell.classList.toggle('british', e.target.checked);
+    save(); renderCast();
+  });
+  return cell;
+}
+for (const name of MALE) document.getElementById('male').appendChild(voiceCell(name, name === 'Jasper Quill'));
+for (const name of FEMALE) document.getElementById('female').appendChild(voiceCell(name, false));
+
+// The cast strip: each part offers only the voices ticked as British.
+function renderCast() {
+  const cast = document.getElementById('cast');
+  cast.innerHTML = '';
+  const ticked = (list) => list.filter((n) => state.british[n]);
+  for (const [part, note, sex] of PARTS) {
+    const options = ticked(sex === 'f' ? FEMALE : MALE);
+    if (state.cast[part] && !options.includes(state.cast[part])) delete state.cast[part];
+    const row = document.createElement('div');
+    row.className = 'part' + (state.cast[part] ? '' : ' unset');
+    const id = 'p-' + part.replace(/\s+/g, '-');
+    row.innerHTML = `<label class="part-name" for="${id}">${part}</label><div class="part-note">${note}</div>
+      <select id="${id}"><option value="">${options.length ? 'Choose a voice' : 'Tick a British voice below first'}</option>${options.map((n) => `<option ${state.cast[part] === n ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
+    row.querySelector('select').addEventListener('change', (e) => { if (e.target.value) state.cast[part] = e.target.value; else delete state.cast[part]; save(); renderCast(); });
+    cast.appendChild(row);
+  }
+  const lines = PARTS.map(([part]) => `${part}: ${state.cast[part] || 'not cast yet'}`);
+  const men = ticked(MALE), women = ticked(FEMALE);
+  document.getElementById('summary').textContent = `My cast for Back to Skool\n${lines.join('\n')}\n\nBritish voices: ${[...men, ...women].join(', ') || 'none ticked yet'}`;
+  document.getElementById('count-male').textContent = `· ${men.length} ticked British`;
+  document.getElementById('count-female').textContent = `· ${women.length} ticked British`;
+}
+renderCast();
+
+document.getElementById('copy').addEventListener('click', () => {
+  const text = document.getElementById('summary').textContent, said = document.getElementById('copied');
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(document.getElementById('summary')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); said.textContent = 'Selected: copy it with Ctrl or Cmd and C'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => { said.textContent = 'Copied'; }, fallback); else fallback();
+});
+
+// The game's own synthesised sounds, played by the same code the game uses.
+const sound = new Sound();
+sound.musicEnabled = false;      // the tune only when asked for
+const EFFECTS = [['BELL', 'The bell'], ['LINES1', 'Lines (a master)'], ['LINES2', 'Lines (another)'], ['ALARM', 'Albert’s alarm'], ['CATAPULT', 'Catapult'], ['WATER_PISTOL', 'Water pistol'], ['CUP_EMPTY', 'Empty cup'], ['KNOCKED_OUT', 'Knocked down'], ['HIT', 'Punch'], ['JUMP', 'Jump'], ['SIT', 'Sit'], ['DESK', 'Desk find'], ['FROG', 'Frog'], ['MOUSE', 'Mouse'], ['BIKE', 'Bike unchained'], ['STOREROOM_KEY', 'Storeroom key'], ['SAFE_KEY', 'Safe key'], ['SHERRY', 'Sherry'], ['CONKER', 'Conker'], ['KISS', 'Kiss'], ['UP_A_YEAR', 'Up a year']];
+const sounds = document.getElementById('sounds');
+for (const [id, label] of EFFECTS) {
+  const b = document.createElement('button'); b.className = 'btn quiet'; b.type = 'button'; b.textContent = label;
+  b.addEventListener('click', () => { stop(); sound.ensure(); sound.setActive(true); sound.play(id); });
+  sounds.appendChild(b);
+}
+const tune = document.createElement('button'); tune.className = 'btn'; tune.type = 'button'; tune.textContent = 'Play the tune';
+let tuneOn = false;
+tune.addEventListener('click', () => { stop(); sound.ensure(); tuneOn = !tuneOn; sound.setActive(true); sound.musicEnabled = tuneOn; tune.textContent = tuneOn ? 'Stop the tune' : 'Play the tune'; });
+sounds.prepend(tune);
+</script>

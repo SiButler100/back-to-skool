@@ -1,5 +1,5 @@
 {
-  "note": "Every Higgsfield generation made for the voice audition: the voice's name, its Higgsfield voice id, and the job that produced its clip. Kept so that no clip is ever generated (and paid for) twice.",
+  "note": "Every Higgsfield generation made for the voice audition: the voice's name, its Higgsfield voice id, and the job that produced its clip. Kept so that no clip is ever generated (and paid for) twice. The audition page (tools/voice/audition.html) is published privately at the address in \"page\"; its clips are downloaded from Higgsfield by job id and are not kept in the repository.",
   "line": "Don't keep me waiting! Sit down, you little anarchists.",
   "model": "seed_audio",
   "male": {
@@ -224,6 +224,19 @@
     "a16df77f": "131712",
     "0ac28965": "131724",
     "f6865a9d": "131724",
-    "0dd20146": "131724"
-  }
+    "0dd20146": "131724",
+    "1048baf6": "131857",
+    "62893934": "131857",
+    "ff30839c": "131858",
+    "4da44e01": "131858",
+    "70e4ea1a": "135123",
+    "35c7a09b": "135123",
+    "f6bfe0f4": "135122",
+    "1b7f8ed2": "135122",
+    "c9badf74": "140704",
+    "c44971e4": "140704",
+    "d05b5780": "140704",
+    "96134aa7": "140705"
+  },
+  "page": "https://claude.ai/artifact/Kdc1ymmZNXZxiSZGtreyid"
 }
