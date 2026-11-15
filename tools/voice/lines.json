@@ -1999,26 +1999,86 @@
    ]
   },
   {
-   "id": "wacker-rec-04",
+   "id": "wacker-rec-04-1",
    "speaker": "WACKER",
    "lines": [
-    "wacker-025",
-    "wacker-026",
-    "wacker-027",
-    "wacker-028",
-    "wacker-029",
+    "wacker-025"
+   ]
+  },
+  {
+   "id": "wacker-rec-04-2",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-026"
+   ]
+  },
+  {
+   "id": "wacker-rec-04-3",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-027"
+   ]
+  },
+  {
+   "id": "wacker-rec-04-4",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-028"
+   ]
+  },
+  {
+   "id": "wacker-rec-04-5",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-029"
+   ]
+  },
+  {
+   "id": "wacker-rec-04-6",
+   "speaker": "WACKER",
+   "lines": [
     "wacker-030"
    ]
   },
   {
-   "id": "wacker-rec-05",
+   "id": "wacker-rec-05-1",
    "speaker": "WACKER",
    "lines": [
-    "wacker-031",
-    "wacker-032",
-    "wacker-033",
-    "wacker-034",
-    "wacker-035",
+    "wacker-031"
+   ]
+  },
+  {
+   "id": "wacker-rec-05-2",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-032"
+   ]
+  },
+  {
+   "id": "wacker-rec-05-3",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-033"
+   ]
+  },
+  {
+   "id": "wacker-rec-05-4",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-034"
+   ]
+  },
+  {
+   "id": "wacker-rec-05-5",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-035"
+   ]
+  },
+  {
+   "id": "wacker-rec-05-6",
+   "speaker": "WACKER",
+   "lines": [
     "wacker-036"
    ]
   },
@@ -2034,25 +2094,79 @@
    ]
   },
   {
-   "id": "wacker-rec-07",
+   "id": "wacker-rec-07-1",
    "speaker": "WACKER",
    "lines": [
-    "wacker-042",
-    "wacker-043",
-    "wacker-044",
-    "wacker-045",
-    "wacker-046",
+    "wacker-042"
+   ]
+  },
+  {
+   "id": "wacker-rec-07-2",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-043"
+   ]
+  },
+  {
+   "id": "wacker-rec-07-3",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-044"
+   ]
+  },
+  {
+   "id": "wacker-rec-07-4",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-045"
+   ]
+  },
+  {
+   "id": "wacker-rec-07-5",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-046"
+   ]
+  },
+  {
+   "id": "wacker-rec-07-6",
+   "speaker": "WACKER",
+   "lines": [
     "wacker-047"
    ]
   },
   {
-   "id": "wacker-rec-08",
+   "id": "wacker-rec-08-1",
    "speaker": "WACKER",
    "lines": [
-    "wacker-048",
-    "wacker-049",
-    "wacker-050",
-    "wacker-051",
+    "wacker-048"
+   ]
+  },
+  {
+   "id": "wacker-rec-08-2",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-049"
+   ]
+  },
+  {
+   "id": "wacker-rec-08-3",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-050"
+   ]
+  },
+  {
+   "id": "wacker-rec-08-4",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-051"
+   ]
+  },
+  {
+   "id": "wacker-rec-08-5",
+   "speaker": "WACKER",
+   "lines": [
     "wacker-052"
    ]
   },
@@ -2078,13 +2192,37 @@
    ]
   },
   {
-   "id": "wacker-rec-11",
+   "id": "wacker-rec-11-1",
    "speaker": "WACKER",
    "lines": [
-    "wacker-062",
-    "wacker-063",
-    "wacker-064",
-    "wacker-065",
+    "wacker-062"
+   ]
+  },
+  {
+   "id": "wacker-rec-11-2",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-063"
+   ]
+  },
+  {
+   "id": "wacker-rec-11-3",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-064"
+   ]
+  },
+  {
+   "id": "wacker-rec-11-4",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-065"
+   ]
+  },
+  {
+   "id": "wacker-rec-11-5",
+   "speaker": "WACKER",
+   "lines": [
     "wacker-066"
    ]
   },
@@ -2263,16 +2401,58 @@
    ]
   },
   {
-   "id": "rockitt-rec-05",
+   "id": "rockitt-rec-05-1",
    "speaker": "ROCKITT",
    "lines": [
-    "rockitt-021",
-    "rockitt-022",
-    "rockitt-023",
-    "rockitt-024",
-    "rockitt-025",
-    "rockitt-026",
-    "rockitt-027",
+    "rockitt-021"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05-2",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-022"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05-3",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-023"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05-4",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-024"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05-5",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-025"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05-6",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-026"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05-7",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-027"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05-8",
+   "speaker": "ROCKITT",
+   "lines": [
     "rockitt-028"
    ]
   },
@@ -2344,16 +2524,58 @@
    ]
   },
   {
-   "id": "creak-rec-05",
+   "id": "creak-rec-05-1",
    "speaker": "CREAK",
    "lines": [
-    "creak-021",
-    "creak-022",
-    "creak-023",
-    "creak-024",
-    "creak-025",
-    "creak-026",
-    "creak-027",
+    "creak-021"
+   ]
+  },
+  {
+   "id": "creak-rec-05-2",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-022"
+   ]
+  },
+  {
+   "id": "creak-rec-05-3",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-023"
+   ]
+  },
+  {
+   "id": "creak-rec-05-4",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-024"
+   ]
+  },
+  {
+   "id": "creak-rec-05-5",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-025"
+   ]
+  },
+  {
+   "id": "creak-rec-05-6",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-026"
+   ]
+  },
+  {
+   "id": "creak-rec-05-7",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-027"
+   ]
+  },
+  {
+   "id": "creak-rec-05-8",
+   "speaker": "CREAK",
+   "lines": [
     "creak-028"
    ]
   },

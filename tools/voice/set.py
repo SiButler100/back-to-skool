@@ -170,6 +170,12 @@ def fetch(work):
                 bad.append((rec['id'], f'{i} lasts {took:.1f} s, expected about {want * middle:.1f} s: "{by_id[i]["spoken"]}"'))
             else:
                 good += 1
+    # A recording with any doubtful clip keeps none of its clips: if one line was
+    # cut in the wrong place, its neighbours may carry the wrong words too.
+    for rec_id in {r for r, why in bad}:
+        for i in next(r['lines'] for r in data['recordings'] if r['id'] == rec_id):
+            if os.path.exists(os.path.join(clips, i + '.mp3')):
+                os.remove(os.path.join(clips, i + '.mp3'))
     print(f'{good} clips cut and of a sensible length')
     for rec, why in bad:
         print(f'  PROBLEM {rec}: {why}')

@@ -129,10 +129,22 @@ add('ALBERT', MESSAGES.escaping.replace('$WACKER', nameOf('WACKER')), "Mister Wa
 // At most eight lines and about 440 letters to a recording, so none runs much
 // past half a minute. Lines with a pause inside them are recorded one at a time.
 const MOST_LINES = 8, MOST_LETTERS = 440;
+// Recordings that could not be cut apart safely (the voice paused inside a line
+// for as long as it paused between lines). Their lines are recorded one at a
+// time instead, under the names rec-04-1, rec-04-2 and so on, so that every
+// other recording keeps its name.
+const REDO_SINGLY = ['wacker-rec-04', 'wacker-rec-05', 'wacker-rec-07', 'wacker-rec-08', 'wacker-rec-11', 'rockitt-rec-05', 'creak-rec-05'];
 const recordings = [];
 for (const speaker of [...new Set(lines.map((l) => l.speaker))]) {
   let n = 0, group = [], letters = 0;
-  const close = () => { if (group.length) recordings.push({ id: `${speaker.toLowerCase()}-rec-${String(++n).padStart(2, '0')}`, speaker, lines: group.map((l) => l.id) }); group = []; letters = 0; };
+  const close = () => {
+    if (group.length) {
+      const id = `${speaker.toLowerCase()}-rec-${String(++n).padStart(2, '0')}`;
+      if (REDO_SINGLY.includes(id)) group.forEach((l, i) => recordings.push({ id: `${id}-${i + 1}`, speaker, lines: [l.id] }));
+      else recordings.push({ id, speaker, lines: group.map((l) => l.id) });
+    }
+    group = []; letters = 0;
+  };
   for (const l of lines.filter((x) => x.speaker === speaker)) {
     if (l.kind === 'alone') { close(); group = [l]; close(); continue; }
     if (group.length === MOST_LINES || letters + l.spoken.length > MOST_LETTERS) close();
