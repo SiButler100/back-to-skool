@@ -257,10 +257,6 @@
    "job": "60bdeb58-ebeb-48a0-90bf-7af185cb93a8",
    "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_211708_60bdeb58-ebeb-48a0-90bf-7af185cb93a8.mp3"
   },
-  "wacker-rec-07-5": {
-   "job": "a3d618b7-895b-46e5-ba22-d875d2d416f0",
-   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_211840_a3d618b7-895b-46e5-ba22-d875d2d416f0.mp3"
-  },
   "wacker-rec-07-6": {
    "job": "ae81d023-331d-4caa-bdf2-9e4358e6e5a1",
    "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_211840_ae81d023-331d-4caa-bdf2-9e4358e6e5a1.mp3"
@@ -583,6 +579,12 @@
    "job": "be3067e6-2233-4277-9424-b62732df277b",
    "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_210325_be3067e6-2233-4277-9424-b62732df277b.mp3",
    "why": "Could not be cut apart safely: the voice paused inside a line for as long as it paused between lines. Its lines are recorded one at a time instead."
+  },
+  {
+   "recording": "wacker-rec-07-5",
+   "job": "a3d618b7-895b-46e5-ba22-d875d2d416f0",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_211840_a3d618b7-895b-46e5-ba22-d875d2d416f0.mp3",
+   "why": "The recording runs to 9 seconds in two stretches for a 5 second line: the voice seems to have said it twice. Recorded again."
   }
  ]
 }
