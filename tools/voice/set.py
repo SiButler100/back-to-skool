@@ -12,6 +12,8 @@ tools/voice/set-jobs.json so that no recording is ever paid for twice:
     set.py record REC JOB       note one job number by the recording's name
     set.py discard REC WHY      set a recording aside (it could not be cut cleanly, or its words changed);
                                 its job stays on record under "discarded" and it can be requested afresh
+    set.py first-phrase REC     keep only what a single recording says before its first pause (for a
+                                recording where the voice said the line and then added more)
     set.py url URL [URL ...]    note where finished recordings can be fetched from (the job number is in the address)
     set.py fetch WORK           download finished recordings into WORK/raw, cut them into
                                 WORK/clips (tools/voice/cut.py), and check every clip's length
@@ -111,6 +113,12 @@ def discard(rec, why):
     save(jobs)
 
 
+def first_phrase(rec):
+    data, by_id, jobs = load()
+    jobs['recordings'][rec]['first_phrase_only'] = True
+    save(jobs)
+
+
 def url(addresses):
     data, by_id, jobs = load()
     by_job = {entry['job']: entry for entry in jobs['recordings'].values()}
@@ -149,8 +157,12 @@ def fetch(work):
             if len(rec['lines']) == 1:
                 # A single line: trim the quiet off both ends and keep the rest whole.
                 quiet, length = cut.quiet_stretches(path)
-                start = max([b for a, b in quiet if a < 0.05], default=0.0)
+                start = max([b for a, b in quiet if a < 0.15], default=0.0)      # (the quiet at the start can begin a moment in)
                 end = min([a for a, b in quiet if b > length - 0.05], default=length)
+                if entry.get('first_phrase_only'):
+                    # The voice said the line and then carried on with something that
+                    # was not asked for: keep what comes before the first pause.
+                    end = min([a for a, b in quiet if a > start + 0.3], default=end)
                 subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-ss', f'{max(0, start - cut.PAD):.3f}', '-to', f'{end + cut.PAD:.3f}',
                                 '-i', path, '-ac', '1', '-ar', '22050', '-b:a', '48k', os.path.join(clips, rec['lines'][0] + '.mp3')], check=True)
             elif not cut.cut(path, clips, rec['lines']):
@@ -211,6 +223,8 @@ if __name__ == '__main__':
         record(sys.argv[2], sys.argv[3])
     elif command == 'discard':
         discard(sys.argv[2], sys.argv[3])
+    elif command == 'first-phrase':
+        first_phrase(sys.argv[2])
     elif command == 'url':
         url(sys.argv[2:])
     elif command == 'fetch':

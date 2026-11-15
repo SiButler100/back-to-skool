@@ -319,11 +319,13 @@
   },
   "rockitt-rec-05-4": {
    "job": "880a23ce-1bb0-46dd-902e-5c47194fad44",
-   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_212145_880a23ce-1bb0-46dd-902e-5c47194fad44.mp3"
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_212145_880a23ce-1bb0-46dd-902e-5c47194fad44.mp3",
+   "first_phrase_only": true
   },
   "rockitt-rec-05-5": {
    "job": "111c4360-618f-4120-a2c2-4cdf33683b0f",
-   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_212144_111c4360-618f-4120-a2c2-4cdf33683b0f.mp3"
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_212144_111c4360-618f-4120-a2c2-4cdf33683b0f.mp3",
+   "first_phrase_only": true
   },
   "rockitt-rec-05-6": {
    "job": "35f35e6c-f287-4c09-9a8d-af0aa37afeeb",
@@ -359,7 +361,8 @@
   },
   "creak-rec-05-6": {
    "job": "f15bdbec-3c08-454f-b577-90f006159e3d",
-   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_212805_f15bdbec-3c08-454f-b577-90f006159e3d.mp3"
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_212805_f15bdbec-3c08-454f-b577-90f006159e3d.mp3",
+   "first_phrase_only": true
   },
   "creak-rec-05-7": {
    "job": "4bf8a9fd-5fab-4b50-8254-449882aa9e53",
