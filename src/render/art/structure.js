@@ -73,7 +73,7 @@ export class StructurePainter {
   }
 
   // ---- 1. Under the rooms: sky, brick, the playground painting -------------------
-  base() {
+  base(wallsOnly = false) {
     const { ctx, C, u, W, H } = this;
     const sky = ctx.createLinearGradient(0, 0, 0, H);
     sky.addColorStop(0, this.theme.hd.sky[0]); sky.addColorStop(1, this.theme.hd.sky[1]);
@@ -83,7 +83,8 @@ export class StructurePainter {
     // (IllustratedPainter.drawParallax), so here the playground is left as a
     // hole, with only the boundary wall and tarmac along the bottom.
     const span = playgroundSpan(C), wall = this.assets.scene('wall');
-    if (wall && this.assets.scene('sky') && this.assets.scene('skyline')) {
+    if (wallsOnly) ctx.clearRect(span.x0, 0, span.w, H);
+    else if (wall && this.assets.scene('sky') && this.assets.scene('skyline')) {
       ctx.clearRect(span.x0, 0, span.w, H);
       const h = wall.img.height * (span.w / wall.img.width);
       ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
@@ -263,14 +264,16 @@ export class StructurePainter {
   }
 
   // Room names: an enamel sign on the wall near the ceiling.
-  plaques() {
+  // (`lower` moves them down by that many units: in the 3D view the edge of
+  // the floor above would otherwise hide them.)
+  plaques(lower = 0) {
     const { ctx, u, C } = this;
     ctx.save();
     ctx.font = `400 ${Math.round(19 * u)}px ${UI_FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     try { ctx.letterSpacing = `${(2.2 * u).toFixed(1)}px`; } catch (e) { /* older browsers */ }
     for (const z of DECOR.zones) {
       if (!z.plaque) continue;
-      const r = zoneRect(z), cx = ((r.x0 + r.x1) / 2) * C, y = r.top * C + 16 * u;
+      const r = zoneRect(z), cx = ((r.x0 + r.x1) / 2) * C, y = r.top * C + (16 + lower) * u;
       const w = ctx.measureText(z.plaque).width + 34 * u, h = 34 * u;
       ctx.fillStyle = 'rgba(0,0,0,0.25)'; roundedRect(ctx, cx - w / 2 + 2 * u, y + 3 * u, w, h, 5 * u); ctx.fill();
       ctx.fillStyle = '#26402f'; roundedRect(ctx, cx - w / 2, y, w, h, 5 * u); ctx.fill();

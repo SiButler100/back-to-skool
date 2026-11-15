@@ -64,6 +64,7 @@ export class ArtAssets {
   loadImage(path) {
     return new Promise((resolve) => {
       const img = new Image();
+      img.crossOrigin = 'anonymous';     // lets the 3D view use pictures served from another site
       img.onload = () => { this.images.set(path, img); resolve(img); };
       img.onerror = () => { console.warn('Illustrated artwork: could not load', path); resolve(null); };
       img.src = this.base + path;

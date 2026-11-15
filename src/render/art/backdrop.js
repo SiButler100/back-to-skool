@@ -30,7 +30,10 @@ const PIXEL_SCALE = 2;
 // is under a seated pupil and the desk in front of their knees.
 export const DESK_UNIT = { dx: 19 };
 
-export function buildIllustratedBackdrop(theme, S, assets) {
+// `wallsOnly` (for the 3D view) leaves out everything that view builds as
+// solid shapes or cut-outs of its own: floors, stairs, dividing walls, the
+// playground, chairs and the tree. What remains is what hangs on a back wall.
+export function buildIllustratedBackdrop(theme, S, assets, { wallsOnly = false } = {}) {
   const C = SKOOL.cell * S, P = PIXEL_SCALE, up = S / P;
   const u = S / 6;                               // one canvas pixel at the illustrated scale
   const W = SKOOL.width * C, rowsH = SKOOL.height * C, H = rowsH + GROUND_MARGIN * S;
@@ -45,7 +48,7 @@ export function buildIllustratedBackdrop(theme, S, assets) {
 
   // 1. What lies under the rooms.
   if (painted) {
-    sp.base();
+    sp.base(wallsOnly);
   } else {
     const base = makeCanvas(W / up, rowsH / up);
     paintBase(base.getContext('2d'), theme, P);
@@ -71,7 +74,7 @@ export function buildIllustratedBackdrop(theme, S, assets) {
 
   // 3. Floors, stairs, walls, door frames, the playground, room signs.
   if (painted) {
-    sp.structure();
+    if (wallsOnly) { sp.doorFrames(); sp.safeShelf(); sp.plaques(52); } else sp.structure();
   } else {
     const over = makeCanvas(W / up, rowsH / up);
     paintStructure(over.getContext('2d'), theme, P, { boards: hasBoards, desks: hasDesks, tree: hasTree, railings: false });
@@ -89,7 +92,7 @@ export function buildIllustratedBackdrop(theme, S, assets) {
       stamp(f, x - 18 * u, y - 18 * u, w + 36 * u, h + 48 * u);
     }
   }
-  if (hasDesks) {
+  if (hasDesks && !wallsOnly) {
     // Only the chairs: the desks are drawn each frame in front of the pupils
     // (IllustratedPainter.drawForeground).
     const f = assets.furniture('chair');
@@ -99,7 +102,7 @@ export function buildIllustratedBackdrop(theme, S, assets) {
       for (const x of xs) stamp(f, x * C + DESK_UNIT.dx * u, floor - f.h, f.w, f.h);
     }
   }
-  if (hasTree) {
+  if (hasTree && !wallsOnly) {
     const f = assets.furniture('tree'), tx = DECOR.playground.treeX * C + C / 2;
     stamp(f, tx - f.w / 2, rowsH + 8 * u - f.h, f.w, f.h);
   }
