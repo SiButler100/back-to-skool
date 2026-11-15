@@ -424,6 +424,10 @@ export class Character {
         y: this.y - (this.isAdult() || this.isStanding() ? 3 : 2),
         lipPos, words, shift,
       };
+      // Tell whoever is listening (the voices, in ui/voice.js) that a sentence
+      // has begun. Only at its very start: a sentence picked up again half-way
+      // through after an interruption is not announced a second time.
+      if (shift <= 0) this.game.events.emit('speech', { character: this, words });
     }
     this.bubble.shift = shift;
     // Finished once the text has scrolled fully out of the bubble (8 px per step).
@@ -457,7 +461,7 @@ export class Character {
     this.game.events.emit('lines', { giver: this, recipient, amount: numLines, messageId, text: admonition.replace('^', ' ') });
     const coords = this.headCoords();
     this.game.showMessageBox({ x: coords[0], y: coords[1], lines: lines1, paper, sound: 'LINES1' });
-    this.game.showMessageBox({ x: coords[0], y: coords[1], lines: admonition.split('^'), paper, sound: 'LINES2' });
+    this.game.showMessageBox({ x: coords[0], y: coords[1], lines: admonition.split('^'), paper, sound: 'LINES2', speaker: this, words: admonition });   // (speaker and words are for the voices)
   }
   canGiveLinesMessage(id) { return !!MESSAGES.lines[id]; }
   reprimand() {

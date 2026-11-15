@@ -81,6 +81,14 @@ flowchart TD
     hud[hud.js score, lesson box, log]
     menu[menu.js title, pause, options]
     sound[sound.js synthesised beeps]
+    voice[voice.js the masters' recorded lines]
+  end
+
+  subgraph VoiceTools["tools/voice — the recordings"]
+    vlines[build-lines.mjs every line, from the game's words]
+    vset[set.py record of requests, fetch, check, install]
+    vcut[cut.py cut a recording into its lines]
+    vclips[(assets/voice clips and manifest)]
   end
 
   subgraph Features["src/features — plug-ins"]
@@ -100,6 +108,13 @@ flowchart TD
 
   main[src/main.js<br/>boot + fixed-step loop]
 
+  msg --> vlines
+  vlines --> vset
+  vcut --> vset
+  vset --> vclips
+  vclips --> voice
+  character -- speech event --> voice
+  voice --> sound
   skool --> world
   cast --> castE
   tt --> timetable
@@ -198,7 +213,7 @@ Four test programs, from the fastest and narrowest to the slowest and broadest. 
 | `node tools/scenarios.mjs` | The engine alone, one rule at a time, with a fake keyboard | A rule that has stopped working: a cup that will not fill, a door that shuts on Eric, a pellet through a wall. Every bug fixed gets a check here so it cannot return |
 | `node tools/playthrough.mjs [seed]` | The engine alone, the whole quest from the first playtime to the safe, by key presses along the real routes | A step of the quest that has become impossible |
 | `node tools/soak.mjs [seeds] [ticks]` | The engine alone for millions of ticks under many random seeds, with a player who presses anything | Things that only go wrong rarely: someone stranded in mid-air, a game that cannot end, an error thrown once in a million ticks |
-| `node tools/browser-checks.mjs [controls] [screens] [quest]` | The real page in a headless browser (it needs Playwright), with real key presses of realistic lengths | Everything the others cannot see: a tap too short to register, a menu that takes the keyboard away, a page that scrolls, a missing picture, an error in the picture or the HUD at any point in the quest |
+| `node tools/browser-checks.mjs [controls] [screens] [quest] [voices] [builds]` | The real page in a headless browser (it needs Playwright), with real key presses of realistic lengths | Everything the others cannot see: a tap too short to register, a menu that takes the keyboard away, a page that scrolls, a missing picture, an error in the picture or the HUD at any point in the quest |
 
 Why four: the first three know nothing of the page, so they are fast and exact, but they press keys perfectly. The fault that started this (the cups could not be hit because a tap of a key was either lost or walked Eric off the step) was invisible to them. `browser-checks.mjs` exists to press keys the way a hand does.
 
@@ -225,6 +240,8 @@ Two rules of thumb. A check should say in plain words what the player would see 
 | Change floors, stairs, walls, the playground or room signs in the illustrated view | `src/render/art/structure.js` (drawn by code from the swatches in `assets/illustrated/textures/`) |
 | Change speech bubbles, reprimand cards or chalk | `src/render/art/text.js` |
 | Add or change a sound, the tune, footsteps or birdsong | `src/ui/sound.js` |
+| Change how voices are played (how loud at a distance, how many at once, the tune stepping back) | `src/ui/voice.js`. It listens for the engine's `speech` event (a bubble begins) and for a reprimand's `messageBox`, looks the words up in `assets/voice/manifest.json` and plays the clip |
+| Change a line that is spoken, or record new ones | edit the words in `src/data/messages.js`, run `node tools/voice/build-lines.mjs`, then follow `tools/voice/set.py` (it prints what to request, keeps the record in `tools/voice/set-jobs.json` so nothing is paid for twice, cuts and checks the clips and installs them) |
 | Change where the plan, keys, feed, map or radar sit in the picture | `styles.css` (the rules under `html.view-modern .screen > ...`); `HUD.placeStrips` in `src/ui/hud.js` moves them in and out of the picture |
 | Add a panel, an overlay, a new rule | a new file in `src/features/`, registered in `src/features/index.js` |
 | Change the HUD or menus | `src/ui/hud.js`, `src/ui/menu.js`, `styles.css` |
@@ -233,9 +250,19 @@ Two rules of thumb. A check should say in plain words what the player would see 
 
 Everything in the engine is measured in **cells** of 8 pixels. The school is 192 cells wide and 21 tall. A character's `(x, y)` is the top-left of a 3-wide, 4-tall sprite, so someone standing on the ground floor has `y = 17` (their feet are in row 20). Floors are at `y = 17, 10, 3`. Staircases are diagonals: one cell across for each cell up. A plant pot counts as standing room one row *above* its floor (Eric jumps up onto it, and the growing plant lifts him two rows more), which is why `world.plantPots` stores `y - 1`. The renderer multiplies by 8 and the page scales the canvas up from there.
 
+## The voices, from the game's words to a clip that plays
+
+Nobody typed a list of lines. `tools/voice/build-lines.mjs` reads `src/data/messages.js` and works out every sentence a master, Einstein or Albert can say: 279 of them. For each it keeps two forms: the words exactly as the game produces them (capitals, no punctuation), which is how a clip is found again while playing, and the words as they should be read aloud ("WHEN DID JAMES I BECOME KING?" is read "When did James the First become king?").
+
+The recordings were made through Higgsfield in the voices cast for each part. Short lines were recorded several to a recording and cut apart at the pauses (`tools/voice/cut.py`). A cut is only trusted if every pause between lines is clearly longer than any pause inside a line, and if every clip then runs at the pace of its neighbours; a recording that fails either test is set aside and its lines recorded one at a time. `tools/voice/set.py` keeps the record of every request in `tools/voice/set-jobs.json`, so that nothing is ever paid for twice, and installs the checked clips in `assets/voice/` with `manifest.json`, which says which file holds which words for which speaker.
+
+In the game, `Character.say` announces the start of a sentence with a `speech` event, and a reprimand's lines box carries its speaker. `src/ui/voice.js` listens for both, looks the words up in the manifest and plays the clip through the same volume control as the other sounds. The engine knows nothing about audio: with the clips missing, or the switch off, the game plays exactly as before.
+
+What a machine could check, it checked: that every sentence the game says has a clip, that no clip is empty, cut short or run together with its neighbour. What it could not check is how a word is pronounced; that takes a listener.
+
 ## Events the engine emits
 
-`start`, `tick`, `lesson`, `lines`, `linesTotal`, `score`, `inventory`, `decked`, `secret`, `found`, `quest`, `cup`, `door`, `splash`, `conked`, `stinkbomb`, `kiss`, `messageBox`, `expelling`, `gameOver`, `upAYear`, `sound`. Subscribe with `game.events.on(name, handler)`.
+`start`, `tick`, `lesson`, `lines`, `linesTotal`, `score`, `inventory`, `decked`, `secret`, `found`, `quest`, `cup`, `door`, `splash`, `conked`, `stinkbomb`, `kiss`, `messageBox`, `expelling`, `gameOver`, `upAYear`, `sound`, `speech` (someone has begun a sentence: `{ character, words }`). Subscribe with `game.events.on(name, handler)`.
 
 ## Why it is organised like this
 

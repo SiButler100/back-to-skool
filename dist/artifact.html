@@ -3734,6 +3734,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
           words,
           shift
         };
+        if (shift <= 0) this.game.events.emit("speech", { character: this, words });
       }
       this.bubble.shift = shift;
       return Math.max(0, shift) * 8 > this.game.measureText(words);
@@ -3772,7 +3773,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.game.events.emit("lines", { giver: this, recipient, amount: numLines, messageId, text: admonition.replace("^", " ") });
       const coords = this.headCoords();
       this.game.showMessageBox({ x: coords[0], y: coords[1], lines: lines1, paper, sound: "LINES1" });
-      this.game.showMessageBox({ x: coords[0], y: coords[1], lines: admonition.split("^"), paper, sound: "LINES2" });
+      this.game.showMessageBox({ x: coords[0], y: coords[1], lines: admonition.split("^"), paper, sound: "LINES2", speaker: this, words: admonition });
     }
     canGiveLinesMessage(id) {
       return !!MESSAGES.lines[id];
@@ -12138,6 +12139,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         <label class="opt"><span>Game speed <output data-out="speed">${formatSetting("speed", s.speed)}</output></span><input type="range" min="0.5" max="2" step="0.1" value="${s.speed}" data-setting="speed"></label>
         ${check("sound", "Sound effects", "Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.")}
         ${check("music", "Music", "A quiet tune while you play.")}
+        ${check("voices", "Voices", "The masters, Einstein and Albert say their lines aloud in British voices. The speech bubbles stay, as subtitles. Modern view only.")}
         ${check("minimap", "Map", "A small map of the whole school in the corner of the picture, with a dot for everyone.")}
         ${check("atmosphere", "Atmosphere", "Everyone casts a soft shadow on the wall behind them, the light warms and cools through the school day, and the picture darkens gently towards its corners. Illustrated artwork only.")}
         ${check("guides", "Aiming help", "Marks where to stand to fill a cup with the pistol or knock it with the catapult, and rings the cup when your aim is true. Modern view only.")}
@@ -12272,6 +12274,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.active = false;
       this.outdoors = false;
       this.crowd = 0;
+      this.speaking = false;
       this.ctx = null;
       this.musicAt = 0;
       this.musicIndex = 0;
@@ -12402,7 +12405,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const ctx = this.ctx;
       if (!ctx || ctx.state !== "running") return;
       const now = ctx.currentTime;
-      const wantMusic = this.active && this.musicEnabled ? 0.16 : 0;
+      const wantMusic = this.active && this.musicEnabled ? this.speaking ? 0.05 : 0.16 : 0;
       this.musicBus.gain.setTargetAtTime(wantMusic, now, 0.4);
       if (wantMusic) {
         if (this.musicAt < now) this.musicAt = now + 0.05;
@@ -12434,6 +12437,107 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         for (let i = 0; i < chirps; i++) this.tone(now + 0.05 + i * 0.09, base * (1 + Math.random() * 0.2), 0.06, { type: "sine", vol: 0.05, slide: base * (1.2 + Math.random() * 0.5) });
         this.nextBird = now + 0.9 + Math.random() * 3.2;
       }
+    }
+  };
+
+  // src/ui/voice.js
+  var voiceKey = (words) => String(words).replace(/\^/g, " ").replace(/\s+/g, " ").trim().toUpperCase();
+  var REPRIMAND_DELAY = 0.3;
+  var FAR = 26;
+  var QUIETEST = 0.35;
+  var AT_ONCE = 3;
+  var Voice = class {
+    constructor({ game, sound, folder = typeof window !== "undefined" && window.BTS_VOICE_BASE || "assets/voice/" }) {
+      this.game = game;
+      this.sound = sound;
+      this.folder = folder;
+      this.enabled = true;
+      this.manifest = null;
+      this.manifestAsked = null;
+      this.clips = /* @__PURE__ */ new Map();
+      this.playing = [];
+      this.started = 0;
+      this.last = null;
+      game.events.on("speech", ({ character, words }) => {
+        this.say(character, words).catch(() => {
+        });
+      });
+      game.events.on("messageBox", (box) => {
+        if (box.speaker) this.say(box.speaker, box.words, REPRIMAND_DELAY).catch(() => {
+        });
+      });
+      game.events.on("tick", () => {
+        for (const p of this.playing.slice()) if (p.character.isKnockedOver()) this.stop(p);
+      });
+      game.events.on("start", () => this.hush());
+    }
+    // The list of clips. Asked for once; if it cannot be had, there are no voices.
+    loadManifest() {
+      if (!this.manifestAsked) {
+        this.manifestAsked = fetch(`${this.folder}manifest.json`).then((r) => r.ok ? r.json() : null).then((m) => {
+          this.manifest = m || {};
+        }).catch(() => {
+          this.manifest = {};
+        });
+      }
+      return this.manifestAsked;
+    }
+    // One clip, fetched and decoded the first time it is wanted and kept after that.
+    loadClip(file) {
+      if (!this.clips.has(file)) {
+        const ctx = this.sound.ctx;
+        this.clips.set(file, fetch(`${this.folder}${file}.mp3`).then((r) => r.ok ? r.arrayBuffer() : Promise.reject(new Error(`no clip ${file}`))).then((data) => ctx.decodeAudioData(data)).catch(() => null));
+      }
+      return this.clips.get(file);
+    }
+    async say(character, words, delay = 0) {
+      const ctx = this.sound.ctx;
+      if (!this.enabled || !this.sound.active || !ctx || !this.game.isOnScreen(character)) return;
+      const asked = ctx.currentTime;
+      if (!this.manifest) await this.loadManifest();
+      const file = (this.manifest[character.id] || {})[voiceKey(words)];
+      if (!file) return;
+      const clip = await this.loadClip(file);
+      if (!clip || !this.enabled || !this.sound.active || ctx.currentTime - asked > 1.5) return;
+      for (const p of this.playing.slice()) if (p.character === character) this.stop(p);
+      while (this.playing.length >= AT_ONCE) this.stop(this.playing[0]);
+      const eric = this.game.cast.eric;
+      const distance = Math.min(1, Math.abs(character.x - eric.x) / FAR);
+      const gain = ctx.createGain();
+      gain.gain.value = 1 - (1 - QUIETEST) * distance;
+      const source = ctx.createBufferSource();
+      source.buffer = clip;
+      source.connect(gain).connect(this.sound.master);
+      const entry = { character, source, gain };
+      source.onended = () => this.forget(entry);
+      source.start(ctx.currentTime + Math.max(0, delay - (ctx.currentTime - asked)));
+      this.playing.push(entry);
+      this.sound.speaking = true;
+      this.started += 1;
+      this.last = { speaker: character.id, file };
+    }
+    // Stop one voice, fading over a twentieth of a second so there is no click.
+    stop(entry) {
+      const ctx = this.sound.ctx;
+      try {
+        entry.gain.gain.setTargetAtTime(0, ctx.currentTime, 0.015);
+        entry.source.stop(ctx.currentTime + 0.06);
+      } catch (err) {
+      }
+      this.forget(entry);
+    }
+    forget(entry) {
+      const i = this.playing.indexOf(entry);
+      if (i >= 0) this.playing.splice(i, 1);
+      this.sound.speaking = this.playing.length > 0;
+    }
+    // Everyone stops: the game was paused, restarted, or the switch was turned off.
+    hush() {
+      for (const p of this.playing.slice()) this.stop(p);
+    }
+    setEnabled(on) {
+      this.enabled = on;
+      if (!on) this.hush();
     }
   };
 
@@ -13407,8 +13511,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: "painted", camera: "whole" },
     modern: { theme: "modern", columns: CLOSE_COLUMNS, camera: "close", smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: "illustrated" }
   };
-  var SETTINGS_VERSION = 7;
-  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, atmosphere: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+  var SETTINGS_VERSION = 8;
+  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, atmosphere: true, voices: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
   function migrateSettings(s) {
     const v = s.settingsVersion || 1;
     if (v < 2) s.hdGraphics = s.view !== "original";
@@ -13453,6 +13557,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     const sound = new Sound();
     game.events.on("sound", (id) => sound.play(id));
     game.events.on("cupEmpty", () => sound.play("CUP_EMPTY"));
+    const voice = new Voice({ game, sound });
     renderer.onFootstep = () => sound.step();
     hud.setIconSource((id) => settings.view !== "original" && settings.artwork === "illustrated" ? renderer.assets.iconUrl(id) : null);
     renderer.assets.onReady(() => hud.setIconSource(hud.iconSource));
@@ -13520,6 +13625,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       game.fontHas = spectrumFont ? originalFontHas : fontHas;
       sound.enabled = s.sound;
       sound.musicEnabled = s.music !== false;
+      voice.setEnabled(s.view !== "original" && s.voices !== false);
       document.documentElement.classList.toggle("view-original", s.view === "original");
       document.documentElement.classList.toggle("view-modern", s.view !== "original");
       document.documentElement.classList.toggle("art-illustrated", s.view !== "original" && s.artwork === "illustrated");
@@ -13602,6 +13708,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
         sound.setActive(false);
+        voice.hush();
         input.held.clear();
       }
     });
@@ -13610,6 +13717,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       const dt = Math.min(0.25, (now - last) / 1e3);
       last = now;
       sound.setActive(!paused && !attract);
+      if (paused || attract) voice.hush();
       if (!paused || attract) {
         acc += dt * (attract ? 1 : settings.speed);
         const step = 1 / game.config.ticksPerSecond;
@@ -13624,7 +13732,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
-    window.bts = { game, renderer, hud, menu, settings, input, tapeLoader, sound };
+    window.bts = { game, renderer, hud, menu, settings, input, tapeLoader, sound, voice };
     return window.bts;
   }
   boot();

@@ -28,7 +28,7 @@ const QUIETEST = 0.35;            // how loud that is, against 1 for someone bes
 const AT_ONCE = 3;                // no more than this many voices talking over each other
 
 export class Voice {
-  constructor({ game, sound, folder = 'assets/voice/' }) {
+  constructor({ game, sound, folder = (typeof window !== 'undefined' && window.BTS_VOICE_BASE) || 'assets/voice/' }) {
     this.game = game;
     this.sound = sound;           // voices share the game's volume control and limiter
     this.folder = folder;
@@ -40,8 +40,9 @@ export class Voice {
     this.started = 0;             // how many clips have been started (the tests read this)
     this.last = null;             // { speaker, file } of the most recent one
 
-    game.events.on('speech', ({ character, words }) => this.say(character, words));
-    game.events.on('messageBox', (box) => { if (box.speaker) this.say(box.speaker, box.words, REPRIMAND_DELAY); });
+    // (say() waits for files, so it answers with a promise; a failure there must never reach the game.)
+    game.events.on('speech', ({ character, words }) => { this.say(character, words).catch(() => {}); });
+    game.events.on('messageBox', (box) => { if (box.speaker) this.say(box.speaker, box.words, REPRIMAND_DELAY).catch(() => {}); });
     // Someone knocked flat stops talking mid-sentence.
     game.events.on('tick', () => { for (const p of this.playing.slice()) if (p.character.isKnockedOver()) this.stop(p); });
     game.events.on('start', () => this.hush());

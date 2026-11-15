@@ -14,6 +14,7 @@ import { Input, DEFAULT_BINDINGS } from './ui/input.js';
 import { HUD } from './ui/hud.js';
 import { Menu } from './ui/menu.js';
 import { Sound } from './ui/sound.js';
+import { Voice } from './ui/voice.js';
 import { TapeLoader } from './ui/tape-loader.js';
 import { measureText, fontHas } from './render/font.js';
 import { setupFeatures } from './features/index.js';
@@ -31,8 +32,8 @@ export const VIEW_PRESETS = {
   modern: { theme: 'modern', columns: CLOSE_COLUMNS, camera: 'close', smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: 'illustrated' },
 };
 
-const SETTINGS_VERSION = 7;      // 5: the map and radar switches; 6: aiming help; 7: atmosphere (defaults are filled in from DEFAULT_SETTINGS)
-const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, atmosphere: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+const SETTINGS_VERSION = 8;      // 5: the map and radar switches; 6: aiming help; 7: atmosphere; 8: voices (defaults are filled in from DEFAULT_SETTINGS)
+const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, atmosphere: true, voices: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
 
 // Settings saved by an older version of the game get the new keys filled in.
 function migrateSettings(s) {
@@ -70,6 +71,7 @@ export function boot() {
   const sound = new Sound();
   game.events.on('sound', (id) => sound.play(id));
   game.events.on('cupEmpty', () => sound.play('CUP_EMPTY'));   // a pellet rattling through a cup with nothing in it
+  const voice = new Voice({ game, sound });                     // the masters speak their lines (ui/voice.js)
   renderer.onFootstep = () => sound.step();
   // Pocket icons: the illustrated ones when that artwork is showing, pixel art otherwise.
   hud.setIconSource((id) => (settings.view !== 'original' && settings.artwork === 'illustrated' ? renderer.assets.iconUrl(id) : null));
@@ -122,6 +124,7 @@ export function boot() {
     game.measureText = spectrumFont ? originalMeasure : measureText;
     game.fontHas = spectrumFont ? originalFontHas : fontHas;
     sound.enabled = s.sound; sound.musicEnabled = s.music !== false;
+    voice.setEnabled(s.view !== 'original' && s.voices !== false);   // voices belong to the modern view only
     document.documentElement.classList.toggle('view-original', s.view === 'original');
     document.documentElement.classList.toggle('view-modern', s.view !== 'original');
     document.documentElement.classList.toggle('art-illustrated', s.view !== 'original' && s.artwork === 'illustrated');
@@ -192,7 +195,7 @@ export function boot() {
 
   // A hidden tab stops drawing (and so stops the game), but timers carry on:
   // hush the sound at once and let go of any held key.
-  document.addEventListener('visibilitychange', () => { if (document.hidden) { sound.setActive(false); input.held.clear(); } });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { sound.setActive(false); voice.hush(); input.held.clear(); } });
 
   // The loop
   let last = performance.now(), acc = 0;
@@ -200,6 +203,7 @@ export function boot() {
     const dt = Math.min(0.25, (now - last) / 1000);
     last = now;
     sound.setActive(!paused && !attract);
+    if (paused || attract) voice.hush();        // nobody talks over the menu
     if (!paused || attract) {
       acc += dt * (attract ? 1 : settings.speed);
       const step = 1 / game.config.ticksPerSecond;
@@ -213,7 +217,7 @@ export function boot() {
   requestAnimationFrame(frame);
 
   // Expose for the console and for tests.
-  window.bts = { game, renderer, hud, menu, settings, input, tapeLoader, sound };
+  window.bts = { game, renderer, hud, menu, settings, input, tapeLoader, sound, voice };
   return window.bts;
 }
 

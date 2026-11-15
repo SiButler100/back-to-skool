@@ -57,6 +57,7 @@ export class Sound {
     this.active = false;          // false while the game is paused or on the title screen
     this.outdoors = false;
     this.crowd = 0;               // 0..1: how many pupils are milling about near Eric
+    this.speaking = false;        // true while a voice clip is playing (ui/voice.js sets it): the tune is turned down
     this.ctx = null;
     this.musicAt = 0; this.musicIndex = 0;
     this.nextBird = 0;
@@ -159,7 +160,7 @@ export class Sound {
     const ctx = this.ctx;
     if (!ctx || ctx.state !== 'running') return;
     const now = ctx.currentTime;
-    const wantMusic = this.active && this.musicEnabled ? 0.16 : 0;
+    const wantMusic = this.active && this.musicEnabled ? (this.speaking ? 0.05 : 0.16) : 0;
     this.musicBus.gain.setTargetAtTime(wantMusic, now, 0.4);
     if (wantMusic) {
       if (this.musicAt < now) this.musicAt = now + 0.05;

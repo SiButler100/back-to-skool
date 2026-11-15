@@ -15,7 +15,7 @@
 // `ctx` gives you: game (state + events), renderer, hud (addPanel), input,
 // settings. Subscribe to events with ctx.game.events.on(name, fn):
 //   'tick' 'lesson' 'lines' 'linesTotal' 'score' 'decked' 'secret' 'found'
-//   'quest' 'cup' 'cupEmpty' 'door' 'inventory' 'start' 'gameOver' 'messageBox' 'sound'
+//   'quest' 'cup' 'cupEmpty' 'door' 'inventory' 'start' 'gameOver' 'messageBox' 'sound' 'speech'
 //
 // Register new features by importing them and adding to the list below.
 // ============================================================================

@@ -34,7 +34,9 @@ const js = readFileSync(bundlePath, 'utf8');
 // the assets/illustrated folder beside it, so it uses relative paths.
 const ART_BASE = 'https://sibutler100.github.io/back-to-skool/assets/illustrated/';
 const manifest = readFileSync(join(root, 'assets', 'illustrated', 'manifest.json'), 'utf8');
-const artPreamble = `<script>window.BTS_ART_BASE = ${JSON.stringify(ART_BASE)}; window.BTS_ART_MANIFEST = ${manifest.trim()};</script>`;
+// The voice clips are fetched the same way (assets/voice beside the artifact; the published site for the download).
+const VOICE_BASE = 'https://sibutler100.github.io/back-to-skool/assets/voice/';
+const artPreamble = `<script>window.BTS_ART_BASE = ${JSON.stringify(ART_BASE)}; window.BTS_VOICE_BASE = ${JSON.stringify(VOICE_BASE)}; window.BTS_ART_MANIFEST = ${manifest.trim()};</script>`;
 
 const single = html
   .replace('<link rel="stylesheet" href="styles.css">', `<style>\n${css}\n</style>`)

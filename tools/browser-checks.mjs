@@ -10,7 +10,7 @@
 //   node tools/browser-checks.mjs            run everything
 //   node tools/browser-checks.mjs controls   run only the sections named
 //
-// Sections: controls, screens, quest, builds.
+// Sections: controls, screens, quest, voices, builds.
 // It needs Playwright (not a dependency of the game itself). Exit code 0 means
 // every check passed.
 // ============================================================================
@@ -30,7 +30,7 @@ const only = process.argv.slice(2);
 const wanted = (name) => !only.length || only.includes(name);
 
 // ---- A tiny web server for the game's own folder -----------------------------
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.mp3': 'audio/mpeg' };
 const server = http.createServer((req, res) => {
   let url = decodeURIComponent(req.url.split('?')[0]).replace(/\/$/, '/index.html');
   // The artifact build is published as one page with the artwork beside it:
@@ -392,7 +392,7 @@ if (wanted('screens')) {
     await page.evaluate(() => localStorage.setItem('bts.settings', JSON.stringify({ view: 'modern', columns: 48, speed: 1, sound: true })));
     await page.reload(); await page.waitForFunction(() => window.bts); await page.waitForTimeout(600);
     const s = await page.evaluate(() => window.bts.settings);
-    check('Settings from before versions existed are brought up to date', s.settingsVersion >= 7 && s.camera === 'close' && s.columns === 32 && s.artwork === 'illustrated' && s.guides === true, JSON.stringify({ v: s.settingsVersion, camera: s.camera, columns: s.columns, artwork: s.artwork, guides: s.guides }));
+    check('Settings from before versions existed are brought up to date', s.settingsVersion >= 8 && s.voices === true && s.camera === 'close' && s.columns === 32 && s.artwork === 'illustrated' && s.guides === true, JSON.stringify({ v: s.settingsVersion, camera: s.camera, columns: s.columns, artwork: s.artwork, guides: s.guides }));
     await page.evaluate(() => localStorage.setItem('bts.settings', '{not json'));
     await page.reload(); await page.waitForFunction(() => window.bts); await page.waitForTimeout(600);
     check('Unreadable saved settings fall back to the defaults', (await page.evaluate(() => window.bts.settings.view)) === 'modern' && errors.length === 0, errors.join(' | '));
@@ -487,6 +487,91 @@ if (wanted('quest')) {
 }
 
 // =============================================================================
+// VOICES: the masters say their lines aloud (src/ui/voice.js, assets/voice/)
+// =============================================================================
+if (wanted('voices')) {
+  console.log('\n-- Voices --');
+  const { page, errors } = await openGame();
+  await quietSchool(page);
+  // Every request for a clip is noted, so the checks can see what was fetched.
+  const fetched = [];
+  page.on('request', (r) => { if (r.url().includes('/assets/voice/') && r.url().endsWith('.mp3')) fetched.push(r.url().split('/').pop()); });
+  // Stand a master beside Eric, in the picture, and have him speak or hand out lines.
+  const speak = async (id, words) => {
+    await page.evaluate(([id, words]) => {
+      const g = window.bts.game, c = g.cast.get(id), e = g.cast.eric;
+      c.x = e.x + 4; c.y = e.y; c.removeBubble();
+      c.say(words, -4);
+    }, [id, words]);
+    await page.waitForTimeout(900);
+    return page.evaluate(() => ({ started: window.bts.voice.started, last: window.bts.voice.last, playing: window.bts.voice.playing.length, speaking: window.bts.sound.speaking, ctx: window.bts.sound.ctx?.state }));
+  };
+  await put(page, 100, 17, 1);
+  await page.waitForTimeout(1500);          // the camera travels to Eric; a speaker must be in the picture to be heard
+  const before = await page.evaluate(() => window.bts.voice.started);
+
+  let v = await speak('WITHIT', 'START READING AT THE NEXT CHAPTER IN YOUR BOOKS');
+  check('A lesson line starts its clip, in the speaker\'s own voice', v.started === before + 1 && v.last?.speaker === 'WITHIT' && /^withit-\d+$/.test(v.last.file) && fetched.includes(`${v.last.file}.mp3`), JSON.stringify(v));
+  check('The tune is turned down while a master is talking', v.speaking === true && v.playing >= 1, JSON.stringify(v));
+
+  const manifest = await page.evaluate(() => window.bts.voice.manifest);
+  const count = Object.values(manifest || {}).reduce((n, m) => n + Object.keys(m).length, 0);
+  check('The manifest names a clip for every line (279 of them, for seven speakers)', count === 279 && Object.keys(manifest).length === 7, `${count} clips, ${Object.keys(manifest || {}).length} speakers`);
+
+  // A reprimand: the lines box says who is speaking, and the voice follows it.
+  await page.evaluate(() => { const g = window.bts.game, c = g.cast.get('WACKER'), e = g.cast.eric; c.x = e.x + 3; c.y = e.y; c.printLinesMessage('HERO', 'NO_HITTING'); });
+  await page.waitForTimeout(2500);
+  v = await page.evaluate(() => ({ started: window.bts.voice.started, last: window.bts.voice.last }));
+  const wanted19 = await page.evaluate(() => window.bts.voice.manifest.WACKER["DON'T HIT YOUR MATES"]);
+  check('A reprimand starts its clip when its box appears', v.last?.speaker === 'WACKER' && v.last.file === wanted19, JSON.stringify(v));
+
+  // Words nobody recorded: nothing plays, and nothing goes wrong.
+  let n = (await page.evaluate(() => window.bts.voice.started));
+  v = await speak('ROCKITT', 'THIS SENTENCE WAS NEVER RECORDED');
+  check('A sentence with no clip is silent and harmless', v.started === n && errors.length === 0, `${v.started - n} started ${errors.slice(0, 2).join(' | ')}`);
+
+  // A speaker out of the picture is not heard.
+  n = v.started;
+  await page.evaluate(() => { const g = window.bts.game, c = g.cast.get('CREAK'); c.x = (g.cast.eric.x + 90) % 190; c.removeBubble(); c.say('SIT DOWN YOU LITTLE ANARCHISTS', -4); });
+  await page.waitForTimeout(700);
+  check('A speaker out of the picture is not heard', (await page.evaluate(() => window.bts.voice.started)) === n);
+
+  // The switch in Options, and the 1985 view, both silence the voices.
+  await apply(page, { voices: false });
+  v = await speak('TAKE', 'SIT DOWN');
+  check('The Voices switch silences them', v.started === n && v.playing === 0, JSON.stringify(v));
+  await apply(page, { voices: true });
+  v = await speak('TAKE', 'SIT DOWN');
+  check('Switching Voices back on brings them back', v.started === n + 1 && v.last.speaker === 'TAKE', JSON.stringify(v));
+  n = v.started;
+  await apply(page, { view: 'original' });
+  v = await speak('WITHIT', 'SIT DOWN CHAPS');
+  check('The 1985 view has no voices', v.started === n, JSON.stringify(v));
+  await apply(page, { view: 'modern' });
+
+  // Pausing stops whoever is talking.
+  await speak('WACKER', "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE GOLDFISH");
+  await page.keyboard.press('Escape'); await page.waitForTimeout(400);
+  check('Pausing the game stops whoever is talking', (await page.evaluate(() => window.bts.voice.playing.length)) === 0);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(300);
+
+  // The game says the same words the clips were recorded for: a school day
+  // played fast, and every sentence anyone starts must be in the manifest.
+  const unknown = await page.evaluate(async () => {
+    const g = window.bts.game, key = (w) => String(w).replace(/\^/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
+    const m = window.bts.voice.manifest, missing = new Set(); let said = 0;
+    g.events.on('speech', ({ character, words }) => { said++; if (!(m[character.id] || {})[key(words)]) missing.add(`${character.id}: ${words}`); });
+    g.events.on('messageBox', (box) => { if (box.speaker) { said++; if (!(m[box.speaker.id] || {})[key(box.words)]) missing.add(`${box.speaker.id}: ${box.words}`); } });
+    g.start();
+    for (let i = 0; i < 30000; i++) { g.setVisibleColumns(0, 191); g.tick(); if (g.gameOver) g.start(); }
+    return { said, missing: [...missing] };
+  });
+  check('Everything said in a fast-forwarded stretch of school has a clip', unknown.said > 20 && unknown.missing.length === 0, `${unknown.said} sentences; missing: ${unknown.missing.slice(0, 4).join(' | ')}`);
+  check('No errors on the page while the voices ran', errors.length === 0, errors.slice(0, 3).join(' | '));
+  await page.close();
+}
+
+// =============================================================================
 // BUILDS: the single-file copies made by tools/build-single-file.mjs
 // =============================================================================
 if (wanted('builds')) {
@@ -499,9 +584,9 @@ if (wanted('builds')) {
     if (!booted) { check(`${label} starts`, false, errors.join(' | ')); await page.close(); continue; }
     await page.waitForFunction(() => window.bts.renderer.assets.ready || window.bts.renderer.assets.failed, null, { timeout: 30000 }).catch(() => {});
     await page.click('text=New game'); await page.waitForTimeout(3000);
-    const state = await page.evaluate(() => ({ ticks: window.bts.game.tickCount, art: window.bts.renderer.assets.ready, v: window.bts.settings.settingsVersion, guides: window.bts.settings.guides, hasGuide: Array.isArray(window.bts.renderer.guide) }));
+    const state = await page.evaluate(() => ({ ticks: window.bts.game.tickCount, art: window.bts.renderer.assets.ready, v: window.bts.settings.settingsVersion, guides: window.bts.settings.guides, voices: window.bts.settings.voices, hasGuide: Array.isArray(window.bts.renderer.guide) }));
     check(`${label} starts and runs`, state.ticks > 30 && errors.length === 0, `${state.ticks} ticks ${errors.slice(0, 2).join(' | ')}`);
-    check(`${label} is built from the current source`, state.v === 7 && state.guides === true && state.hasGuide, JSON.stringify(state));
+    check(`${label} is built from the current source`, state.v === 8 && state.voices === true && state.guides === true && state.hasGuide, JSON.stringify(state));
     if (wantArt) check(`${label} loads the illustrated artwork`, state.art === true);
     await page.close();
   }
