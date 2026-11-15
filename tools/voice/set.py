@@ -14,6 +14,8 @@ tools/voice/set-jobs.json so that no recording is ever paid for twice:
                                 its job stays on record under "discarded" and it can be requested afresh
     set.py first-phrase REC     keep only what a single recording says before its first pause (for a
                                 recording where the voice said the line and then added more)
+    set.py main-phrase REC      for a grouped recording where the voice added short sounds of its own
+                                around each line: keep only each line's one long stretch of speech
     set.py url URL [URL ...]    note where finished recordings can be fetched from (the job number is in the address)
     set.py fetch WORK           download finished recordings into WORK/raw, cut them into
                                 WORK/clips (tools/voice/cut.py), and check every clip's length
@@ -119,6 +121,12 @@ def first_phrase(rec):
     save(jobs)
 
 
+def main_phrase(rec):
+    data, by_id, jobs = load()
+    jobs['recordings'][rec]['main_phrase_only'] = True
+    save(jobs)
+
+
 def url(addresses):
     data, by_id, jobs = load()
     by_job = {entry['job']: entry for entry in jobs['recordings'].values()}
@@ -168,6 +176,15 @@ def fetch(work):
             elif not cut.cut(path, clips, rec['lines']):
                 bad.append((rec['id'], 'could not be cut'))
                 continue
+            elif entry.get('main_phrase_only'):
+                # The voice added short sounds of its own around each line. Keep,
+                # for each line, only its one long stretch of unbroken speech.
+                quiet, length = cut.quiet_stretches(path)
+                for (start, end), i in zip(cut.lines(path, len(rec['lines'])), rec['lines']):
+                    marks = [start] + [t for a, b in quiet if start < a and b < end for t in (a, b)] + [end]
+                    a, b = max(zip(marks[0::2], marks[1::2]), key=lambda stretch: stretch[1] - stretch[0])
+                    subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-ss', f'{max(0, a - cut.PAD):.3f}', '-to', f'{b + cut.PAD:.3f}',
+                                    '-i', path, '-ac', '1', '-ar', '22050', '-b:a', '48k', os.path.join(clips, i + '.mp3')], check=True)
         # Each clip should last about as long as its words take to say, and the
         # clips of one recording should all run at about the same pace (a clip
         # much slower or faster than its neighbours has probably been cut in the
@@ -225,6 +242,8 @@ if __name__ == '__main__':
         discard(sys.argv[2], sys.argv[3])
     elif command == 'first-phrase':
         first_phrase(sys.argv[2])
+    elif command == 'main-phrase':
+        main_phrase(sys.argv[2])
     elif command == 'url':
         url(sys.argv[2:])
     elif command == 'fetch':

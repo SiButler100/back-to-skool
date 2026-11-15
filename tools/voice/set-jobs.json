@@ -127,7 +127,8 @@
   },
   "creak-rec-07": {
    "job": "21ee8d31-48ed-4a19-a570-6244fc4d1b8e",
-   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_210416_21ee8d31-48ed-4a19-a570-6244fc4d1b8e.mp3"
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_210416_21ee8d31-48ed-4a19-a570-6244fc4d1b8e.mp3",
+   "main_phrase_only": true
   },
   "take-rec-01": {
    "job": "6a0bc540-39c7-48e9-bcd3-6ba2940517c9",
@@ -525,7 +526,8 @@
    "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_213444_5cca49af-8aec-4020-bd85-cbdaa236ece2.mp3"
   },
   "wacker-rec-07-5": {
-   "job": "b44a9f4f-17d0-4964-81a7-668d9c4c7094"
+   "job": "b44a9f4f-17d0-4964-81a7-668d9c4c7094",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_215925_b44a9f4f-17d0-4964-81a7-668d9c4c7094.mp3"
   }
  },
  "discarded": [

@@ -85,15 +85,15 @@ select:focus-visible, button:focus-visible, input:focus-visible{outline:2px soli
 
 <section class="scene"><div class="gutter">
   <div class="kicker">The full set is in the game</div>
-  <h1>Twenty clips for your ear</h1>
-  <p class="standfirst">All 279 lines are recorded and play in the game. Every clip was checked for its length and for being cut in the right place. Pronunciation is the one thing I cannot check, so here are twenty for you to judge.</p>
+  <h1>Twenty-five clips for your ear</h1>
+  <p class="standfirst">All 279 lines are recorded and play in the game. Every clip was checked for its length and for being cut in the right place. Pronunciation is the one thing I cannot check, so here are twenty-five for you to judge.</p>
   <p class="caption">Each line is written as it should be heard. Tick any clip that sounds wrong.</p>
 </div></section>
 
 <section class="scene"><div class="gutter">
   <div class="kicker">One</div>
-  <h2>Three to check first</h2>
-  <p>In these three recordings the voice said its line and then carried on with something I had not asked for. I kept only what came before the first pause. Each should be the whole line and nothing more.</p>
+  <h2>Eight to check first</h2>
+  <p>These are the clips my measurements doubted. In the first six the voice added something of its own around the line, and I kept only the line: each should be the whole line and nothing more. The seventh is slow, and may simply be slow. The eighth was said twice in its first recording and has been recorded again.</p>
   <div class="voices wide" id="trimmed"></div>
 </div></section>
 
@@ -118,7 +118,7 @@ select:focus-visible, button:focus-visible, input:focus-visible{outline:2px soli
 <footer class="shell"><div class="gutter"><span>Back to Skool remake · voice spot-check</span><span>Clips generated with Higgsfield Seed Audio</span></div></footer>
 
 <script>
-const TRIMMED = [["rockitt-024", "Mr Rockitt", "Where does a badger live?"], ["rockitt-025", "Mr Rockitt", "What lives in a set?"], ["creak-026", "Mr Creak", "When did Stephen become king?"]];
+const TRIMMED = [["rockitt-024", "Mr Rockitt", "Where does a badger live?"], ["rockitt-025", "Mr Rockitt", "What lives in a set?"], ["creak-026", "Mr Creak", "When did Stephen become king?"], ["creak-037", "Mr Creak", "Who became king in seventeen fourteen?"], ["creak-038", "Mr Creak", "When did Charles the First become king?"], ["creak-039", "Mr Creak", "Who became king in sixteen twenty-five?"], ["creak-020", "Mr Creak", "Sit down, you little anarchists."], ["wacker-046", "Mr Wacker", "You're all in detention until I find out who blew up the Latin master!"]];
 const RANDOM = [["wacker-050", "Mr Wacker", "You're all in detention until I find out who blew up the milk monitor!"], ["wacker-052", "Mr Wacker", "You're all in detention until I find out who is making rude phone calls to the goldfish!"], ["wacker-053", "Mr Wacker", "You're all in detention until I find out who is making rude phone calls to the school cat!"], ["wacker-085", "Mr Wacker", "You are not a bird, Eric. You're expelled!"], ["withit-016", "Mr Withit", "Get back to school!"], ["withit-024", "Mr Withit", "Where is Mount Kilimanjaro?"], ["withit-033", "Mr Withit", "What is the highest mountain in Peru?"], ["rockitt-026", "Mr Rockitt", "Where does a squirrel live?"], ["creak-012", "Mr Creak", "No catapults!"], ["creak-034", "Mr Creak", "When did Henry the Seventh become king?"], ["take-001", "Miss Take", "You are not allowed here!"], ["take-021", "Miss Take", "Start revising for your exams."], ["swot-004", "Einstein", "Please Sir, I cannot tell a lie. It was King Stephen."], ["swot-007", "Einstein", "Please Sir, I cannot tell a lie. It was in nineteen ten."], ["swot-025", "Einstein", "Please Sir, I cannot tell a lie. It is in Peru."], ["swot-036", "Einstein", "Please Sir, I cannot tell a lie. It is a squirrel."], ["albert-001", "Albert", "Mister Wacker! He's escaping!"]];
 const KEY = 'bts-spot-check';
 let state = { verdict: '', wrong: [] };
