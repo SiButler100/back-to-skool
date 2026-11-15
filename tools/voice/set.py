@@ -6,9 +6,13 @@ The recordings are made through Higgsfield by hand (a request per recording).
 This script does everything either side of that, and keeps a record in
 tools/voice/set-jobs.json so that no recording is ever paid for twice:
 
-    set.py todo                 recordings not yet requested, with the exact words to send
-    set.py record REC JOB       note the job number the moment a recording is requested
-    set.py url JOB URL          note where a finished recording can be fetched from
+    set.py batch N              the next N recordings not yet requested, as a ready-made request list
+                                (each is numbered by its place in lines.json)
+    set.py recorded JSON        note the job numbers that came back for a batch: [{"index":..,"job_id":..},..]
+    set.py record REC JOB       note one job number by the recording's name
+    set.py discard REC WHY      set a recording aside (it could not be cut cleanly, or its words changed);
+                                its job stays on record under "discarded" and it can be requested afresh
+    set.py url URL [URL ...]    note where finished recordings can be fetched from (the job number is in the address)
     set.py fetch WORK           download finished recordings into WORK/raw, cut them into
                                 WORK/clips (tools/voice/cut.py), and check every clip's length
     set.py install WORK         copy the checked clips into assets/voice/, evened out in
@@ -19,6 +23,7 @@ The list of lines and how they are grouped comes from tools/voice/lines.json
 """
 import json
 import os
+import re
 import subprocess
 import sys
 import urllib.request
@@ -62,13 +67,29 @@ def words_for(rec, by_id):
     return '\n\n'.join(by_id[i]['spoken'] for i in rec['lines'])
 
 
-def todo():
+def batch(n):
     data, by_id, jobs = load()
-    left = [r for r in data['recordings'] if r['id'] not in jobs['recordings']]
-    print(f'{len(left)} of {len(data["recordings"])} recordings not yet requested')
-    for r in left[:int(sys.argv[2]) if len(sys.argv) > 2 else 4]:
+    left = [(i, r) for i, r in enumerate(data['recordings']) if r['id'] not in jobs['recordings']]
+    requests = []
+    for i, r in left[:n]:
         name, voice, extra = CAST[r['speaker']]
-        print(json.dumps({'rec': r['id'], 'voice': name, 'voice_id': voice, **extra, 'prompt': words_for(r, by_id)}))
+        requests.append({'index': i, 'params': {'model': 'seed_audio', 'prompt': words_for(r, by_id), 'voice_type': 'preset', 'voice_id': voice,
+                                                'format': 'mp3', **extra, 'use_unlim': False}})
+    print(f'{len(left)} of {len(data["recordings"])} recordings not yet requested; next: {" ".join(r["id"] for i, r in left[:n])}', file=sys.stderr)
+    print(json.dumps(requests))
+
+
+def recorded(text):
+    data, by_id, jobs = load()
+    for item in json.loads(text):
+        rec = data['recordings'][item['index']]['id']
+        if rec in jobs['recordings'] and jobs['recordings'][rec]['job'] != item['job_id']:
+            sys.exit(f'{rec} already has job {jobs["recordings"][rec]["job"]}; not replaced')
+        jobs['recordings'][rec] = {'job': item['job_id']}
+    save(jobs)
+    waiting = [{'index': i, 'job_id': jobs['recordings'][r['id']]['job']} for i, r in enumerate(data['recordings'])
+               if r['id'] in jobs['recordings'] and 'url' not in jobs['recordings'][r['id']]]
+    print('waiting for:', json.dumps(waiting))
 
 
 def record(rec, job):
@@ -81,14 +102,24 @@ def record(rec, job):
     save(jobs)
 
 
-def url(job, address):
+def discard(rec, why):
     data, by_id, jobs = load()
-    for rec, entry in jobs['recordings'].items():
-        if entry['job'] == job:
-            entry['url'] = address
-            save(jobs)
-            return
-    sys.exit(f'no recording has job {job}')
+    entry = jobs['recordings'].pop(rec, None)
+    if not entry:
+        sys.exit(f'{rec} has no job on record')
+    jobs.setdefault('discarded', []).append({'recording': rec, **entry, 'why': why})
+    save(jobs)
+
+
+def url(addresses):
+    data, by_id, jobs = load()
+    by_job = {entry['job']: entry for entry in jobs['recordings'].values()}
+    for address in addresses:
+        job = re.search(r'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.mp3', address)
+        if not job or job.group(1) not in by_job:
+            sys.exit(f'no recording has the job in {address}')
+        by_job[job.group(1)]['url'] = address
+    save(jobs)
 
 
 def expected_seconds(spoken, slow):
@@ -125,11 +156,18 @@ def fetch(work):
             elif not cut.cut(path, clips, rec['lines']):
                 bad.append((rec['id'], 'could not be cut'))
                 continue
-        # Each clip should last about as long as its words take to say.
+        # Each clip should last about as long as its words take to say, and the
+        # clips of one recording should all run at about the same pace (a clip
+        # much slower or faster than its neighbours has probably been cut in the
+        # wrong place).
+        pace = {}
         for i in rec['lines']:
             took, want = clip_seconds(os.path.join(clips, i + '.mp3')), expected_seconds(by_id[i]['spoken'], rec['speaker'] == 'CREAK')
-            if took < want * 0.5 or took > want * 1.9:
-                bad.append((rec['id'], f'{i} lasts {took:.1f} s, expected about {want:.1f} s: "{by_id[i]["spoken"]}"'))
+            pace[i] = (took / want, took, want)
+        middle = sorted(p[0] for p in pace.values())[len(pace) // 2]
+        for i, (ratio, took, want) in pace.items():
+            if ratio < 0.5 or ratio > 1.9 or ratio < middle * 0.6 or ratio > middle * 1.6:
+                bad.append((rec['id'], f'{i} lasts {took:.1f} s, expected about {want * middle:.1f} s: "{by_id[i]["spoken"]}"'))
             else:
                 good += 1
     print(f'{good} clips cut and of a sensible length')
@@ -159,12 +197,16 @@ def install(work):
 
 if __name__ == '__main__':
     command = sys.argv[1] if len(sys.argv) > 1 else ''
-    if command == 'todo':
-        todo()
+    if command == 'batch':
+        batch(int(sys.argv[2]))
+    elif command == 'recorded':
+        recorded(sys.argv[2])
     elif command == 'record':
         record(sys.argv[2], sys.argv[3])
+    elif command == 'discard':
+        discard(sys.argv[2], sys.argv[3])
     elif command == 'url':
-        url(sys.argv[2], sys.argv[3])
+        url(sys.argv[2:])
     elif command == 'fetch':
         sys.exit(0 if fetch(sys.argv[2]) else 1)
     elif command == 'install':

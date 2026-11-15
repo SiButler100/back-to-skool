@@ -2,22 +2,55 @@
  "note": "Every Higgsfield recording made for the full set of voices: recording -> job number and where it was fetched from. Written as each is requested, so that none is ever made twice.",
  "recordings": {
   "wacker-rec-15": {
-   "job": "39c43cd3-4f0e-4f5c-9985-cc1c596af887"
+   "job": "39c43cd3-4f0e-4f5c-9985-cc1c596af887",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_161844_39c43cd3-4f0e-4f5c-9985-cc1c596af887.mp3"
   },
   "albert-rec-01": {
-   "job": "bfa15bb6-4312-4379-b82a-e15b4cc8efbb"
+   "job": "bfa15bb6-4312-4379-b82a-e15b4cc8efbb",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_161841_bfa15bb6-4312-4379-b82a-e15b4cc8efbb.mp3"
   },
   "wacker-rec-01": {
-   "job": "3c344e92-fd43-442c-9d35-fedbb99dbda1"
+   "job": "3c344e92-fd43-442c-9d35-fedbb99dbda1",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_172728_3c344e92-fd43-442c-9d35-fedbb99dbda1.mp3"
   },
   "wacker-rec-03": {
-   "job": "7e7ca3b5-f3e4-4bd0-a3b3-4d58211b367b"
+   "job": "7e7ca3b5-f3e4-4bd0-a3b3-4d58211b367b",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_172728_7e7ca3b5-f3e4-4bd0-a3b3-4d58211b367b.mp3"
   },
-  "creak-rec-01": {
-   "job": "7e07e135-6c7d-43d4-912e-4d3c8d70f811"
+  "swot-rec-51": {
+   "job": "ba89ffd3-0864-43b4-a24c-9c64e610af18"
   },
-  "swot-rec-01": {
-   "job": "d04b7b7d-9f96-4b0b-a074-2de1a41e4363"
+  "wacker-rec-02": {
+   "job": "d96a631a-bbb3-4ea3-a698-cc9d75c0e8ba"
+  },
+  "wacker-rec-04": {
+   "job": "84f9638e-ef86-490d-bc98-6110def2ebec"
+  },
+  "wacker-rec-05": {
+   "job": "622b1550-42db-45dc-8a25-907131f996c9"
+  },
+  "wacker-rec-06": {
+   "job": "fafa78db-1d45-40ba-8777-a1a3957d880c"
+  },
+  "wacker-rec-07": {
+   "job": "b23c7aa3-c93d-4ec6-9092-679c06b6b2fb"
+  },
+  "wacker-rec-08": {
+   "job": "8c7f4698-c64f-4aa9-98a6-0c82bc63f6f6"
   }
- }
+ },
+ "discarded": [
+  {
+   "recording": "swot-rec-01",
+   "job": "d04b7b7d-9f96-4b0b-a074-2de1a41e4363",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_172728_d04b7b7d-9f96-4b0b-a074-2de1a41e4363.mp3",
+   "why": "Seven of Einstein's answers in one recording: the pauses between lines were no longer than his commas, so it could not be cut. His lines are now recorded one at a time."
+  },
+  {
+   "recording": "creak-rec-01",
+   "job": "7e07e135-6c7d-43d4-912e-4d3c8d70f811",
+   "url": "https://d8j0ntlcm91z4.cloudfront.net/user_3FN7rrHe1dhT0xzyOzShOuDE5Ah/hf_20261115_172728_7e07e135-6c7d-43d4-912e-4d3c8d70f811.mp3",
+   "why": "Eight reprimands in Mr Creak's slowed voice: the comma in 'Come along, you monster' made a pause as long as the pauses between lines, so it could not be cut cleanly. Requested again without the comma."
+  }
+ ]
 }

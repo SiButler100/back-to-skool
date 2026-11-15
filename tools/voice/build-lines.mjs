@@ -59,9 +59,9 @@ function add(speaker, words, spoken, kind) {
 const GIVERS = ['WACKER', 'WITHIT', 'ROCKITT', 'CREAK', 'TAKE'];
 for (const giver of GIVERS) {
   for (const words of Object.values(MESSAGES.lines)) {
-    let spoken = tidy(sentence(words));
-    if (spoken === 'Come along you monster') spoken = 'Come along, you monster';
-    add(giver, words, `${spoken}!`, 'reprimand');
+    // (No comma in "Come along you monster": lines that share a recording are cut apart
+    // at the pauses between them, and a comma's pause can be as long as one of those.)
+    add(giver, words, `${tidy(sentence(words))}!`, 'reprimand');
   }
 }
 
@@ -70,7 +70,8 @@ const SIT = { 'SIT DOWN CHAPS': 'Sit down, chaps.', 'SIT DOWN MY CHERUBS': 'Sit 
 const LESSON = { 'START REVISING FOR YOUR EXAMS': 'Start revising for your exams.', 'START READING AT THE NEXT CHAPTER IN YOUR BOOKS': 'Start reading at the next chapter in your books.',
   "WRITE AN ESSAY TITLED 'WHY I LOVE SCHOOL'": 'Write an essay titled: Why I love school.' };
 for (const [teacher, list] of Object.entries(MESSAGES.sitDown)) {
-  for (const words of list) add(teacher, words, must(SIT, words), 'sit down');
+  // A greeting with a comma in it is recorded alone, so the comma can stay.
+  for (const words of list) add(teacher, words, must(SIT, words), must(SIT, words).includes(',') ? 'alone' : 'sit down');
   for (const words of MESSAGES.lesson) add(teacher, words, must(LESSON, words), 'lesson');
 }
 
@@ -78,36 +79,38 @@ for (const [teacher, list] of Object.entries(MESSAGES.sitDown)) {
 // Each teacher has two questions about each of eight pairs of facts. Einstein
 // always answers a master, so his "Please $TITLE" is "Please Sir".
 const expand = (template, a, b) => template.replace(/\$1/g, a).replace(/\$2/g, b).replace(/\$TITLE/g, 'Sir');
-const PLEASE = 'Please Sir, I cannot tell a lie,';
+// Everything Einstein says has two pauses inside it, so each of his lines is
+// recorded alone (kind 'alone' below) and nothing of his ever needs cutting.
+const PLEASE = 'Please Sir, I cannot tell a lie.';
 const READ = {
   CREAK: {
     Q1: ([king]) => `When did ${must(KINGS, king)} become king?`, Q2: ([, year]) => `Who became king in ${must(YEARS, year)}?`,
-    A1: ([, year]) => `${PLEASE} it was in ${must(YEARS, year)}.`, A2: ([king]) => `${PLEASE} it was King ${must(KINGS, king)}.`,
+    A1: ([, year]) => `${PLEASE} It was in ${must(YEARS, year)}.`, A2: ([king]) => `${PLEASE} It was King ${must(KINGS, king)}.`,
   },
   WITHIT: {
     Q1: ([mount]) => `Where is Mount ${must(MOUNTAINS, mount)}?`, Q2: ([, place]) => `What is the highest mountain in ${must(PLACES, place)}?`,
-    A1: ([, place]) => `${PLEASE} it is in ${must(PLACES, place)}.`, A2: ([mount]) => `${PLEASE} it is Mount ${must(MOUNTAINS, mount)}.`,
+    A1: ([, place]) => `${PLEASE} It is in ${must(PLACES, place)}.`, A2: ([mount]) => `${PLEASE} It is Mount ${must(MOUNTAINS, mount)}.`,
   },
   ROCKITT: {
     // The pairs carry their own "a" or "an": ' BADGER' gives "A BADGER", 'N EAGLE' gives "AN EAGLE".
     Q1: ([animal]) => `Where does a${animal.toLowerCase()} live?`, Q2: ([, home]) => `What lives in a${home.toLowerCase()}?`,
-    A1: ([, home]) => `${PLEASE} it is a${home.toLowerCase()}.`, A2: ([animal]) => `${PLEASE} it is a${animal.toLowerCase()}.`,
+    A1: ([, home]) => `${PLEASE} It is a${home.toLowerCase()}.`, A2: ([animal]) => `${PLEASE} It is a${animal.toLowerCase()}.`,
   },
 };
 for (const [teacher, spec] of Object.entries(MESSAGES.qa)) {
   for (const pair of spec.pairs) {
     for (const q of ['Q1', 'Q2']) {
       add(teacher, expand(spec.questions[q], ...pair), READ[teacher][q](pair), 'question');
-      add('SWOT', expand(spec.answers[q], ...pair), READ[teacher][q.replace('Q', 'A')](pair), 'answer');
+      add('SWOT', expand(spec.answers[q], ...pair), READ[teacher][q.replace('Q', 'A')](pair), 'alone');
     }
   }
 }
 
 // ---- Einstein telling tales ------------------------------------------------------
 const g = MESSAGES.grass;
-for (const id of g.hitters) add('SWOT', expand(g.hitTale, nameOf(id)), `${PLEASE} ${must(PUPILS, nameOf(id))} hit me.`, 'tale');
-for (const id of g.writers) add('SWOT', expand(g.writeTale, nameOf(id)), `${PLEASE} ${must(PUPILS, nameOf(id))} wrote on the blackboard.`, 'tale');
-add('SWOT', expand(g.absentTale.replace('$HERO', nameOf('HERO'))), `${PLEASE} Eric is not here.`, 'tale');
+for (const id of g.hitters) add('SWOT', expand(g.hitTale, nameOf(id)), `${PLEASE} ${must(PUPILS, nameOf(id))} hit me.`, 'alone');
+for (const id of g.writers) add('SWOT', expand(g.writeTale, nameOf(id)), `${PLEASE} ${must(PUPILS, nameOf(id))} wrote on the blackboard.`, 'alone');
+add('SWOT', expand(g.absentTale.replace('$HERO', nameOf('HERO'))), `${PLEASE} Eric is not here.`, 'alone');
 
 // ---- Mr Wacker at assembly: every verb with every noun -------------------------------
 for (const verb of MESSAGES.assembly.VERB) {
@@ -117,7 +120,7 @@ for (const verb of MESSAGES.assembly.VERB) {
   }
 }
 
-// ---- Expulsions and the alarm: these have a pause inside them, so each is recorded alone ---
+// ---- Expulsions and the alarm: these too have a pause inside them, so each is recorded alone ---
 add('WACKER', MESSAGES.expelled.tooManyLines.replace('$HERO', 'ERIC'), "You have ten thousand lines, Eric. You're expelled!", 'alone');
 add('WACKER', MESSAGES.expelled.notABird.replace('$HERO', 'ERIC'), "You are not a bird, Eric. You're expelled!", 'alone');
 add('ALBERT', MESSAGES.escaping.replace('$WACKER', nameOf('WACKER')), "Mister Wacker! He's escaping!", 'alone');

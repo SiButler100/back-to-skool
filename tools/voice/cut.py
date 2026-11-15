@@ -22,10 +22,10 @@ import re
 import subprocess
 import sys
 
-PAUSE = 0.6          # seconds of quiet that count as "between lines"
+PAUSE = 0.45         # the shortest quiet that can count as "between lines"
 QUIET = '-38dB'      # how quiet counts as quiet
 PAD = 0.07           # seconds of the pause kept either side of each line, so nothing is clipped
-MARGIN = 1.25        # a pause between lines must be this many times longer than any pause inside a line
+MARGIN = 1.3         # a pause between lines must be this many times longer than any pause inside a line
 
 
 def quiet_stretches(path):
