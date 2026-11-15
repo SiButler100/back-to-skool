@@ -1,0 +1,23 @@
+{
+ "note": "Every Higgsfield recording made for the full set of voices: recording -> job number and where it was fetched from. Written as each is requested, so that none is ever made twice.",
+ "recordings": {
+  "wacker-rec-15": {
+   "job": "39c43cd3-4f0e-4f5c-9985-cc1c596af887"
+  },
+  "albert-rec-01": {
+   "job": "bfa15bb6-4312-4379-b82a-e15b4cc8efbb"
+  },
+  "wacker-rec-01": {
+   "job": "3c344e92-fd43-442c-9d35-fedbb99dbda1"
+  },
+  "wacker-rec-03": {
+   "job": "7e7ca3b5-f3e4-4bd0-a3b3-4d58211b367b"
+  },
+  "creak-rec-01": {
+   "job": "7e07e135-6c7d-43d4-912e-4d3c8d70f811"
+  },
+  "swot-rec-01": {
+   "job": "d04b7b7d-9f96-4b0b-a074-2de1a41e4363"
+  }
+ }
+}

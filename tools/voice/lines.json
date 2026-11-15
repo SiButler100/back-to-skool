@@ -1,0 +1,2491 @@
+{
+ "note": "Made by tools/voice/build-lines.mjs from src/data/messages.js. Do not edit by hand.",
+ "lines": [
+  {
+   "id": "wacker-001",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "YOU ARE NOT ALLOWED HERE",
+   "spoken": "You are not allowed here!"
+  },
+  {
+   "id": "wacker-002",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "GET ALONG NOW",
+   "spoken": "Get along now!"
+  },
+  {
+   "id": "wacker-003",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "NOW SIT DOWN",
+   "spoken": "Now sit down!"
+  },
+  {
+   "id": "wacker-004",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "GET OFF THE FLOOR",
+   "spoken": "Get off the floor!"
+  },
+  {
+   "id": "wacker-005",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "COME ALONG YOU MONSTER",
+   "spoken": "Come along, you monster!"
+  },
+  {
+   "id": "wacker-006",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "DON'T KEEP ME WAITING",
+   "spoken": "Don't keep me waiting!"
+  },
+  {
+   "id": "wacker-007",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "NOW DON'T DO IT AGAIN",
+   "spoken": "Now don't do it again!"
+  },
+  {
+   "id": "wacker-008",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "DON'T TELL TALES",
+   "spoken": "Don't tell tales!"
+  },
+  {
+   "id": "wacker-009",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "DON'T BE LATE AGAIN",
+   "spoken": "Don't be late again!"
+  },
+  {
+   "id": "wacker-010",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "STAY TILL I DISMISS YOU",
+   "spoken": "Stay till I dismiss you!"
+  },
+  {
+   "id": "wacker-011",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "DON'T TOUCH BLACKBOARDS",
+   "spoken": "Don't touch blackboards!"
+  },
+  {
+   "id": "wacker-012",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "NO CATAPULTS",
+   "spoken": "No catapults!"
+  },
+  {
+   "id": "wacker-013",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "DON'T HIT YOUR MATES",
+   "spoken": "Don't hit your mates!"
+  },
+  {
+   "id": "wacker-014",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "GET OFF THE PLANTS",
+   "spoken": "Get off the plants!"
+  },
+  {
+   "id": "wacker-015",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "DON'T RIDE BIKES IN HERE",
+   "spoken": "Don't ride bikes in here!"
+  },
+  {
+   "id": "wacker-016",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "GET BACK TO SCHOOL",
+   "spoken": "Get back to school!"
+  },
+  {
+   "id": "wacker-017",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "SIT FACING THE STAGE",
+   "spoken": "Sit facing the stage!"
+  },
+  {
+   "id": "wacker-018",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "NO STINKBOMBS",
+   "spoken": "No stinkbombs!"
+  },
+  {
+   "id": "wacker-019",
+   "speaker": "WACKER",
+   "kind": "reprimand",
+   "key": "NO WATERPISTOLS",
+   "spoken": "No water pistols!"
+  },
+  {
+   "id": "withit-001",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "YOU ARE NOT ALLOWED HERE",
+   "spoken": "You are not allowed here!"
+  },
+  {
+   "id": "withit-002",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "GET ALONG NOW",
+   "spoken": "Get along now!"
+  },
+  {
+   "id": "withit-003",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "NOW SIT DOWN",
+   "spoken": "Now sit down!"
+  },
+  {
+   "id": "withit-004",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "GET OFF THE FLOOR",
+   "spoken": "Get off the floor!"
+  },
+  {
+   "id": "withit-005",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "COME ALONG YOU MONSTER",
+   "spoken": "Come along, you monster!"
+  },
+  {
+   "id": "withit-006",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "DON'T KEEP ME WAITING",
+   "spoken": "Don't keep me waiting!"
+  },
+  {
+   "id": "withit-007",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "NOW DON'T DO IT AGAIN",
+   "spoken": "Now don't do it again!"
+  },
+  {
+   "id": "withit-008",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "DON'T TELL TALES",
+   "spoken": "Don't tell tales!"
+  },
+  {
+   "id": "withit-009",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "DON'T BE LATE AGAIN",
+   "spoken": "Don't be late again!"
+  },
+  {
+   "id": "withit-010",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "STAY TILL I DISMISS YOU",
+   "spoken": "Stay till I dismiss you!"
+  },
+  {
+   "id": "withit-011",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "DON'T TOUCH BLACKBOARDS",
+   "spoken": "Don't touch blackboards!"
+  },
+  {
+   "id": "withit-012",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "NO CATAPULTS",
+   "spoken": "No catapults!"
+  },
+  {
+   "id": "withit-013",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "DON'T HIT YOUR MATES",
+   "spoken": "Don't hit your mates!"
+  },
+  {
+   "id": "withit-014",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "GET OFF THE PLANTS",
+   "spoken": "Get off the plants!"
+  },
+  {
+   "id": "withit-015",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "DON'T RIDE BIKES IN HERE",
+   "spoken": "Don't ride bikes in here!"
+  },
+  {
+   "id": "withit-016",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "GET BACK TO SCHOOL",
+   "spoken": "Get back to school!"
+  },
+  {
+   "id": "withit-017",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "SIT FACING THE STAGE",
+   "spoken": "Sit facing the stage!"
+  },
+  {
+   "id": "withit-018",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "NO STINKBOMBS",
+   "spoken": "No stinkbombs!"
+  },
+  {
+   "id": "withit-019",
+   "speaker": "WITHIT",
+   "kind": "reprimand",
+   "key": "NO WATERPISTOLS",
+   "spoken": "No water pistols!"
+  },
+  {
+   "id": "rockitt-001",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "YOU ARE NOT ALLOWED HERE",
+   "spoken": "You are not allowed here!"
+  },
+  {
+   "id": "rockitt-002",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "GET ALONG NOW",
+   "spoken": "Get along now!"
+  },
+  {
+   "id": "rockitt-003",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "NOW SIT DOWN",
+   "spoken": "Now sit down!"
+  },
+  {
+   "id": "rockitt-004",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "GET OFF THE FLOOR",
+   "spoken": "Get off the floor!"
+  },
+  {
+   "id": "rockitt-005",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "COME ALONG YOU MONSTER",
+   "spoken": "Come along, you monster!"
+  },
+  {
+   "id": "rockitt-006",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "DON'T KEEP ME WAITING",
+   "spoken": "Don't keep me waiting!"
+  },
+  {
+   "id": "rockitt-007",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "NOW DON'T DO IT AGAIN",
+   "spoken": "Now don't do it again!"
+  },
+  {
+   "id": "rockitt-008",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "DON'T TELL TALES",
+   "spoken": "Don't tell tales!"
+  },
+  {
+   "id": "rockitt-009",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "DON'T BE LATE AGAIN",
+   "spoken": "Don't be late again!"
+  },
+  {
+   "id": "rockitt-010",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "STAY TILL I DISMISS YOU",
+   "spoken": "Stay till I dismiss you!"
+  },
+  {
+   "id": "rockitt-011",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "DON'T TOUCH BLACKBOARDS",
+   "spoken": "Don't touch blackboards!"
+  },
+  {
+   "id": "rockitt-012",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "NO CATAPULTS",
+   "spoken": "No catapults!"
+  },
+  {
+   "id": "rockitt-013",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "DON'T HIT YOUR MATES",
+   "spoken": "Don't hit your mates!"
+  },
+  {
+   "id": "rockitt-014",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "GET OFF THE PLANTS",
+   "spoken": "Get off the plants!"
+  },
+  {
+   "id": "rockitt-015",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "DON'T RIDE BIKES IN HERE",
+   "spoken": "Don't ride bikes in here!"
+  },
+  {
+   "id": "rockitt-016",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "GET BACK TO SCHOOL",
+   "spoken": "Get back to school!"
+  },
+  {
+   "id": "rockitt-017",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "SIT FACING THE STAGE",
+   "spoken": "Sit facing the stage!"
+  },
+  {
+   "id": "rockitt-018",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "NO STINKBOMBS",
+   "spoken": "No stinkbombs!"
+  },
+  {
+   "id": "rockitt-019",
+   "speaker": "ROCKITT",
+   "kind": "reprimand",
+   "key": "NO WATERPISTOLS",
+   "spoken": "No water pistols!"
+  },
+  {
+   "id": "creak-001",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "YOU ARE NOT ALLOWED HERE",
+   "spoken": "You are not allowed here!"
+  },
+  {
+   "id": "creak-002",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "GET ALONG NOW",
+   "spoken": "Get along now!"
+  },
+  {
+   "id": "creak-003",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "NOW SIT DOWN",
+   "spoken": "Now sit down!"
+  },
+  {
+   "id": "creak-004",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "GET OFF THE FLOOR",
+   "spoken": "Get off the floor!"
+  },
+  {
+   "id": "creak-005",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "COME ALONG YOU MONSTER",
+   "spoken": "Come along, you monster!"
+  },
+  {
+   "id": "creak-006",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "DON'T KEEP ME WAITING",
+   "spoken": "Don't keep me waiting!"
+  },
+  {
+   "id": "creak-007",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "NOW DON'T DO IT AGAIN",
+   "spoken": "Now don't do it again!"
+  },
+  {
+   "id": "creak-008",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "DON'T TELL TALES",
+   "spoken": "Don't tell tales!"
+  },
+  {
+   "id": "creak-009",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "DON'T BE LATE AGAIN",
+   "spoken": "Don't be late again!"
+  },
+  {
+   "id": "creak-010",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "STAY TILL I DISMISS YOU",
+   "spoken": "Stay till I dismiss you!"
+  },
+  {
+   "id": "creak-011",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "DON'T TOUCH BLACKBOARDS",
+   "spoken": "Don't touch blackboards!"
+  },
+  {
+   "id": "creak-012",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "NO CATAPULTS",
+   "spoken": "No catapults!"
+  },
+  {
+   "id": "creak-013",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "DON'T HIT YOUR MATES",
+   "spoken": "Don't hit your mates!"
+  },
+  {
+   "id": "creak-014",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "GET OFF THE PLANTS",
+   "spoken": "Get off the plants!"
+  },
+  {
+   "id": "creak-015",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "DON'T RIDE BIKES IN HERE",
+   "spoken": "Don't ride bikes in here!"
+  },
+  {
+   "id": "creak-016",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "GET BACK TO SCHOOL",
+   "spoken": "Get back to school!"
+  },
+  {
+   "id": "creak-017",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "SIT FACING THE STAGE",
+   "spoken": "Sit facing the stage!"
+  },
+  {
+   "id": "creak-018",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "NO STINKBOMBS",
+   "spoken": "No stinkbombs!"
+  },
+  {
+   "id": "creak-019",
+   "speaker": "CREAK",
+   "kind": "reprimand",
+   "key": "NO WATERPISTOLS",
+   "spoken": "No water pistols!"
+  },
+  {
+   "id": "take-001",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "YOU ARE NOT ALLOWED HERE",
+   "spoken": "You are not allowed here!"
+  },
+  {
+   "id": "take-002",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "GET ALONG NOW",
+   "spoken": "Get along now!"
+  },
+  {
+   "id": "take-003",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "NOW SIT DOWN",
+   "spoken": "Now sit down!"
+  },
+  {
+   "id": "take-004",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "GET OFF THE FLOOR",
+   "spoken": "Get off the floor!"
+  },
+  {
+   "id": "take-005",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "COME ALONG YOU MONSTER",
+   "spoken": "Come along, you monster!"
+  },
+  {
+   "id": "take-006",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "DON'T KEEP ME WAITING",
+   "spoken": "Don't keep me waiting!"
+  },
+  {
+   "id": "take-007",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "NOW DON'T DO IT AGAIN",
+   "spoken": "Now don't do it again!"
+  },
+  {
+   "id": "take-008",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "DON'T TELL TALES",
+   "spoken": "Don't tell tales!"
+  },
+  {
+   "id": "take-009",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "DON'T BE LATE AGAIN",
+   "spoken": "Don't be late again!"
+  },
+  {
+   "id": "take-010",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "STAY TILL I DISMISS YOU",
+   "spoken": "Stay till I dismiss you!"
+  },
+  {
+   "id": "take-011",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "DON'T TOUCH BLACKBOARDS",
+   "spoken": "Don't touch blackboards!"
+  },
+  {
+   "id": "take-012",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "NO CATAPULTS",
+   "spoken": "No catapults!"
+  },
+  {
+   "id": "take-013",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "DON'T HIT YOUR MATES",
+   "spoken": "Don't hit your mates!"
+  },
+  {
+   "id": "take-014",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "GET OFF THE PLANTS",
+   "spoken": "Get off the plants!"
+  },
+  {
+   "id": "take-015",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "DON'T RIDE BIKES IN HERE",
+   "spoken": "Don't ride bikes in here!"
+  },
+  {
+   "id": "take-016",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "GET BACK TO SCHOOL",
+   "spoken": "Get back to school!"
+  },
+  {
+   "id": "take-017",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "SIT FACING THE STAGE",
+   "spoken": "Sit facing the stage!"
+  },
+  {
+   "id": "take-018",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "NO STINKBOMBS",
+   "spoken": "No stinkbombs!"
+  },
+  {
+   "id": "take-019",
+   "speaker": "TAKE",
+   "kind": "reprimand",
+   "key": "NO WATERPISTOLS",
+   "spoken": "No water pistols!"
+  },
+  {
+   "id": "withit-020",
+   "speaker": "WITHIT",
+   "kind": "sit down",
+   "key": "SIT DOWN CHAPS",
+   "spoken": "Sit down, chaps."
+  },
+  {
+   "id": "withit-021",
+   "speaker": "WITHIT",
+   "kind": "lesson",
+   "key": "START REVISING FOR YOUR EXAMS",
+   "spoken": "Start revising for your exams."
+  },
+  {
+   "id": "withit-022",
+   "speaker": "WITHIT",
+   "kind": "lesson",
+   "key": "START READING AT THE NEXT CHAPTER IN YOUR BOOKS",
+   "spoken": "Start reading at the next chapter in your books."
+  },
+  {
+   "id": "withit-023",
+   "speaker": "WITHIT",
+   "kind": "lesson",
+   "key": "WRITE AN ESSAY TITLED 'WHY I LOVE SCHOOL'",
+   "spoken": "Write an essay titled: Why I love school."
+  },
+  {
+   "id": "rockitt-020",
+   "speaker": "ROCKITT",
+   "kind": "sit down",
+   "key": "SIT DOWN MY CHERUBS",
+   "spoken": "Sit down, my cherubs."
+  },
+  {
+   "id": "rockitt-021",
+   "speaker": "ROCKITT",
+   "kind": "lesson",
+   "key": "START REVISING FOR YOUR EXAMS",
+   "spoken": "Start revising for your exams."
+  },
+  {
+   "id": "rockitt-022",
+   "speaker": "ROCKITT",
+   "kind": "lesson",
+   "key": "START READING AT THE NEXT CHAPTER IN YOUR BOOKS",
+   "spoken": "Start reading at the next chapter in your books."
+  },
+  {
+   "id": "rockitt-023",
+   "speaker": "ROCKITT",
+   "kind": "lesson",
+   "key": "WRITE AN ESSAY TITLED 'WHY I LOVE SCHOOL'",
+   "spoken": "Write an essay titled: Why I love school."
+  },
+  {
+   "id": "creak-020",
+   "speaker": "CREAK",
+   "kind": "sit down",
+   "key": "SIT DOWN YOU LITTLE ANARCHISTS",
+   "spoken": "Sit down, you little anarchists."
+  },
+  {
+   "id": "creak-021",
+   "speaker": "CREAK",
+   "kind": "lesson",
+   "key": "START REVISING FOR YOUR EXAMS",
+   "spoken": "Start revising for your exams."
+  },
+  {
+   "id": "creak-022",
+   "speaker": "CREAK",
+   "kind": "lesson",
+   "key": "START READING AT THE NEXT CHAPTER IN YOUR BOOKS",
+   "spoken": "Start reading at the next chapter in your books."
+  },
+  {
+   "id": "creak-023",
+   "speaker": "CREAK",
+   "kind": "lesson",
+   "key": "WRITE AN ESSAY TITLED 'WHY I LOVE SCHOOL'",
+   "spoken": "Write an essay titled: Why I love school."
+  },
+  {
+   "id": "take-020",
+   "speaker": "TAKE",
+   "kind": "sit down",
+   "key": "SIT DOWN",
+   "spoken": "Sit down."
+  },
+  {
+   "id": "take-021",
+   "speaker": "TAKE",
+   "kind": "lesson",
+   "key": "START REVISING FOR YOUR EXAMS",
+   "spoken": "Start revising for your exams."
+  },
+  {
+   "id": "take-022",
+   "speaker": "TAKE",
+   "kind": "lesson",
+   "key": "START READING AT THE NEXT CHAPTER IN YOUR BOOKS",
+   "spoken": "Start reading at the next chapter in your books."
+  },
+  {
+   "id": "take-023",
+   "speaker": "TAKE",
+   "kind": "lesson",
+   "key": "WRITE AN ESSAY TITLED 'WHY I LOVE SCHOOL'",
+   "spoken": "Write an essay titled: Why I love school."
+  },
+  {
+   "id": "creak-024",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID JOHN BECOME KING?",
+   "spoken": "When did John become king?"
+  },
+  {
+   "id": "swot-001",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1199",
+   "spoken": "Please Sir, I cannot tell a lie, it was in eleven ninety-nine."
+  },
+  {
+   "id": "creak-025",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1199?",
+   "spoken": "Who became king in eleven ninety-nine?"
+  },
+  {
+   "id": "swot-002",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING JOHN",
+   "spoken": "Please Sir, I cannot tell a lie, it was King John."
+  },
+  {
+   "id": "creak-026",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID STEPHEN BECOME KING?",
+   "spoken": "When did Stephen become king?"
+  },
+  {
+   "id": "swot-003",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1135",
+   "spoken": "Please Sir, I cannot tell a lie, it was in eleven thirty-five."
+  },
+  {
+   "id": "creak-027",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1135?",
+   "spoken": "Who became king in eleven thirty-five?"
+  },
+  {
+   "id": "swot-004",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING STEPHEN",
+   "spoken": "Please Sir, I cannot tell a lie, it was King Stephen."
+  },
+  {
+   "id": "creak-028",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID JAMES I BECOME KING?",
+   "spoken": "When did James the First become king?"
+  },
+  {
+   "id": "swot-005",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1603",
+   "spoken": "Please Sir, I cannot tell a lie, it was in sixteen oh three."
+  },
+  {
+   "id": "creak-029",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1603?",
+   "spoken": "Who became king in sixteen oh three?"
+  },
+  {
+   "id": "swot-006",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING JAMES I",
+   "spoken": "Please Sir, I cannot tell a lie, it was King James the First."
+  },
+  {
+   "id": "creak-030",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID GEORGE V BECOME KING?",
+   "spoken": "When did George the Fifth become king?"
+  },
+  {
+   "id": "swot-007",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1910",
+   "spoken": "Please Sir, I cannot tell a lie, it was in nineteen ten."
+  },
+  {
+   "id": "creak-031",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1910?",
+   "spoken": "Who became king in nineteen ten?"
+  },
+  {
+   "id": "swot-008",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING GEORGE V",
+   "spoken": "Please Sir, I cannot tell a lie, it was King George the Fifth."
+  },
+  {
+   "id": "creak-032",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID HENRY V BECOME KING?",
+   "spoken": "When did Henry the Fifth become king?"
+  },
+  {
+   "id": "swot-009",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1413",
+   "spoken": "Please Sir, I cannot tell a lie, it was in fourteen thirteen."
+  },
+  {
+   "id": "creak-033",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1413?",
+   "spoken": "Who became king in fourteen thirteen?"
+  },
+  {
+   "id": "swot-010",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING HENRY V",
+   "spoken": "Please Sir, I cannot tell a lie, it was King Henry the Fifth."
+  },
+  {
+   "id": "creak-034",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID HENRY VII BECOME KING?",
+   "spoken": "When did Henry the Seventh become king?"
+  },
+  {
+   "id": "swot-011",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1485",
+   "spoken": "Please Sir, I cannot tell a lie, it was in fourteen eighty-five."
+  },
+  {
+   "id": "creak-035",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1485?",
+   "spoken": "Who became king in fourteen eighty-five?"
+  },
+  {
+   "id": "swot-012",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING HENRY VII",
+   "spoken": "Please Sir, I cannot tell a lie, it was King Henry the Seventh."
+  },
+  {
+   "id": "creak-036",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID GEORGE I BECOME KING?",
+   "spoken": "When did George the First become king?"
+  },
+  {
+   "id": "swot-013",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1714",
+   "spoken": "Please Sir, I cannot tell a lie, it was in seventeen fourteen."
+  },
+  {
+   "id": "creak-037",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1714?",
+   "spoken": "Who became king in seventeen fourteen?"
+  },
+  {
+   "id": "swot-014",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING GEORGE I",
+   "spoken": "Please Sir, I cannot tell a lie, it was King George the First."
+  },
+  {
+   "id": "creak-038",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHEN DID CHARLES I BECOME KING?",
+   "spoken": "When did Charles the First become king?"
+  },
+  {
+   "id": "swot-015",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS IN 1625",
+   "spoken": "Please Sir, I cannot tell a lie, it was in sixteen twenty-five."
+  },
+  {
+   "id": "creak-039",
+   "speaker": "CREAK",
+   "kind": "question",
+   "key": "WHO BECAME KING IN 1625?",
+   "spoken": "Who became king in sixteen twenty-five?"
+  },
+  {
+   "id": "swot-016",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT WAS KING CHARLES I",
+   "spoken": "Please Sir, I cannot tell a lie, it was King Charles the First."
+  },
+  {
+   "id": "withit-024",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. KILIMANJARO?",
+   "spoken": "Where is Mount Kilimanjaro?"
+  },
+  {
+   "id": "swot-017",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN TANZANIA",
+   "spoken": "Please Sir, I cannot tell a lie, it is in Tanzania."
+  },
+  {
+   "id": "withit-025",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN TANZANIA?",
+   "spoken": "What is the highest mountain in Tanzania?"
+  },
+  {
+   "id": "swot-018",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. KILIMANJARO",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount Kilimanjaro."
+  },
+  {
+   "id": "withit-026",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. KOSCIUSKO?",
+   "spoken": "Where is Mount Kosciusko?"
+  },
+  {
+   "id": "swot-019",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN AUSTRALIA",
+   "spoken": "Please Sir, I cannot tell a lie, it is in Australia."
+  },
+  {
+   "id": "withit-027",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN AUSTRALIA?",
+   "spoken": "What is the highest mountain in Australia?"
+  },
+  {
+   "id": "swot-020",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. KOSCIUSKO",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount Kosciusko."
+  },
+  {
+   "id": "withit-028",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. MCKINLEY?",
+   "spoken": "Where is Mount McKinley?"
+  },
+  {
+   "id": "swot-021",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN ALASKA",
+   "spoken": "Please Sir, I cannot tell a lie, it is in Alaska."
+  },
+  {
+   "id": "withit-029",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN ALASKA?",
+   "spoken": "What is the highest mountain in Alaska?"
+  },
+  {
+   "id": "swot-022",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. MCKINLEY",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount McKinley."
+  },
+  {
+   "id": "withit-030",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. KOMMUNISMA?",
+   "spoken": "Where is Mount Kommunisma?"
+  },
+  {
+   "id": "swot-023",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN THE USSR",
+   "spoken": "Please Sir, I cannot tell a lie, it is in the U S S R."
+  },
+  {
+   "id": "withit-031",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN THE USSR?",
+   "spoken": "What is the highest mountain in the U S S R?"
+  },
+  {
+   "id": "swot-024",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. KOMMUNISMA",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount Kommunisma."
+  },
+  {
+   "id": "withit-032",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. HUASCARAN?",
+   "spoken": "Where is Mount Huascaran?"
+  },
+  {
+   "id": "swot-025",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN PERU",
+   "spoken": "Please Sir, I cannot tell a lie, it is in Peru."
+  },
+  {
+   "id": "withit-033",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN PERU?",
+   "spoken": "What is the highest mountain in Peru?"
+  },
+  {
+   "id": "swot-026",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. HUASCARAN",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount Huascaran."
+  },
+  {
+   "id": "withit-034",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. SAJAMA?",
+   "spoken": "Where is Mount Sajama?"
+  },
+  {
+   "id": "swot-027",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN BOLIVIA",
+   "spoken": "Please Sir, I cannot tell a lie, it is in Bolivia."
+  },
+  {
+   "id": "withit-035",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN BOLIVIA?",
+   "spoken": "What is the highest mountain in Bolivia?"
+  },
+  {
+   "id": "swot-028",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. SAJAMA",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount Sajama."
+  },
+  {
+   "id": "withit-036",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. COOK?",
+   "spoken": "Where is Mount Cook?"
+  },
+  {
+   "id": "swot-029",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN NEW ZEALAND",
+   "spoken": "Please Sir, I cannot tell a lie, it is in New Zealand."
+  },
+  {
+   "id": "withit-037",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN NEW ZEALAND?",
+   "spoken": "What is the highest mountain in New Zealand?"
+  },
+  {
+   "id": "swot-030",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. COOK",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount Cook."
+  },
+  {
+   "id": "withit-038",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHERE IS MT. SNOWDON?",
+   "spoken": "Where is Mount Snowdon?"
+  },
+  {
+   "id": "swot-031",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS IN WALES",
+   "spoken": "Please Sir, I cannot tell a lie, it is in Wales."
+  },
+  {
+   "id": "withit-039",
+   "speaker": "WITHIT",
+   "kind": "question",
+   "key": "WHAT IS THE HIGHEST MOUNTAIN IN WALES?",
+   "spoken": "What is the highest mountain in Wales?"
+  },
+  {
+   "id": "swot-032",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS MT. SNOWDON",
+   "spoken": "Please Sir, I cannot tell a lie, it is Mount Snowdon."
+  },
+  {
+   "id": "rockitt-024",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES A BADGER LIVE?",
+   "spoken": "Where does a badger live?"
+  },
+  {
+   "id": "swot-033",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A SET",
+   "spoken": "Please Sir, I cannot tell a lie, it is a set."
+  },
+  {
+   "id": "rockitt-025",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN A SET?",
+   "spoken": "What lives in a set?"
+  },
+  {
+   "id": "swot-034",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A BADGER",
+   "spoken": "Please Sir, I cannot tell a lie, it is a badger."
+  },
+  {
+   "id": "rockitt-026",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES A SQUIRREL LIVE?",
+   "spoken": "Where does a squirrel live?"
+  },
+  {
+   "id": "swot-035",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A DREY",
+   "spoken": "Please Sir, I cannot tell a lie, it is a drey."
+  },
+  {
+   "id": "rockitt-027",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN A DREY?",
+   "spoken": "What lives in a drey?"
+  },
+  {
+   "id": "swot-036",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A SQUIRREL",
+   "spoken": "Please Sir, I cannot tell a lie, it is a squirrel."
+  },
+  {
+   "id": "rockitt-028",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES A BEAVER LIVE?",
+   "spoken": "Where does a beaver live?"
+  },
+  {
+   "id": "swot-037",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A LODGE",
+   "spoken": "Please Sir, I cannot tell a lie, it is a lodge."
+  },
+  {
+   "id": "rockitt-029",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN A LODGE?",
+   "spoken": "What lives in a lodge?"
+  },
+  {
+   "id": "swot-038",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A BEAVER",
+   "spoken": "Please Sir, I cannot tell a lie, it is a beaver."
+  },
+  {
+   "id": "rockitt-030",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES A HARE LIVE?",
+   "spoken": "Where does a hare live?"
+  },
+  {
+   "id": "swot-039",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A FORM",
+   "spoken": "Please Sir, I cannot tell a lie, it is a form."
+  },
+  {
+   "id": "rockitt-031",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN A FORM?",
+   "spoken": "What lives in a form?"
+  },
+  {
+   "id": "swot-040",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A HARE",
+   "spoken": "Please Sir, I cannot tell a lie, it is a hare."
+  },
+  {
+   "id": "rockitt-032",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES AN EAGLE LIVE?",
+   "spoken": "Where does an eagle live?"
+  },
+  {
+   "id": "swot-041",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS AN EYRIE",
+   "spoken": "Please Sir, I cannot tell a lie, it is an eyrie."
+  },
+  {
+   "id": "rockitt-033",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN AN EYRIE?",
+   "spoken": "What lives in an eyrie?"
+  },
+  {
+   "id": "swot-042",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS AN EAGLE",
+   "spoken": "Please Sir, I cannot tell a lie, it is an eagle."
+  },
+  {
+   "id": "rockitt-034",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES AN OTTER LIVE?",
+   "spoken": "Where does an otter live?"
+  },
+  {
+   "id": "swot-043",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A HOLT",
+   "spoken": "Please Sir, I cannot tell a lie, it is a holt."
+  },
+  {
+   "id": "rockitt-035",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN A HOLT?",
+   "spoken": "What lives in a holt?"
+  },
+  {
+   "id": "swot-044",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS AN OTTER",
+   "spoken": "Please Sir, I cannot tell a lie, it is an otter."
+  },
+  {
+   "id": "rockitt-036",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES A BEE LIVE?",
+   "spoken": "Where does a bee live?"
+  },
+  {
+   "id": "swot-045",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A HIVE",
+   "spoken": "Please Sir, I cannot tell a lie, it is a hive."
+  },
+  {
+   "id": "rockitt-037",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN A HIVE?",
+   "spoken": "What lives in a hive?"
+  },
+  {
+   "id": "swot-046",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A BEE",
+   "spoken": "Please Sir, I cannot tell a lie, it is a bee."
+  },
+  {
+   "id": "rockitt-038",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHERE DOES A BUG LIVE?",
+   "spoken": "Where does a bug live?"
+  },
+  {
+   "id": "swot-047",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A BAD PROGRAM",
+   "spoken": "Please Sir, I cannot tell a lie, it is a bad program."
+  },
+  {
+   "id": "rockitt-039",
+   "speaker": "ROCKITT",
+   "kind": "question",
+   "key": "WHAT LIVES IN A BAD PROGRAM?",
+   "spoken": "What lives in a bad program?"
+  },
+  {
+   "id": "swot-048",
+   "speaker": "SWOT",
+   "kind": "answer",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . IT IS A BUG",
+   "spoken": "Please Sir, I cannot tell a lie, it is a bug."
+  },
+  {
+   "id": "swot-049",
+   "speaker": "SWOT",
+   "kind": "tale",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . ERIC HIT ME",
+   "spoken": "Please Sir, I cannot tell a lie, Eric hit me."
+  },
+  {
+   "id": "swot-050",
+   "speaker": "SWOT",
+   "kind": "tale",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . ANGELFACE HIT ME",
+   "spoken": "Please Sir, I cannot tell a lie, Angelface hit me."
+  },
+  {
+   "id": "swot-051",
+   "speaker": "SWOT",
+   "kind": "tale",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . ERIC WROTE ON THE BLACKBOARD",
+   "spoken": "Please Sir, I cannot tell a lie, Eric wrote on the blackboard."
+  },
+  {
+   "id": "swot-052",
+   "speaker": "SWOT",
+   "kind": "tale",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . BOY WANDER WROTE ON THE BLACKBOARD",
+   "spoken": "Please Sir, I cannot tell a lie, Boy Wander wrote on the blackboard."
+  },
+  {
+   "id": "swot-053",
+   "speaker": "SWOT",
+   "kind": "tale",
+   "key": "PLEASE SIR I CANNOT TELL A LIE . . ERIC IS NOT HERE",
+   "spoken": "Please Sir, I cannot tell a lie, Eric is not here."
+  },
+  {
+   "id": "wacker-020",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who kidnapped the goldfish!"
+  },
+  {
+   "id": "wacker-021",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who kidnapped the school cat!"
+  },
+  {
+   "id": "wacker-022",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who kidnapped the Latin master!"
+  },
+  {
+   "id": "wacker-023",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who kidnapped the lollipop lady!"
+  },
+  {
+   "id": "wacker-024",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE PTA",
+   "spoken": "You're all in detention until I find out who kidnapped the P T A!"
+  },
+  {
+   "id": "wacker-025",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who kidnapped the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-026",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who kidnapped the milk monitor!"
+  },
+  {
+   "id": "wacker-027",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO KIDNAPPED THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who kidnapped the head boy!"
+  },
+  {
+   "id": "wacker-028",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who ate the goldfish!"
+  },
+  {
+   "id": "wacker-029",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who ate the school cat!"
+  },
+  {
+   "id": "wacker-030",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who ate the Latin master!"
+  },
+  {
+   "id": "wacker-031",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who ate the lollipop lady!"
+  },
+  {
+   "id": "wacker-032",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE PTA",
+   "spoken": "You're all in detention until I find out who ate the P T A!"
+  },
+  {
+   "id": "wacker-033",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who ate the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-034",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who ate the milk monitor!"
+  },
+  {
+   "id": "wacker-035",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO ATE THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who ate the head boy!"
+  },
+  {
+   "id": "wacker-036",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who set fire to the goldfish!"
+  },
+  {
+   "id": "wacker-037",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who set fire to the school cat!"
+  },
+  {
+   "id": "wacker-038",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who set fire to the Latin master!"
+  },
+  {
+   "id": "wacker-039",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who set fire to the lollipop lady!"
+  },
+  {
+   "id": "wacker-040",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE PTA",
+   "spoken": "You're all in detention until I find out who set fire to the P T A!"
+  },
+  {
+   "id": "wacker-041",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who set fire to the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-042",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who set fire to the milk monitor!"
+  },
+  {
+   "id": "wacker-043",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SET FIRE TO THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who set fire to the head boy!"
+  },
+  {
+   "id": "wacker-044",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who blew up the goldfish!"
+  },
+  {
+   "id": "wacker-045",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who blew up the school cat!"
+  },
+  {
+   "id": "wacker-046",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who blew up the Latin master!"
+  },
+  {
+   "id": "wacker-047",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who blew up the lollipop lady!"
+  },
+  {
+   "id": "wacker-048",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE PTA",
+   "spoken": "You're all in detention until I find out who blew up the P T A!"
+  },
+  {
+   "id": "wacker-049",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who blew up the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-050",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who blew up the milk monitor!"
+  },
+  {
+   "id": "wacker-051",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO BLEW UP THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who blew up the head boy!"
+  },
+  {
+   "id": "wacker-052",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the goldfish!"
+  },
+  {
+   "id": "wacker-053",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the school cat!"
+  },
+  {
+   "id": "wacker-054",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the Latin master!"
+  },
+  {
+   "id": "wacker-055",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the lollipop lady!"
+  },
+  {
+   "id": "wacker-056",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE PTA",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the P T A!"
+  },
+  {
+   "id": "wacker-057",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-058",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the milk monitor!"
+  },
+  {
+   "id": "wacker-059",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS MAKING RUDE PHONE CALLS TO THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who is making rude phone calls to the head boy!"
+  },
+  {
+   "id": "wacker-060",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who is blackmailing the goldfish!"
+  },
+  {
+   "id": "wacker-061",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who is blackmailing the school cat!"
+  },
+  {
+   "id": "wacker-062",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who is blackmailing the Latin master!"
+  },
+  {
+   "id": "wacker-063",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who is blackmailing the lollipop lady!"
+  },
+  {
+   "id": "wacker-064",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE PTA",
+   "spoken": "You're all in detention until I find out who is blackmailing the P T A!"
+  },
+  {
+   "id": "wacker-065",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who is blackmailing the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-066",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who is blackmailing the milk monitor!"
+  },
+  {
+   "id": "wacker-067",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO IS BLACKMAILING THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who is blackmailing the head boy!"
+  },
+  {
+   "id": "wacker-068",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who squashed the goldfish!"
+  },
+  {
+   "id": "wacker-069",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who squashed the school cat!"
+  },
+  {
+   "id": "wacker-070",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who squashed the Latin master!"
+  },
+  {
+   "id": "wacker-071",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who squashed the lollipop lady!"
+  },
+  {
+   "id": "wacker-072",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE PTA",
+   "spoken": "You're all in detention until I find out who squashed the P T A!"
+  },
+  {
+   "id": "wacker-073",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who squashed the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-074",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who squashed the milk monitor!"
+  },
+  {
+   "id": "wacker-075",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO SQUASHED THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who squashed the head boy!"
+  },
+  {
+   "id": "wacker-076",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE GOLDFISH",
+   "spoken": "You're all in detention until I find out who poisoned the goldfish!"
+  },
+  {
+   "id": "wacker-077",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE SCHOOL CAT",
+   "spoken": "You're all in detention until I find out who poisoned the school cat!"
+  },
+  {
+   "id": "wacker-078",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE LATIN MASTER",
+   "spoken": "You're all in detention until I find out who poisoned the Latin master!"
+  },
+  {
+   "id": "wacker-079",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE LOLLIPOP LADY",
+   "spoken": "You're all in detention until I find out who poisoned the lollipop lady!"
+  },
+  {
+   "id": "wacker-080",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE PTA",
+   "spoken": "You're all in detention until I find out who poisoned the P T A!"
+  },
+  {
+   "id": "wacker-081",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE CARETAKER'S BUDGIE",
+   "spoken": "You're all in detention until I find out who poisoned the caretaker's budgie!"
+  },
+  {
+   "id": "wacker-082",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE MILK MONITOR",
+   "spoken": "You're all in detention until I find out who poisoned the milk monitor!"
+  },
+  {
+   "id": "wacker-083",
+   "speaker": "WACKER",
+   "kind": "assembly",
+   "key": "YOU'RE ALL IN DETENTION UNTIL I FIND OUT WHO POISONED THE HEAD BOY",
+   "spoken": "You're all in detention until I find out who poisoned the head boy!"
+  },
+  {
+   "id": "wacker-084",
+   "speaker": "WACKER",
+   "kind": "alone",
+   "key": "YOU HAVE 10000 LINES ERIC YOU'RE EXPELLED",
+   "spoken": "You have ten thousand lines, Eric. You're expelled!"
+  },
+  {
+   "id": "wacker-085",
+   "speaker": "WACKER",
+   "kind": "alone",
+   "key": "YOU ARE NOT A BIRD ERIC YOU'RE EXPELLED",
+   "spoken": "You are not a bird, Eric. You're expelled!"
+  },
+  {
+   "id": "albert-001",
+   "speaker": "ALBERT",
+   "kind": "alone",
+   "key": "MR WACKER HE'S ESCAPING",
+   "spoken": "Mister Wacker! He's escaping!"
+  }
+ ],
+ "recordings": [
+  {
+   "id": "wacker-rec-01",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-001",
+    "wacker-002",
+    "wacker-003",
+    "wacker-004",
+    "wacker-005",
+    "wacker-006",
+    "wacker-007",
+    "wacker-008"
+   ]
+  },
+  {
+   "id": "wacker-rec-02",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-009",
+    "wacker-010",
+    "wacker-011",
+    "wacker-012",
+    "wacker-013",
+    "wacker-014",
+    "wacker-015",
+    "wacker-016"
+   ]
+  },
+  {
+   "id": "wacker-rec-03",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-017",
+    "wacker-018",
+    "wacker-019",
+    "wacker-020",
+    "wacker-021",
+    "wacker-022",
+    "wacker-023",
+    "wacker-024"
+   ]
+  },
+  {
+   "id": "wacker-rec-04",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-025",
+    "wacker-026",
+    "wacker-027",
+    "wacker-028",
+    "wacker-029",
+    "wacker-030"
+   ]
+  },
+  {
+   "id": "wacker-rec-05",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-031",
+    "wacker-032",
+    "wacker-033",
+    "wacker-034",
+    "wacker-035",
+    "wacker-036"
+   ]
+  },
+  {
+   "id": "wacker-rec-06",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-037",
+    "wacker-038",
+    "wacker-039",
+    "wacker-040",
+    "wacker-041"
+   ]
+  },
+  {
+   "id": "wacker-rec-07",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-042",
+    "wacker-043",
+    "wacker-044",
+    "wacker-045",
+    "wacker-046",
+    "wacker-047"
+   ]
+  },
+  {
+   "id": "wacker-rec-08",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-048",
+    "wacker-049",
+    "wacker-050",
+    "wacker-051",
+    "wacker-052"
+   ]
+  },
+  {
+   "id": "wacker-rec-09",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-053",
+    "wacker-054",
+    "wacker-055",
+    "wacker-056"
+   ]
+  },
+  {
+   "id": "wacker-rec-10",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-057",
+    "wacker-058",
+    "wacker-059",
+    "wacker-060",
+    "wacker-061"
+   ]
+  },
+  {
+   "id": "wacker-rec-11",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-062",
+    "wacker-063",
+    "wacker-064",
+    "wacker-065",
+    "wacker-066"
+   ]
+  },
+  {
+   "id": "wacker-rec-12",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-067",
+    "wacker-068",
+    "wacker-069",
+    "wacker-070",
+    "wacker-071",
+    "wacker-072"
+   ]
+  },
+  {
+   "id": "wacker-rec-13",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-073",
+    "wacker-074",
+    "wacker-075",
+    "wacker-076",
+    "wacker-077",
+    "wacker-078"
+   ]
+  },
+  {
+   "id": "wacker-rec-14",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-079",
+    "wacker-080",
+    "wacker-081",
+    "wacker-082",
+    "wacker-083"
+   ]
+  },
+  {
+   "id": "wacker-rec-15",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-084"
+   ]
+  },
+  {
+   "id": "wacker-rec-16",
+   "speaker": "WACKER",
+   "lines": [
+    "wacker-085"
+   ]
+  },
+  {
+   "id": "withit-rec-01",
+   "speaker": "WITHIT",
+   "lines": [
+    "withit-001",
+    "withit-002",
+    "withit-003",
+    "withit-004",
+    "withit-005",
+    "withit-006",
+    "withit-007",
+    "withit-008"
+   ]
+  },
+  {
+   "id": "withit-rec-02",
+   "speaker": "WITHIT",
+   "lines": [
+    "withit-009",
+    "withit-010",
+    "withit-011",
+    "withit-012",
+    "withit-013",
+    "withit-014",
+    "withit-015",
+    "withit-016"
+   ]
+  },
+  {
+   "id": "withit-rec-03",
+   "speaker": "WITHIT",
+   "lines": [
+    "withit-017",
+    "withit-018",
+    "withit-019",
+    "withit-020",
+    "withit-021",
+    "withit-022",
+    "withit-023",
+    "withit-024"
+   ]
+  },
+  {
+   "id": "withit-rec-04",
+   "speaker": "WITHIT",
+   "lines": [
+    "withit-025",
+    "withit-026",
+    "withit-027",
+    "withit-028",
+    "withit-029",
+    "withit-030",
+    "withit-031",
+    "withit-032"
+   ]
+  },
+  {
+   "id": "withit-rec-05",
+   "speaker": "WITHIT",
+   "lines": [
+    "withit-033",
+    "withit-034",
+    "withit-035",
+    "withit-036",
+    "withit-037",
+    "withit-038",
+    "withit-039"
+   ]
+  },
+  {
+   "id": "rockitt-rec-01",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-001",
+    "rockitt-002",
+    "rockitt-003",
+    "rockitt-004",
+    "rockitt-005",
+    "rockitt-006",
+    "rockitt-007",
+    "rockitt-008"
+   ]
+  },
+  {
+   "id": "rockitt-rec-02",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-009",
+    "rockitt-010",
+    "rockitt-011",
+    "rockitt-012",
+    "rockitt-013",
+    "rockitt-014",
+    "rockitt-015",
+    "rockitt-016"
+   ]
+  },
+  {
+   "id": "rockitt-rec-03",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-017",
+    "rockitt-018",
+    "rockitt-019",
+    "rockitt-020",
+    "rockitt-021",
+    "rockitt-022",
+    "rockitt-023",
+    "rockitt-024"
+   ]
+  },
+  {
+   "id": "rockitt-rec-04",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-025",
+    "rockitt-026",
+    "rockitt-027",
+    "rockitt-028",
+    "rockitt-029",
+    "rockitt-030",
+    "rockitt-031",
+    "rockitt-032"
+   ]
+  },
+  {
+   "id": "rockitt-rec-05",
+   "speaker": "ROCKITT",
+   "lines": [
+    "rockitt-033",
+    "rockitt-034",
+    "rockitt-035",
+    "rockitt-036",
+    "rockitt-037",
+    "rockitt-038",
+    "rockitt-039"
+   ]
+  },
+  {
+   "id": "creak-rec-01",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-001",
+    "creak-002",
+    "creak-003",
+    "creak-004",
+    "creak-005",
+    "creak-006",
+    "creak-007",
+    "creak-008"
+   ]
+  },
+  {
+   "id": "creak-rec-02",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-009",
+    "creak-010",
+    "creak-011",
+    "creak-012",
+    "creak-013",
+    "creak-014",
+    "creak-015",
+    "creak-016"
+   ]
+  },
+  {
+   "id": "creak-rec-03",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-017",
+    "creak-018",
+    "creak-019",
+    "creak-020",
+    "creak-021",
+    "creak-022",
+    "creak-023",
+    "creak-024"
+   ]
+  },
+  {
+   "id": "creak-rec-04",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-025",
+    "creak-026",
+    "creak-027",
+    "creak-028",
+    "creak-029",
+    "creak-030",
+    "creak-031",
+    "creak-032"
+   ]
+  },
+  {
+   "id": "creak-rec-05",
+   "speaker": "CREAK",
+   "lines": [
+    "creak-033",
+    "creak-034",
+    "creak-035",
+    "creak-036",
+    "creak-037",
+    "creak-038",
+    "creak-039"
+   ]
+  },
+  {
+   "id": "take-rec-01",
+   "speaker": "TAKE",
+   "lines": [
+    "take-001",
+    "take-002",
+    "take-003",
+    "take-004",
+    "take-005",
+    "take-006",
+    "take-007",
+    "take-008"
+   ]
+  },
+  {
+   "id": "take-rec-02",
+   "speaker": "TAKE",
+   "lines": [
+    "take-009",
+    "take-010",
+    "take-011",
+    "take-012",
+    "take-013",
+    "take-014",
+    "take-015",
+    "take-016"
+   ]
+  },
+  {
+   "id": "take-rec-03",
+   "speaker": "TAKE",
+   "lines": [
+    "take-017",
+    "take-018",
+    "take-019",
+    "take-020",
+    "take-021",
+    "take-022",
+    "take-023"
+   ]
+  },
+  {
+   "id": "swot-rec-01",
+   "speaker": "SWOT",
+   "lines": [
+    "swot-001",
+    "swot-002",
+    "swot-003",
+    "swot-004",
+    "swot-005",
+    "swot-006",
+    "swot-007"
+   ]
+  },
+  {
+   "id": "swot-rec-02",
+   "speaker": "SWOT",
+   "lines": [
+    "swot-008",
+    "swot-009",
+    "swot-010",
+    "swot-011",
+    "swot-012",
+    "swot-013",
+    "swot-014"
+   ]
+  },
+  {
+   "id": "swot-rec-03",
+   "speaker": "SWOT",
+   "lines": [
+    "swot-015",
+    "swot-016",
+    "swot-017",
+    "swot-018",
+    "swot-019",
+    "swot-020",
+    "swot-021"
+   ]
+  },
+  {
+   "id": "swot-rec-04",
+   "speaker": "SWOT",
+   "lines": [
+    "swot-022",
+    "swot-023",
+    "swot-024",
+    "swot-025",
+    "swot-026",
+    "swot-027",
+    "swot-028",
+    "swot-029"
+   ]
+  },
+  {
+   "id": "swot-rec-05",
+   "speaker": "SWOT",
+   "lines": [
+    "swot-030",
+    "swot-031",
+    "swot-032",
+    "swot-033",
+    "swot-034",
+    "swot-035",
+    "swot-036",
+    "swot-037"
+   ]
+  },
+  {
+   "id": "swot-rec-06",
+   "speaker": "SWOT",
+   "lines": [
+    "swot-038",
+    "swot-039",
+    "swot-040",
+    "swot-041",
+    "swot-042",
+    "swot-043",
+    "swot-044",
+    "swot-045"
+   ]
+  },
+  {
+   "id": "swot-rec-07",
+   "speaker": "SWOT",
+   "lines": [
+    "swot-046",
+    "swot-047",
+    "swot-048",
+    "swot-049",
+    "swot-050",
+    "swot-051",
+    "swot-052",
+    "swot-053"
+   ]
+  },
+  {
+   "id": "albert-rec-01",
+   "speaker": "ALBERT",
+   "lines": [
+    "albert-001"
+   ]
+  }
+ ]
+}
