@@ -1,0 +1,165 @@
+<title>Skool Voice Proof</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400&display=swap">
+<style>
+/* Capgemini Invent Visual Identity 2026. A working page: a cast strip to fill in, then the voices in the
+   order they are used. Light ground throughout; navy only in the header and footer. */
+:root{
+  --navy:#121A38; --blue:#0058AB; --light-blue:#1DB8F2; --white:#FFFFFF;
+  --turquoise:#00D5D0; --yellow:#FEB100; --orange:#FF816E;
+  --g1:#F3F4F7; --g2:#E4E8EC; --g3:#CAD1D8; --g4:#ADB8C2; --g5:#738597; --g6:#47556B;
+  --font:'Ubuntu',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  --fs-h1:48px; --fs-h2:36px; --fs-h3:28px; --fs-h4:22px;
+  --fs-lead:20px; --fs-body:17px; --fs-sm:15px; --fs-caption:13px; --fs-micro:11px;
+  --measure:66ch; --page:1120px;
+}
+*{box-sizing:border-box}
+body{margin:0; background:var(--white); color:var(--g6); font-family:var(--font); font-weight:300; font-size:var(--fs-body); line-height:1.6; -webkit-font-smoothing:antialiased}
+.gutter{max-width:var(--page); margin:0 auto; padding-left:max(24px, env(safe-area-inset-left, 0px)); padding-right:max(24px, env(safe-area-inset-right, 0px))}
+header.shell, footer.shell{background:var(--navy)}
+header.shell .gutter, footer.shell .gutter{display:flex; align-items:center; justify-content:space-between; gap:24px; padding-block:22px; flex-wrap:wrap}
+.wordmark{font-size:var(--fs-h4); font-weight:300; color:var(--white)}
+.classification{font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--g4)}
+footer.shell .gutter{font-size:var(--fs-caption); font-weight:400; color:var(--g4)}
+.scene{padding-block:64px 0}
+.scene:last-of-type{padding-bottom:72px}
+h1,h2,h3{margin:0; font-weight:300; text-wrap:balance}
+h1{font-size:var(--fs-h1); line-height:1.08; letter-spacing:-0.01em; color:var(--blue); margin-bottom:20px}
+h2{font-size:var(--fs-h2); line-height:1.12; color:var(--blue); margin-bottom:12px}
+.kicker{font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); margin-bottom:14px}
+p{margin:0 0 18px; max-width:var(--measure)}
+.standfirst{font-size:var(--fs-lead); line-height:1.55; max-width:60ch; margin-bottom:28px}
+.caption{font-size:var(--fs-caption); font-weight:400; color:var(--g5); max-width:70ch; margin:0}
+.steps{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:32px; margin:8px 0 0}
+.step .rule{width:34px; height:2px; background:var(--light-blue); margin-bottom:14px}
+.step-n{font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--g5)}
+.step-t{font-size:var(--fs-h4); line-height:1.2; color:var(--blue); margin:4px 0 6px}
+.step p{margin:0; font-size:var(--fs-sm)}
+
+/* The cast: one row per part, the pick on the right. */
+.cast{border-top:1px solid var(--g2); margin-top:20px}
+.part{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1.6fr) minmax(0,1fr); gap:12px 28px; align-items:center; padding:14px 0; border-bottom:1px solid var(--g2)}
+.part-name{font-size:var(--fs-h4); color:var(--navy); line-height:1.2}
+.part-note{font-size:var(--fs-sm); min-width:0}
+select{font:inherit; font-weight:400; font-size:var(--fs-sm); color:var(--navy); background:var(--white); border:1px solid var(--g3); border-radius:2px; padding:9px 10px; width:100%; min-width:0}
+select:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--light-blue); outline-offset:2px}
+.part.unset select{border-color:var(--yellow)}
+.out{margin-top:24px; background:var(--g1); border-left:2px solid var(--light-blue); padding:18px 20px}
+.out pre{margin:0 0 14px; font-family:var(--font); font-weight:400; font-size:var(--fs-sm); white-space:pre-wrap; color:var(--navy)}
+.btn{font:inherit; font-weight:400; font-size:var(--fs-sm); color:var(--white); background:var(--blue); border:0; border-radius:2px; padding:10px 18px; cursor:pointer}
+.btn:hover{background:var(--navy)}
+.btn.quiet{color:var(--blue); background:var(--white); border:1px solid var(--g3)}
+.btn.quiet:hover{border-color:var(--blue); background:var(--white)}
+.said{font-size:var(--fs-sm); font-weight:400; color:var(--blue); margin-left:14px}
+
+/* The voices: a grid of small cells with hairline seams. */
+.count{font-size:var(--fs-sm); font-weight:400; color:var(--g5); font-variant-numeric:tabular-nums}
+.voices{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:1px; padding:1px; margin-top:20px}
+.voice{background:var(--white); box-shadow:0 0 0 1px var(--g2); display:flex; align-items:center; gap:12px; padding:12px 14px; min-width:0}
+.voice.british{background:var(--g1)}
+.play{flex:none; width:38px; height:38px; border-radius:50%; border:1px solid var(--blue); background:var(--white); color:var(--blue); cursor:pointer; display:grid; place-items:center; padding:0}
+.play svg{width:14px; height:14px; fill:currentColor}
+.voice.playing .play{background:var(--blue); color:var(--white)}
+.vname{flex:1; min-width:0; font-size:var(--fs-body); font-weight:400; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.vname small{display:block; font-size:var(--fs-micro); font-weight:400; letter-spacing:.08em; text-transform:uppercase; color:var(--g5)}
+.tick{flex:none; display:flex; align-items:center; gap:7px; font-size:var(--fs-caption); font-weight:400; color:var(--g6); cursor:pointer}
+.tick input{width:17px; height:17px; accent-color:var(--blue); margin:0}
+.sounds{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px}
+@media (max-width:720px){
+  h1{font-size:var(--fs-h2)} h2{font-size:var(--fs-h3)}
+  .part{grid-template-columns:1fr}
+  .scene{padding-block:44px 0}
+}
+</style>
+<style>
+.line{font-size:var(--fs-sm); color:var(--g6); min-width:0}
+.voice .vname{white-space:normal}
+.choice{display:flex; flex-wrap:wrap; gap:10px 28px; margin-top:18px}
+.choice label{display:flex; align-items:center; gap:8px; font-weight:400; font-size:var(--fs-sm); color:var(--navy); cursor:pointer}
+.choice input{width:17px; height:17px; accent-color:var(--blue); margin:0}
+.voices.wide{grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+</style>
+
+<header class="shell"><div class="gutter"><div class="wordmark">Back to Skool</div><div class="classification">Voice proof · your cast</div></div></header>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">Before the full set</div>
+  <h1>Hear the cast in character</h1>
+  <p class="standfirst">Seventeen short clips in the voices you chose. Three things to settle, then I make all 285 lines.</p>
+</div></section>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">One</div>
+  <h2>Each part in its own words</h2>
+  <p class="caption">Tell me if any voice is wrong for its part now that you hear it speaking its lines.</p>
+  <div class="voices wide" id="parts"></div>
+</div></section>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">Two</div>
+  <h2>Which is Mr Creak?</h2>
+  <p>He shares Cillian with Mr Rockitt, so he needs to sound older. All three are slower; two also shift the pitch.</p>
+  <div class="voices wide" id="creak"></div>
+  <div class="choice" id="creak-choice"></div>
+</div></section>
+
+<section class="scene"><div class="gutter">
+  <div class="kicker">Three</div>
+  <h2>Lines cut from one recording</h2>
+  <p>These eight were spoken by Alistair in a single clip and cut apart at the pauses. If they sound natural, the full set takes a seventh of the generations. If they sound clipped or flat, I make every line on its own.</p>
+  <div class="voices" id="cuts"></div>
+  <div class="choice" id="cut-choice"></div>
+  <div class="out" style="margin-top:36px">
+    <pre id="summary"></pre>
+    <button class="btn" id="copy" type="button">Copy my answer</button><span class="said" id="copied" role="status"></span>
+  </div>
+</div></section>
+
+<footer class="shell"><div class="gutter"><span>Back to Skool remake · voice proof</span><span>Clips generated with Higgsfield Seed Audio</span></div></footer>
+
+<script>
+const PARTS = [['wacker', 'Mr Wacker · Alistair', 'You have ten thousand lines, Eric. You’re expelled!'], ['withit', 'Mr Withit · Andre', 'Sit down, chaps. Where is Mount Kilimanjaro?'], ['rockitt', 'Mr Rockitt · Cillian', 'Sit down, my cherubs. What lives in a hive?'], ['take', 'Miss Take · Imogen', 'Sit down. Don’t keep me waiting!'], ['einstein', 'Einstein · Cody', 'Please Sir, I cannot tell a lie. Eric wrote on the blackboard.'], ['albert', 'Albert · Arthur', 'Mister Wacker! He’s escaping!']];
+const CREAK = [['creak-slower', 'Slower', 'Same pitch as Mr Rockitt'], ['creak-slower-lower', 'Slower and lower', 'Deeper'], ['creak-slower-higher', 'Slower and higher', 'Thinner']];
+const CUTS = ['You are not allowed here.', 'Get along now.', 'Now sit down.', 'Get off the floor.', 'Come along you monster.', 'Don’t keep me waiting.', 'Now don’t do it again.', 'Don’t tell tales.'];
+const KEY = 'bts-proof';
+let state = { creak: '', cuts: '' };
+try { state = { ...state, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) { /* no storage */ }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* ignore */ } };
+
+const audio = new Audio(); let playing = null;
+const PLAY = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.5v11l9-5.5z"/></svg>', STOP = '<svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2.5" y="2.5" width="9" height="9"/></svg>';
+const stop = () => { audio.pause(); if (playing) { playing.classList.remove('playing'); playing.querySelector('.play').innerHTML = PLAY; } playing = null; };
+audio.addEventListener('ended', stop);
+function cell(file, title, sub) {
+  const el = document.createElement('div'); el.className = 'voice';
+  el.innerHTML = `<button class="play" type="button" aria-label="Play ${title}">${PLAY}</button><div class="vname">${title}<div class="line">${sub}</div></div>`;
+  el.querySelector('.play').addEventListener('click', () => {
+    const was = playing === el; stop(); if (was) return;
+    audio.src = `clips/${file}.mp3`; audio.play().catch(() => {});
+    playing = el; el.classList.add('playing'); el.querySelector('.play').innerHTML = STOP;
+  });
+  return el;
+}
+for (const [f, t, l] of PARTS) document.getElementById('parts').appendChild(cell(f, t, '“' + l + '”'));
+for (const [f, t, l] of CREAK) document.getElementById('creak').appendChild(cell(f, t, l));
+CUTS.forEach((l, i) => document.getElementById('cuts').appendChild(cell(`cut-${i + 1}`, '“' + l + '”', '')));
+
+function radios(holder, name, options, key) {
+  for (const [value, label] of options) {
+    const id = `${name}-${value.replace(/\W+/g, '-')}`;
+    const el = document.createElement('label'); el.htmlFor = id;
+    el.innerHTML = `<input type="radio" name="${name}" id="${id}" ${state[key] === value ? 'checked' : ''}>${label}`;
+    el.querySelector('input').addEventListener('change', () => { state[key] = value; save(); render(); });
+    document.getElementById(holder).appendChild(el);
+  }
+}
+radios('creak-choice', 'creak', [['Slower', 'Slower'], ['Slower and lower', 'Slower and lower'], ['Slower and higher', 'Slower and higher'], ['None of these', 'None of these']], 'creak');
+radios('cut-choice', 'cuts', [['Cut lines are fine', 'They sound natural: cut the full set this way'], ['Make each line on its own', 'They sound clipped: make each line on its own']], 'cuts');
+function render() { document.getElementById('summary').textContent = `Voice proof\nMr Creak: ${state.creak || 'not chosen yet'}\nCut lines: ${state.cuts || 'not chosen yet'}\nAnything wrong with a part: `; }
+render();
+document.getElementById('copy').addEventListener('click', () => {
+  const text = document.getElementById('summary').textContent, said = document.getElementById('copied');
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents(document.getElementById('summary')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); said.textContent = 'Selected: copy it with Ctrl or Cmd and C'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => { said.textContent = 'Copied'; }, fallback); else fallback();
+});
+</script>

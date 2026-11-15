@@ -1,0 +1,73 @@
+{
+  "note": "Higgsfield generations made for the voice proof (one in-character line per part, three versions of Mr Creak, and the cutting test). Recorded as they are made so that none is generated twice.",
+  "cast": {
+    "WACKER": "Alistair",
+    "WITHIT": "Andre",
+    "ROCKITT": "Cillian",
+    "CREAK": "Cillian",
+    "TAKE": "Imogen",
+    "SWOT": "Cody",
+    "ALBERT": "Arthur"
+  },
+  "voices": {
+    "Alistair": "d9d5c263-f84e-4752-97b5-3750fcc6fd2f",
+    "Andre": "f1e8226e-2248-4d5f-b43c-0a79e9949dbf",
+    "Cillian": "d8ba9f14-8a24-44db-932b-99e16c45bd32",
+    "Imogen": "3811e986-0891-47cf-a1f5-78a1d62a547a",
+    "Cody": "1ffcdbb3-078b-5491-959d-359e3021e917",
+    "Arthur": "30fc8796-ceb6-4a66-b3a7-4a145ef7f346"
+  },
+  "jobs": {
+    "wacker": [
+      "You have ten thousand lines, Eric. You're expelled!",
+      "39c43cd3-4f0e-4f5c-9985-cc1c596af887"
+    ],
+    "withit": [
+      "Sit down, chaps. Where is Mount Kilimanjaro?",
+      "f97aa554-61e8-480a-a7ab-b31cc143fa9b"
+    ],
+    "rockitt": [
+      "Sit down, my cherubs. What lives in a hive?",
+      "e2f7d62f-5536-426e-833c-0981c1988340"
+    ],
+    "take": [
+      "Sit down. Don't keep me waiting!",
+      "8b96ffda-7eb5-4186-ab24-dfb32abd07a5"
+    ],
+    "einstein": [
+      "Please Sir, I cannot tell a lie. Eric wrote on the blackboard.",
+      "ba89ffd3-0864-43b4-a24c-9c64e610af18"
+    ],
+    "albert": [
+      "Mister Wacker! He's escaping!",
+      "bfa15bb6-4312-4379-b82a-e15b4cc8efbb"
+    ],
+    "creak-slower": [
+      "Sit down, you little anarchists. When did Henry the Fifth become king?",
+      "75fac209-4d9e-4b4e-b982-070bb70880c7",
+      {
+        "speech_rate": -25
+      }
+    ],
+    "creak-slower-lower": [
+      "Sit down, you little anarchists. When did Henry the Fifth become king?",
+      "bdf2dcab-1938-483e-8031-9a7c7e0fa01c",
+      {
+        "speech_rate": -25,
+        "pitch_rate": -3
+      }
+    ],
+    "creak-slower-higher": [
+      "Sit down, you little anarchists. When did Henry the Fifth become king?",
+      "15d1c9ca-a3a9-435c-99da-f4523c4d2ed3",
+      {
+        "speech_rate": -25,
+        "pitch_rate": 3
+      }
+    ],
+    "cutting-test": [
+      "Eight of Mr Wacker's reprimands in one clip, a blank line between each",
+      "6b3860a4-fd31-404f-8807-16f665fdd9e0"
+    ]
+  }
+}
