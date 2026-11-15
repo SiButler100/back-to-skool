@@ -31,8 +31,8 @@ export const VIEW_PRESETS = {
   modern: { theme: 'modern', columns: CLOSE_COLUMNS, camera: 'close', smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: 'illustrated' },
 };
 
-const SETTINGS_VERSION = 6;      // 5: the map and radar switches; 6: aiming help (defaults are filled in from DEFAULT_SETTINGS)
-const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+const SETTINGS_VERSION = 7;      // 5: the map and radar switches; 6: aiming help; 7: atmosphere (defaults are filled in from DEFAULT_SETTINGS)
+const DEFAULT_SETTINGS = { view: 'modern', speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, atmosphere: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
 
 // Settings saved by an older version of the game get the new keys filled in.
 function migrateSettings(s) {
@@ -114,6 +114,7 @@ export function boot() {
     renderer.options.artwork = s.artwork || 'illustrated';
     renderer.options.camera = s.camera || 'whole';
     renderer.options.guides = s.view !== 'original' && s.guides !== false;   // aiming help belongs to the modern view only
+    renderer.options.atmosphere = s.view !== 'original' && s.artwork === 'illustrated' && s.atmosphere !== false;   // shadows, the light of the hour, the lens
     // Blackboard wrapping and bubble timing follow whichever font is on screen.
     // (The original font only once the tape has supplied it; until then the
     // stand-in font is what is drawn, even in the original view.)

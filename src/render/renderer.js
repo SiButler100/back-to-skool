@@ -290,15 +290,23 @@ export class Renderer {
       else people.push({ d, m, lane: p.smooth ? this.laneOf(d, m, dt) : 0 });
     }
     people.sort((a, b) => a.lane - b.lane);     // stable: equal lanes keep the engine's order (Eric last)
-    const drawOne = ({ d, m, lane }) => {
-      const x = m.x * C, y = m.y * C + lane * LANE_STEP;
-      if (d.group !== 'OBJ' && d.isStanding?.() && !m.air) p.drawShadow(ctx, x, y);
-      // Which picture: the walk cycle while gliding, the standing pose at
-      // rest, otherwise whatever pose the engine says.
+    // Which picture shows a thing: the walk cycle while gliding, the standing
+    // pose at rest, otherwise whatever pose the engine says.
+    const pictureOf = (d, m) => {
       let state = d.animatoryState;
       if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : 'WALK0';
       // In mid-air on a scripted flight: leaping on the way up, flailing on the way down.
       if (m.air && p.hasFrame && p.hasFrame(d.group, 'DROP_A', d.look)) state = m.air === 'up' ? 'LEAP' : (Math.floor(this.lastDraw / 120) % 2 ? 'DROP_B' : 'DROP_A');
+      return state;
+    };
+    // Atmosphere: everybody's shadow on the wall behind them, drawn before
+    // anybody, so that no shadow ever falls across a face.
+    const mood = this.options.atmosphere && p.drawWallShadow ? this.daylight() : null;
+    if (mood) for (const { d, m, lane } of people) p.drawWallShadow(ctx, d.group, pictureOf(d, m), d.direction, d.look, m.x * C, m.y * C + lane * LANE_STEP, mood.lean);
+    const drawOne = ({ d, m, lane }) => {
+      const x = m.x * C, y = m.y * C + lane * LANE_STEP;
+      if (d.group !== 'OBJ' && d.isStanding?.() && !m.air) p.drawShadow(ctx, x, y);
+      const state = pictureOf(d, m);
       if (m.seq && p.hasFrame && p.hasFrame(d.group, m.seq.needs, d.look)) {
         // A change of pose with in-between pictures: show the current one and,
         // in the second half of its time, bring the next one in over it.
@@ -326,6 +334,7 @@ export class Renderer {
     objects.forEach(drawOne);
     if (this.options.guides) this.drawGuideTargets(ctx, S);   // the ring round the cup, over everything
     this.fx.draw(ctx, S);
+    if (mood) this.drawAtmosphere(ctx, mood);                 // the colour of the hour and the lens, under the words
     // Speech bubbles, for speakers who are in the picture. (A bubble is kept
     // inside the view, so one for somebody out of sight would be pinned to the
     // edge with nobody under it.)
@@ -343,6 +352,41 @@ export class Renderer {
     this.fx.drawFlash(ctx, this.canvas.width, this.canvas.height);
     if (game.messageBox) p.drawMessageBox(ctx, game.messageBox, cam, viewW, camY, viewH);
     if (this.options.retroStatus) { ctx.save(); ctx.scale(S, S); this.drawStatus(); ctx.restore(); }
+  }
+
+  // ---- Atmosphere (illustrated view) ----------------------------------------------
+  // The time of day, from the school clock. Eight periods make a "day": it
+  // starts cool and clear, is warmest in the middle and cools again, so there
+  // is never a jump. `warm` is 0..1; `lean` is how far the sun pushes shadows
+  // sideways, in game pixels (from one side in the morning to the other later).
+  daylight() {
+    const tt = this.game.timetable;
+    const day = (((tt.index % 8) + 8) % 8 + tt.progress()) / 8;
+    return { warm: 0.5 - 0.5 * Math.cos(day * Math.PI * 2), lean: 5.5 * Math.cos(day * Math.PI) };
+  }
+  // A wash of the hour's colour over the scene and a gentle darkening towards
+  // the corners, as a lens gives. Drawn in screen space, whatever the camera.
+  drawAtmosphere(ctx, mood) {
+    const w = this.canvas.width, h = this.canvas.height;
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // Cool blue early, gold late: mixed by how warm the hour is.
+    const cool = [150, 190, 255], gold = [255, 176, 92], k = mood.warm;
+    const tint = cool.map((c, i) => Math.round(c + (gold[i] - c) * k));
+    ctx.globalCompositeOperation = 'soft-light';
+    ctx.fillStyle = `rgba(${tint.join(',')},${(0.05 + 0.2 * k).toFixed(3)})`;      // the morning is left almost as painted
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'source-over';
+    if (!this.lens || this.lens.width !== w || this.lens.height !== h) {
+      // The darkening is the same every frame, so it is painted once and kept.
+      this.lens = document.createElement('canvas'); this.lens.width = w; this.lens.height = h;
+      const lx = this.lens.getContext('2d');
+      const g = lx.createRadialGradient(w / 2, h * 0.46, Math.min(w, h) * 0.45, w / 2, h * 0.46, Math.hypot(w, h) * 0.56);
+      g.addColorStop(0, 'rgba(24,14,4,0)'); g.addColorStop(1, 'rgba(24,14,4,0.34)');
+      lx.fillStyle = g; lx.fillRect(0, 0, w, h);
+    }
+    ctx.drawImage(this.lens, 0, 0);
+    ctx.restore();
   }
 
   // ---- Aiming help (modern view) ----------------------------------------------

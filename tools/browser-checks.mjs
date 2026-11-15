@@ -360,7 +360,7 @@ if (wanted('screens')) {
     const switches = [
       { artwork: 'pixel' }, { artwork: 'painted' }, { artwork: 'illustrated' }, { camera: 'whole' }, { columns: 96 }, { columns: 32 }, { camera: 'close' },
       { speed: 2 }, { speed: 0.5 }, { speed: 1 }, { sound: false }, { music: false }, { sound: true }, { music: true }, { minimap: false }, { minimap: true },
-      { radar: true }, { radar: false }, { guides: false }, { guides: true }, { theme: 'spectrum' }, { theme: 'modern' }, { smoothMotion: false }, { smoothMotion: true },
+      { radar: true }, { radar: false }, { guides: false }, { guides: true }, { atmosphere: false }, { atmosphere: true }, { theme: 'spectrum' }, { theme: 'modern' }, { smoothMotion: false }, { smoothMotion: true },
       { retroScroll: true }, { retroScroll: false }, { retroStatus: true }, { retroStatus: false }, { freezeOnMessages: false }, { freezeOnMessages: true },
       { view: 'original' }, { originalGraphics: false }, { view: 'modern' },
     ];
@@ -371,6 +371,8 @@ if (wanted('screens')) {
     check('Every option can be switched in mid-game: no error, the game keeps running', errors.length === 0 && after > before && size[0] > 0, `${errors.slice(0, 2).join(' | ')} ticks ${before}->${after}`);
     const fallbacks = await page.evaluate(() => window.bts.renderer.painters?.illustrated?.stats?.fallback ?? 0);
     const missing = await page.evaluate(() => [...(window.bts.renderer.painters?.illustrated?.stats?.missing ?? [])].join(', '));
+    const shaded = await page.evaluate(() => { const r = window.bts.renderer; r.draw(performance.now()); return [r.options.atmosphere, r.painters.illustrated.shades.size]; });
+    check('Atmosphere is on in the illustrated view and people cast shadows', shaded[0] === true && shaded[1] > 0, `on ${shaded[0]}, ${shaded[1]} shadow outlines made`);
     check('No picture is missing in the illustrated view (nothing fell back to a stand-in)', fallbacks === 0, `${fallbacks} fallbacks: ${missing}`);
 
     // Settings survive a reload.
@@ -390,7 +392,7 @@ if (wanted('screens')) {
     await page.evaluate(() => localStorage.setItem('bts.settings', JSON.stringify({ view: 'modern', columns: 48, speed: 1, sound: true })));
     await page.reload(); await page.waitForFunction(() => window.bts); await page.waitForTimeout(600);
     const s = await page.evaluate(() => window.bts.settings);
-    check('Settings from before versions existed are brought up to date', s.settingsVersion >= 6 && s.camera === 'close' && s.columns === 32 && s.artwork === 'illustrated' && s.guides === true, JSON.stringify({ v: s.settingsVersion, camera: s.camera, columns: s.columns, artwork: s.artwork, guides: s.guides }));
+    check('Settings from before versions existed are brought up to date', s.settingsVersion >= 7 && s.camera === 'close' && s.columns === 32 && s.artwork === 'illustrated' && s.guides === true, JSON.stringify({ v: s.settingsVersion, camera: s.camera, columns: s.columns, artwork: s.artwork, guides: s.guides }));
     await page.evaluate(() => localStorage.setItem('bts.settings', '{not json'));
     await page.reload(); await page.waitForFunction(() => window.bts); await page.waitForTimeout(600);
     check('Unreadable saved settings fall back to the defaults', (await page.evaluate(() => window.bts.settings.view)) === 'modern' && errors.length === 0, errors.join(' | '));
@@ -499,7 +501,7 @@ if (wanted('builds')) {
     await page.click('text=New game'); await page.waitForTimeout(3000);
     const state = await page.evaluate(() => ({ ticks: window.bts.game.tickCount, art: window.bts.renderer.assets.ready, v: window.bts.settings.settingsVersion, guides: window.bts.settings.guides, hasGuide: Array.isArray(window.bts.renderer.guide) }));
     check(`${label} starts and runs`, state.ticks > 30 && errors.length === 0, `${state.ticks} ticks ${errors.slice(0, 2).join(' | ')}`);
-    check(`${label} is built from the current source`, state.v === 6 && state.guides === true && state.hasGuide, JSON.stringify(state));
+    check(`${label} is built from the current source`, state.v === 7 && state.guides === true && state.hasGuide, JSON.stringify(state));
     if (wantArt) check(`${label} loads the illustrated artwork`, state.art === true);
     await page.close();
   }

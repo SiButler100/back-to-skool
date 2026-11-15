@@ -13509,6 +13509,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.marginBottom = GROUND_MARGIN;
       this.assets = assets;
       this.flips = /* @__PURE__ */ new Map();
+      this.shades = /* @__PURE__ */ new Map();
       this.stats = { drawn: 0, fallback: 0 };
       assets.onReady(() => {
         this.backdrop = null;
@@ -13569,6 +13570,50 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       this.stats.fallback++;
       (this.stats.missing = this.stats.missing || /* @__PURE__ */ new Set()).add(`${group}:${state}`);
       return true;
+    }
+    // ---- Atmosphere ------------------------------------------------------------------
+    // The shadow a figure throws on the wall behind it: the same picture, turned
+    // to a dark outline and softened. It is made once for each pose (small, so
+    // that enlarging it blurs it for free) and kept.
+    silhouette(f, flip) {
+      const key = `${f.img.src}|${f.x},${f.y},${f.w},${f.h}|${flip ? "L" : "R"}`;
+      let c = this.shades.get(key);
+      if (!c) {
+        const k = 1 / 6, w = Math.max(2, Math.ceil(f.w * k)) + 4, h = Math.max(2, Math.ceil(f.h * k)) + 4;
+        c = makeCanvas(w, h);
+        const cx = c.getContext("2d");
+        cx.imageSmoothingEnabled = true;
+        if (flip) {
+          cx.translate(w, 0);
+          cx.scale(-1, 1);
+        }
+        cx.drawImage(f.img, f.x, f.y, f.w, f.h, 2, 2, w - 4, h - 4);
+        cx.setTransform(1, 0, 0, 1, 0, 0);
+        cx.globalCompositeOperation = "source-in";
+        cx.fillStyle = "#1a1208";
+        cx.fillRect(0, 0, w, h);
+        this.shades.set(key, c);
+      }
+      return c;
+    }
+    // Draw that shadow for someone standing at (x, y) in game pixels. `lean` is
+    // how far the sun pushes it sideways, in game pixels (negative = to the
+    // left); it always falls a little downwards and never below the floor the
+    // figure is standing on.
+    drawWallShadow(ctx, group, state, direction, look, x, y, lean) {
+      const f = this.assets.frame(group, state, look?.variant);
+      if (!f) return;
+      const S = this.scale, flip = direction < 0;
+      const left = Math.round(x * S) - (flip ? f.w - f.ox - 24 * S : f.ox), top = Math.round(y * S) - f.oy;
+      const floor = Math.round((y + 32) * S) - Math.round(10 * S / 6);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(left - 60 * S, top - 8 * S, f.w + 120 * S, floor - (top - 8 * S));
+      ctx.clip();
+      ctx.globalAlpha = 0.2;
+      ctx.imageSmoothingEnabled = true;
+      ctx.drawImage(this.silhouette(f, flip), left + lean * S - 2 * 6, top + 2.2 * S - 2 * 6, f.w + 4 * 6, f.h + 4 * 6);
+      ctx.restore();
     }
     flipped(f) {
       const key = `${f.img.src}|${f.x},${f.y},${f.w},${f.h}`;
@@ -14399,12 +14444,18 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         else people.push({ d, m, lane: p.smooth ? this.laneOf(d, m, dt) : 0 });
       }
       people.sort((a, b) => a.lane - b.lane);
-      const drawOne = ({ d, m, lane }) => {
-        const x = m.x * C4, y = m.y * C4 + lane * LANE_STEP;
-        if (d.group !== "OBJ" && d.isStanding?.() && !m.air) p.drawShadow(ctx, x, y);
+      const pictureOf = (d, m) => {
         let state = d.animatoryState;
         if (cycles && m.walkState && p.hasCycle(d.group, d.look)) state = m.walking ? `CYCLE${m.cycle}` : "WALK0";
         if (m.air && p.hasFrame && p.hasFrame(d.group, "DROP_A", d.look)) state = m.air === "up" ? "LEAP" : Math.floor(this.lastDraw / 120) % 2 ? "DROP_B" : "DROP_A";
+        return state;
+      };
+      const mood = this.options.atmosphere && p.drawWallShadow ? this.daylight() : null;
+      if (mood) for (const { d, m, lane } of people) p.drawWallShadow(ctx, d.group, pictureOf(d, m), d.direction, d.look, m.x * C4, m.y * C4 + lane * LANE_STEP, mood.lean);
+      const drawOne = ({ d, m, lane }) => {
+        const x = m.x * C4, y = m.y * C4 + lane * LANE_STEP;
+        if (d.group !== "OBJ" && d.isStanding?.() && !m.air) p.drawShadow(ctx, x, y);
+        const state = pictureOf(d, m);
         if (m.seq && p.hasFrame && p.hasFrame(d.group, m.seq.needs, d.look)) {
           p.drawSprite(ctx, d.group, m.seq.a || state, m.seq.dirA, d.look, x, y);
           if (m.seq.k > 0.5) {
@@ -14429,6 +14480,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       objects.forEach(drawOne);
       if (this.options.guides) this.drawGuideTargets(ctx, S);
       this.fx.draw(ctx, S);
+      if (mood) this.drawAtmosphere(ctx, mood);
       for (const c of game.cast.characterList) {
         if (!c.bubble) continue;
         const [bx, by] = this.spritePos(c);
@@ -14450,6 +14502,42 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         this.drawStatus();
         ctx.restore();
       }
+    }
+    // ---- Atmosphere (illustrated view) ----------------------------------------------
+    // The time of day, from the school clock. Eight periods make a "day": it
+    // starts cool and clear, is warmest in the middle and cools again, so there
+    // is never a jump. `warm` is 0..1; `lean` is how far the sun pushes shadows
+    // sideways, in game pixels (from one side in the morning to the other later).
+    daylight() {
+      const tt = this.game.timetable;
+      const day = ((tt.index % 8 + 8) % 8 + tt.progress()) / 8;
+      return { warm: 0.5 - 0.5 * Math.cos(day * Math.PI * 2), lean: 5.5 * Math.cos(day * Math.PI) };
+    }
+    // A wash of the hour's colour over the scene and a gentle darkening towards
+    // the corners, as a lens gives. Drawn in screen space, whatever the camera.
+    drawAtmosphere(ctx, mood) {
+      const w = this.canvas.width, h = this.canvas.height;
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      const cool = [150, 190, 255], gold = [255, 176, 92], k = mood.warm;
+      const tint = cool.map((c, i) => Math.round(c + (gold[i] - c) * k));
+      ctx.globalCompositeOperation = "soft-light";
+      ctx.fillStyle = `rgba(${tint.join(",")},${(0.05 + 0.2 * k).toFixed(3)})`;
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = "source-over";
+      if (!this.lens || this.lens.width !== w || this.lens.height !== h) {
+        this.lens = document.createElement("canvas");
+        this.lens.width = w;
+        this.lens.height = h;
+        const lx = this.lens.getContext("2d");
+        const g = lx.createRadialGradient(w / 2, h * 0.46, Math.min(w, h) * 0.45, w / 2, h * 0.46, Math.hypot(w, h) * 0.56);
+        g.addColorStop(0, "rgba(24,14,4,0)");
+        g.addColorStop(1, "rgba(24,14,4,0.34)");
+        lx.fillStyle = g;
+        lx.fillRect(0, 0, w, h);
+      }
+      ctx.drawImage(this.lens, 0, 0);
+      ctx.restore();
     }
     // ---- Aiming help (modern view) ----------------------------------------------
     // features/aim-guide.js works out where Eric must stand to fill a cup with
@@ -15431,6 +15519,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
         ${check("sound", "Sound effects", "Footsteps, splashes, the bell, birdsong outdoors and the murmur of the school indoors, all synthesised.")}
         ${check("music", "Music", "A quiet tune while you play.")}
         ${check("minimap", "Map", "A small map of the whole school in the corner of the picture, with a dot for everyone.")}
+        ${check("atmosphere", "Atmosphere", "Everyone casts a soft shadow on the wall behind them, the light warms and cools through the school day, and the picture darkens gently towards its corners. Illustrated artwork only.")}
         ${check("guides", "Aiming help", "Marks where to stand to fill a cup with the pistol or knock it with the catapult, and rings the cup when your aim is true. Modern view only.")}
         ${check("radar", "Teacher radar", "Lists the staff, how far away they are and whether they can see Eric. An aid the original never had.")}
       </div>
@@ -16698,8 +16787,8 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
     original: { theme: "spectrum", columns: 32, smoothMotion: false, retroScroll: true, freezeOnMessages: true, retroStatus: true, originalGraphics: true, artwork: "painted", camera: "whole" },
     modern: { theme: "modern", columns: CLOSE_COLUMNS, camera: "close", smoothMotion: true, retroScroll: false, freezeOnMessages: true, retroStatus: false, originalGraphics: false, artwork: "illustrated" }
   };
-  var SETTINGS_VERSION = 6;
-  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
+  var SETTINGS_VERSION = 7;
+  var DEFAULT_SETTINGS = { view: "modern", speed: 1, sound: true, music: true, minimap: true, radar: false, guides: true, atmosphere: true, settingsVersion: SETTINGS_VERSION, ...VIEW_PRESETS.modern };
   function migrateSettings(s) {
     const v = s.settingsVersion || 1;
     if (v < 2) s.hdGraphics = s.view !== "original";
@@ -16805,6 +16894,7 @@ html.view-modern .screen > #sidebar .radar li.watching .name { color: #ff8a8d; }
       renderer.options.artwork = s.artwork || "illustrated";
       renderer.options.camera = s.camera || "whole";
       renderer.options.guides = s.view !== "original" && s.guides !== false;
+      renderer.options.atmosphere = s.view !== "original" && s.artwork === "illustrated" && s.atmosphere !== false;
       const spectrumFont = s.originalGraphics && renderer.original.ready;
       game.measureText = spectrumFont ? originalMeasure : measureText;
       game.fontHas = spectrumFont ? originalFontHas : fontHas;

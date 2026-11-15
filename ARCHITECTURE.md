@@ -218,6 +218,7 @@ Two rules of thumb. A check should say in plain words what the player would see 
 | Change how people look in pixel art | `src/render/hd/palette.js` (each group's colours) and `src/render/hd/people.js` (the body parts, drawn as text bitmaps); the original view draws the game's own sprites from the player's tape via `src/render/extract.js` and `src/render/original.js` |
 | Draw a new object or icon | `src/render/hd/objects.js`, `src/render/hd/icons.js`; the bitmap alphabet is explained at the top of `src/render/hd/pixelart.js` |
 | Change how the keys feel (how long Eric pauses after turning round) | `turnPause` and `turnPauseOnStairs` in `src/config.js`; a tap is recorded in `src/ui/input.js` and acted on in `Eric.move` in `src/engine/eric.js` |
+| Change the atmosphere (wall shadows, the light of the hour, the lens darkening) | `daylight` and `drawAtmosphere` in `src/render/renderer.js`; the shadow outlines are made by `silhouette` and `drawWallShadow` in `src/render/art/illustrated.js` |
 | Change the aiming help (the glowing spots and the ring round a cup) | `src/features/aim-guide.js` finds the spots by tracing the engine's own flights; `drawGuideSpots` and `drawGuideTargets` in `src/render/renderer.js` draw them |
 | Change how movement feels (glide, walk cycle, pose blend, jump) | `src/render/motion.js`; the camera is in `src/render/renderer.js` (`updateCamera`, `updateCameraY`) |
 | Add or change a visual effect | `src/render/fx.js`: listen for an engine event and add particles |

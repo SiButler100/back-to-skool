@@ -33,6 +33,7 @@ export class IllustratedPainter extends ModernPainter {
     this.marginBottom = GROUND_MARGIN;   // game pixels of ground shown below the last row
     this.assets = assets;
     this.flips = new Map();         // frame key -> flipped copy
+    this.shades = new Map();        // frame key -> soft dark outline, for shadows on the wall
     this.stats = { drawn: 0, fallback: 0 };
     assets.onReady(() => { this.backdrop = null; this.layers = null; });
     this.view = { x0: 0, x1: 0, y0: 0, y1: 0 };   // the visible strip in canvas pixels, noted each frame
@@ -83,6 +84,44 @@ export class IllustratedPainter extends ModernPainter {
     this.stats.fallback++;
     (this.stats.missing = this.stats.missing || new Set()).add(`${group}:${state}`);   // which pictures were missing, for the tests
     return true;
+  }
+
+  // ---- Atmosphere ------------------------------------------------------------------
+  // The shadow a figure throws on the wall behind it: the same picture, turned
+  // to a dark outline and softened. It is made once for each pose (small, so
+  // that enlarging it blurs it for free) and kept.
+  silhouette(f, flip) {
+    const key = `${f.img.src}|${f.x},${f.y},${f.w},${f.h}|${flip ? 'L' : 'R'}`;
+    let c = this.shades.get(key);
+    if (!c) {
+      const k = 1 / 6, w = Math.max(2, Math.ceil(f.w * k)) + 4, h = Math.max(2, Math.ceil(f.h * k)) + 4;
+      c = makeCanvas(w, h);
+      const cx = c.getContext('2d');
+      cx.imageSmoothingEnabled = true;
+      if (flip) { cx.translate(w, 0); cx.scale(-1, 1); }
+      cx.drawImage(f.img, f.x, f.y, f.w, f.h, 2, 2, w - 4, h - 4);
+      cx.setTransform(1, 0, 0, 1, 0, 0);
+      cx.globalCompositeOperation = 'source-in';       // keep the outline, replace the colours
+      cx.fillStyle = '#1a1208'; cx.fillRect(0, 0, w, h);
+      this.shades.set(key, c);
+    }
+    return c;
+  }
+  // Draw that shadow for someone standing at (x, y) in game pixels. `lean` is
+  // how far the sun pushes it sideways, in game pixels (negative = to the
+  // left); it always falls a little downwards and never below the floor the
+  // figure is standing on.
+  drawWallShadow(ctx, group, state, direction, look, x, y, lean) {
+    const f = this.assets.frame(group, state, look?.variant);
+    if (!f) return;
+    const S = this.scale, flip = direction < 0;
+    const left = Math.round(x * S) - (flip ? f.w - f.ox - 24 * S : f.ox), top = Math.round(y * S) - f.oy;
+    const floor = Math.round((y + 32) * S) - Math.round(10 * S / 6);     // where the floor strip begins
+    ctx.save();
+    ctx.beginPath(); ctx.rect(left - 60 * S, top - 8 * S, f.w + 120 * S, floor - (top - 8 * S)); ctx.clip();
+    ctx.globalAlpha = 0.2; ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(this.silhouette(f, flip), left + lean * S - 2 * 6, top + 2.2 * S - 2 * 6, f.w + 4 * 6, f.h + 4 * 6);
+    ctx.restore();
   }
 
   flipped(f) {
